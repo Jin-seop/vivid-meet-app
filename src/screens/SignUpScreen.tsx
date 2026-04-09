@@ -30,6 +30,7 @@ export interface SignUpData {
   providerId: string;
   region: string;
   gender: string;
+  aiPhotoUrl: string;
   posePhotoUrl: string;
   realPhotos: string[];
 }
@@ -47,6 +48,7 @@ const SignUpScreen = ({ navigation }: SignUpScreenProps) => {
     providerId: '',
     region: '',
     gender: '',
+    aiPhotoUrl: '',
     posePhotoUrl: '',
     realPhotos: [],
   });
@@ -94,16 +96,7 @@ const SignUpScreen = ({ navigation }: SignUpScreenProps) => {
           />
         )}
 
-        {/* Step 2: 사진 업로드 */}
-        {step === 2 && (
-          <SignUpStep2
-            setStep={setStep}
-            uploadedPhotos={uploadedPhotos}
-            removePhoto={removePhoto}
-            handlePhotoUpload={handlePhotoUpload}
-          />
-        )}
-
+        {/* 취향 + ai 사진생성 만들기 */}
         {/* Step 3: 취향 설정 */}
         {step === 3 && (
           <SignUpStep3
@@ -113,7 +106,17 @@ const SignUpScreen = ({ navigation }: SignUpScreenProps) => {
           />
         )}
 
-        {/* Step 4: AI 캐릭터 프리뷰 */}
+        {/* Step 2: ai 사진 생성 */}
+        {step === 2 && (
+          <SignUpStep2
+            setStep={setStep}
+            uploadedPhotos={uploadedPhotos}
+            removePhoto={removePhoto}
+            handlePhotoUpload={handlePhotoUpload}
+          />
+        )}
+
+        {/* Step 4: AI 캐릭터 프리뷰하고 계정 생성 */}
         {step === 4 && (
           <SignUpStep4 profileData={profileData} navigation={navigation} />
         )}
