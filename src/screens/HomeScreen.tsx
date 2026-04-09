@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 // import client from '../api/client';
 import React from 'react';
-import { Text, FlatList } from 'react-native';
+import { Text, FlatList, View } from 'react-native';
 
 const HomeScreen = () => {
   // const { data, isLoading, error } = useQuery({
@@ -16,6 +16,7 @@ const HomeScreen = () => {
   // return (
   //   <FlatList data={data} renderItem={({ item }) => <UserCard user={item} />} />
   // );
+  return <View />;
 };
 
 export default HomeScreen;

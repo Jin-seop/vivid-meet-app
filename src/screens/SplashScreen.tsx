@@ -6,6 +6,7 @@ import { MotiView, MotiText } from 'moti';
 import { Sparkles } from 'lucide-react-native';
 import BootSplash from 'react-native-bootsplash';
 import { getPretendardFont } from '../utils/fonts';
+import { RootStackScreenName } from './navigation/RootStack';
 
 // 내비게이션 타입 정의
 type RootStackParamList = {
@@ -27,7 +28,7 @@ export function SplashScreen({ navigation }: Props) {
     BootSplash.hide({ fade: true });
     // 웹 코드와 동일하게 2.5초 후 로그인 화면으로 이동
     const timer = setTimeout(() => {
-      navigation.replace('Login'); // 스플래시는 히스토리에 남지 않도록 replace 사용
+      navigation.replace(RootStackScreenName.Login);
     }, 2500);
 
     return () => clearTimeout(timer);

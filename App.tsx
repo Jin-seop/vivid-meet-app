@@ -1,21 +1,14 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { SplashScreen } from './src/screens/SplashScreen';
-import { LoginScreen } from './src/screens/LoginScreen';
-
-const Stack = createStackNavigator();
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import RootStack from './src/screens/navigation/RootStack';
 
 export default function App() {
+  // 실제 서비스 시에는 전역 상태(Zustand 등)를 통해 isLoggedIn 값을 가져옵니다.
+  const isLoggedIn = false;
+
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="Splash"
-        screenOptions={{ headerShown: false }}
-      >
-        <Stack.Screen name="Splash" component={SplashScreen} />
-        <Stack.Screen name="Login" component={LoginScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <SafeAreaProvider>
+      <RootStack isLoggedIn={isLoggedIn} />
+    </SafeAreaProvider>
   );
 }

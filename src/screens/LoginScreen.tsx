@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
   StyleSheet,
   View,
@@ -12,24 +12,23 @@ import { MotiView } from 'moti';
 import { Sparkles } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import VIText from '../components/common/VIText';
-
-type RootStackParamList = {
-  Login: undefined;
-  SignUp: undefined;
-  HomeMain: undefined;
-};
+import {
+  RootStackParamList,
+  RootStackScreenName,
+} from './navigation/RootStack';
 
 type LoginScreenProps = {
   navigation: StackNavigationProp<RootStackParamList, 'Login'>;
 };
 
-export function LoginScreen({ navigation }: LoginScreenProps) {
-  const handleSocialLogin = (provider: string) => {
+const LoginScreen = ({ navigation }: LoginScreenProps) => {
+  const onSocialLoginPress = (provider: string) => {
     console.log(`Login with ${provider}`);
-    setTimeout(() => navigation.replace('HomeMain'), 500);
+    // setTimeout(() => navigation.replace('HomeMain'), 500);
+    setTimeout(() => navigation.navigate(RootStackScreenName.SignUp), 500);
   };
 
-  useEffect(() => {}, []);
+  // useEffect(() => {}, []);
 
   return (
     <View style={styles.container}>
@@ -83,7 +82,7 @@ export function LoginScreen({ navigation }: LoginScreenProps) {
               {/* Google 로그인 */}
               <TouchableOpacity
                 style={[styles.loginButton, styles.googleButton]}
-                onPress={() => handleSocialLogin('Google')}
+                onPress={() => onSocialLoginPress('Google')}
               >
                 <VIText style={styles.googleButtonText} fontWeight={600}>
                   Google로 시작하기
@@ -93,7 +92,7 @@ export function LoginScreen({ navigation }: LoginScreenProps) {
               {/* Apple 로그인 */}
               <TouchableOpacity
                 style={[styles.loginButton, styles.appleButton]}
-                onPress={() => handleSocialLogin('Apple')}
+                onPress={() => onSocialLoginPress('Apple')}
               >
                 <VIText style={styles.appleButtonText} fontWeight={600}>
                   Apple로 시작하기
@@ -108,13 +107,6 @@ export function LoginScreen({ navigation }: LoginScreenProps) {
               transition={{ delay: 600 }}
               style={styles.footer}
             >
-              <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
-                <VIText style={styles.signUpText}>
-                  계정이 없으신가요?{' '}
-                  <VIText style={styles.link}>회원가입</VIText>
-                </VIText>
-              </TouchableOpacity>
-
               <VIText style={styles.policyText}>
                 로그인 시 VividMeet의 {'\n'}
                 <VIText style={styles.underline}>이용약관</VIText> 및{' '}
@@ -127,7 +119,7 @@ export function LoginScreen({ navigation }: LoginScreenProps) {
       </LinearGradient>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -234,3 +226,5 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
 });
+
+export default LoginScreen;
