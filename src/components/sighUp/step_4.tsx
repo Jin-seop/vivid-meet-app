@@ -15,6 +15,10 @@ interface SignUpStep4Props {
 }
 
 const SignUpStep4 = ({ profileData, navigation }: SignUpStep4Props) => {
+  const onCompletePress = () => {
+    navigation.replace('HomeMain');
+  };
+
   return (
     <MotiView
       from={{ opacity: 0, translateX: 20 }}
@@ -51,7 +55,7 @@ const SignUpStep4 = ({ profileData, navigation }: SignUpStep4Props) => {
 
       <VITouchableOpacity
         style={styles.completeButton}
-        onPress={() => navigation.replace('HomeMain')}
+        onPress={onCompletePress}
       >
         <LinearGradient
           colors={['#4A90E2', '#50E3C2']}
