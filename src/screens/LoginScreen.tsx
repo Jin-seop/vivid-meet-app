@@ -19,8 +19,15 @@ type LoginScreenProps = {
 const LoginScreen = ({ navigation }: LoginScreenProps) => {
   const onSocialLoginPress = (provider: string) => {
     console.log(`Login with ${provider}`);
+    // TODO: 실제 소셜 로그인 로직 구현 후 이메일 전달
     // setTimeout(() => navigation.replace('HomeMain'), 500);
-    setTimeout(() => navigation.navigate(RootStackScreenName.SignUp), 500);
+    setTimeout(
+      () =>
+        navigation.navigate(RootStackScreenName.SignUp, {
+          email: 'test@example.com',
+        }),
+      500,
+    );
   };
 
   // useEffect(() => {}, []);

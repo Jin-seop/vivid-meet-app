@@ -18,7 +18,7 @@ const Stack = createStackNavigator();
 export type RootStackParamList = {
   Splash: undefined;
   Login: undefined;
-  SignUp: undefined;
+  SignUp: { email: string };
   HomeMain: undefined;
 };
 

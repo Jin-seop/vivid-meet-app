@@ -1,13 +1,13 @@
-import { CheckCircle2 } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { StyleSheet, TextInput, View } from 'react-native';
 import VIText from '../common/VIText';
 import VITouchableOpacity from '../common/VITouchableOpacity';
+import { SignUpData } from '../../screens/SignUpScreen';
 
 interface SignUpStep1Props {
-  profileData;
-  setProfileData;
-  setStep;
+  profileData: SignUpData;
+  setProfileData: React.Dispatch<React.SetStateAction<SignUpData>>;
+  setStep: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const SignUpStep1 = ({
@@ -26,26 +26,17 @@ const SignUpStep1 = ({
       </VIText>
 
       <View style={styles.form}>
-        <VIText style={styles.label}>이름</VIText>
+        <VIText style={styles.label}>닉네임</VIText>
         <TextInput
           style={styles.input}
-          value={profileData.name}
-          onChangeText={text => setProfileData({ ...profileData, name: text })}
-          placeholder="실명을 입력해주세요"
-        />
-
-        <VIText style={[styles.label, { marginTop: 20 }]}>출생년도</VIText>
-        <TextInput
-          style={styles.input}
-          keyboardType="numeric"
-          value={profileData.birthYear}
+          value={profileData?.nickname}
           onChangeText={text =>
-            setProfileData({ ...profileData, birthYear: text })
+            setProfileData({ ...profileData, nickname: text })
           }
-          placeholder="예: 1995"
+          placeholder="닉네임을 입력해주세요"
         />
 
-        <View style={styles.infoCard}>
+        {/* <View style={styles.infoCard}>
           <CheckCircle2 size={20} color="#4A90E2" />
           <View style={styles.infoTextWrapper}>
             <VIText style={styles.infoTitle}>본인 인증이 필요합니다</VIText>
@@ -53,16 +44,15 @@ const SignUpStep1 = ({
               19세 미만 및 악성 유저 차단을 위해 국내 본인 확인 API를 사용합니다
             </VIText>
           </View>
-        </View>
+        </View> */}
       </View>
 
       <VITouchableOpacity
         style={[
           styles.nextButton,
-          (!profileData.name || !profileData.birthYear) &&
-            styles.disabledButton,
+          !profileData?.nickname && styles.disabledButton,
         ]}
-        disabled={!profileData.name || !profileData.birthYear}
+        disabled={!profileData?.nickname}
         onPress={() => setStep(2)}
       >
         <VIText style={styles.nextButtonText}>다음</VIText>

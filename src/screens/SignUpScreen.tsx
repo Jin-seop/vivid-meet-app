@@ -12,6 +12,7 @@ import SignUpStep1 from '../components/sighUp/step_1';
 import SignUpStep2 from '../components/sighUp/step_2';
 import SignUpStep4 from '../components/sighUp/step_4';
 import SignUpStep3 from '../components/sighUp/step_3';
+import { RouteProp, useRoute } from '@react-navigation/native';
 
 export type SignUpScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -22,14 +23,32 @@ interface SignUpScreenProps {
   navigation: SignUpScreenNavigationProp;
 }
 
+export interface SignUpData {
+  email: string;
+  nickname: string;
+  provider: string;
+  providerId: string;
+  region: string;
+  gender: string;
+  posePhotoUrl: string;
+  realPhotos: string[];
+}
+
 const SignUpScreen = ({ navigation }: SignUpScreenProps) => {
+  const route =
+    useRoute<RouteProp<RootStackParamList, RootStackScreenName.SignUp>>();
+
   const [step, setStep] = useState(1);
   const [uploadedPhotos, setUploadedPhotos] = useState<string[]>([]);
-  const [profileData, setProfileData] = useState({
-    name: '',
-    birthYear: '',
-    mbti: '',
-    interests: [] as string[],
+  const [profileData, setProfileData] = useState<SignUpData>({
+    email: route.params.email,
+    nickname: '',
+    provider: '',
+    providerId: '',
+    region: '',
+    gender: '',
+    posePhotoUrl: '',
+    realPhotos: [],
   });
 
   const totalSteps = 4;
@@ -50,20 +69,6 @@ const SignUpScreen = ({ navigation }: SignUpScreenProps) => {
 
   const removePhoto = (index: number) => {
     setUploadedPhotos(uploadedPhotos.filter((_, i) => i !== index));
-  };
-
-  const toggleInterest = (interest: string) => {
-    if (profileData.interests.includes(interest)) {
-      setProfileData({
-        ...profileData,
-        interests: profileData.interests.filter(i => i !== interest),
-      });
-    } else {
-      setProfileData({
-        ...profileData,
-        interests: [...profileData.interests, interest],
-      });
-    }
   };
 
   return (
@@ -105,7 +110,6 @@ const SignUpScreen = ({ navigation }: SignUpScreenProps) => {
             profileData={profileData}
             setProfileData={setProfileData}
             setStep={setStep}
-            toggleInterest={toggleInterest}
           />
         )}
 

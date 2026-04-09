@@ -3,11 +3,14 @@ import { StyleSheet, View } from 'react-native';
 import VIText from '../common/VIText';
 import LinearGradient from 'react-native-linear-gradient';
 import { CheckCircle2 } from 'lucide-react-native';
-import { SignUpScreenNavigationProp } from '../../screens/SignUpScreen';
+import {
+  SignUpData,
+  SignUpScreenNavigationProp,
+} from '../../screens/SignUpScreen';
 import VITouchableOpacity from '../common/VITouchableOpacity';
 
 interface SignUpStep4Props {
-  profileData;
+  profileData: SignUpData;
   navigation: SignUpScreenNavigationProp;
 }
 
@@ -28,11 +31,11 @@ const SignUpStep4 = ({ profileData, navigation }: SignUpStep4Props) => {
           <VIText style={styles.aiAvatarText}>AI</VIText>
         </View>
         <VIText style={styles.aiName}>
-          {profileData.name}님의 AI 페르소나
+          {profileData.nickname}님의 AI 페르소나
         </VIText>
         <VIText style={styles.aiInfo}>
-          {profileData.mbti && `${profileData.mbti} • `}
-          {profileData.interests.slice(0, 2).join(', ')}
+          {/* {profileData.mbti && `${profileData.mbti} • `}
+          {profileData.interests.slice(0, 2).join(', ')} */}
         </VIText>
       </LinearGradient>
 
@@ -41,8 +44,7 @@ const SignUpStep4 = ({ profileData, navigation }: SignUpStep4Props) => {
         <View style={styles.infoTextWrapper}>
           <VIText style={styles.infoTitle}>AI 투명성 고지</VIText>
           <VIText style={styles.infoDesc}>
-            상대방에게는 AI 캐릭터가 먼저 노출되며, 대화가 진행될수록 실물
-            사진이 단계적으로 공개됩니다.
+            상대방에게는 AI 캐릭터가 노출됩니다.
           </VIText>
         </View>
       </View>

@@ -2,19 +2,18 @@ import { MotiView } from 'moti';
 import { StyleSheet, View } from 'react-native';
 import VIText from '../common/VIText';
 import VITouchableOpacity from '../common/VITouchableOpacity';
+import { SignUpData } from '../../screens/SignUpScreen';
 
 interface SignUpStep3Props {
-  profileData;
-  setProfileData;
+  profileData: SignUpData;
+  setProfileData: React.Dispatch<React.SetStateAction<SignUpData>>;
   setStep: React.Dispatch<React.SetStateAction<number>>;
-  toggleInterest: (interest: string) => void;
 }
 
 const SignUpStep3 = ({
   profileData,
   setProfileData,
   setStep,
-  toggleInterest,
 }: SignUpStep3Props) => {
   return (
     <MotiView
@@ -26,7 +25,7 @@ const SignUpStep3 = ({
 
       <VIText style={styles.label}>MBTI (선택)</VIText>
       <View style={styles.interestGrid}>
-        {['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP'].map(
+        {/* {['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP'].map(
           mbti => (
             <VITouchableOpacity
               key={mbti}
@@ -46,51 +45,15 @@ const SignUpStep3 = ({
               </VIText>
             </VITouchableOpacity>
           ),
-        )}
-      </View>
-
-      <VIText style={[styles.label, { marginTop: 24 }]}>
-        관심사 (3개 이상 선택)
-      </VIText>
-      <View style={styles.interestGrid}>
-        {[
-          '운동',
-          '음악',
-          '영화',
-          '여행',
-          '요리',
-          '게임',
-          '독서',
-          '사진',
-          '춤',
-        ].map(interest => (
-          <VITouchableOpacity
-            key={interest}
-            onPress={() => toggleInterest(interest)}
-            style={[
-              styles.chip,
-              profileData.interests.includes(interest) && styles.chipActive,
-            ]}
-          >
-            <VIText
-              style={[
-                styles.chipText,
-                profileData.interests.includes(interest) &&
-                  styles.chipTextActive,
-              ]}
-            >
-              {interest}
-            </VIText>
-          </VITouchableOpacity>
-        ))}
+        )} */}
       </View>
 
       <VITouchableOpacity
         style={[
           styles.nextButton,
-          profileData.interests.length < 3 && styles.disabledButton,
+          // profileData.interests.length < 3 && styles.disabledButton,
         ]}
-        disabled={profileData.interests.length < 3}
+        // disabled={profileData.interests.length < 3}
         onPress={() => setStep(4)}
       >
         <VIText style={styles.nextButtonText}>다음</VIText>
