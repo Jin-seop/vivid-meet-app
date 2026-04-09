@@ -1,52 +1,19 @@
 import { Text, TextProps } from 'react-native';
+import {
+  getPretendardFont,
+  PretendardFont,
+  PretendardFontWeight,
+} from '../../utils/fonts';
 
-interface AppTextProps extends TextProps {
+interface VITextProps extends TextProps {
   children?: React.ReactNode;
-  fontWeight?: string;
-  fontFamily?: string;
+  fontWeight?: PretendardFontWeight;
+  fontFamily?: PretendardFont;
 }
 
-const getPretendardFont = (fontWeight?: string, fontFamily?: string) => {
-  if (fontFamily && fontFamily.startsWith('Pretendard')) return fontFamily;
-  switch (fontWeight) {
-    case '100':
-    case 'thin':
-      return 'Pretendard-Thin';
-    case '200':
-    case 'extralight':
-      return 'Pretendard-ExtraLight';
-    case '300':
-    case 'light':
-      return 'Pretendard-Light';
-    case '400':
-    case 'normal':
-      return 'Pretendard-Regular';
-    case '500':
-    case 'medium':
-      return 'Pretendard-Medium';
-    case '600':
-    case 'semibold':
-      return 'Pretendard-SemiBold';
-    case '700':
-    case 'bold':
-      return 'Pretendard-Bold';
-    case '800':
-    case 'extrabold':
-      return 'Pretendard-ExtraBold';
-    case '900':
-    case 'black':
-      return 'Pretendard-Black';
-    default:
-      return 'Pretendard-Regular';
-  }
-};
-
-const AppText = (props: AppTextProps) => {
-  const { style, fontWeight, fontFamily, ...rest } = props;
-  const resolvedFontFamily = getPretendardFont(
-    fontWeight as string,
-    fontFamily,
-  );
+const VIText = (props: VITextProps) => {
+  const { style, fontWeight = 400, fontFamily, ...rest } = props;
+  const resolvedFontFamily = getPretendardFont(fontWeight, fontFamily);
   return (
     <Text {...rest} style={[{ fontFamily: resolvedFontFamily }, style]}>
       {props.children}
@@ -54,4 +21,4 @@ const AppText = (props: AppTextProps) => {
   );
 };
 
-export default AppText;
+export default VIText;
