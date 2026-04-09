@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  Image,
-  StatusBar,
-} from 'react-native';
+import { StyleSheet, View, Image, StatusBar } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import LinearGradient from 'react-native-linear-gradient';
 import { MotiView } from 'moti';
@@ -16,6 +10,7 @@ import {
   RootStackParamList,
   RootStackScreenName,
 } from './navigation/RootStack';
+import VITouchableOpacity from '../components/common/VITouchableOpacity';
 
 type LoginScreenProps = {
   navigation: StackNavigationProp<RootStackParamList, 'Login'>;
@@ -80,24 +75,24 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
               style={styles.buttonSection}
             >
               {/* Google 로그인 */}
-              <TouchableOpacity
+              <VITouchableOpacity
                 style={[styles.loginButton, styles.googleButton]}
                 onPress={() => onSocialLoginPress('Google')}
               >
                 <VIText style={styles.googleButtonText} fontWeight={600}>
                   Google로 시작하기
                 </VIText>
-              </TouchableOpacity>
+              </VITouchableOpacity>
 
               {/* Apple 로그인 */}
-              <TouchableOpacity
+              <VITouchableOpacity
                 style={[styles.loginButton, styles.appleButton]}
                 onPress={() => onSocialLoginPress('Apple')}
               >
                 <VIText style={styles.appleButtonText} fontWeight={600}>
                   Apple로 시작하기
                 </VIText>
-              </TouchableOpacity>
+              </VITouchableOpacity>
             </MotiView>
 
             {/* 하단 링크 */}

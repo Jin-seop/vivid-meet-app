@@ -16,7 +16,7 @@ type RootStackParamList = {
 
 type SplashScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
-  'Splash'
+  RootStackScreenName.Splash
 >;
 
 interface Props {

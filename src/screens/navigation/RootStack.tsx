@@ -2,11 +2,12 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import HomeScreen from '../HomeScreen';
-import { SignUpScreen } from '../SignUpScreen';
 import LoginScreen from '../LoginScreen';
 import { SplashScreen } from '../SplashScreen';
+import SignUpScreen from '../SignUpScreen';
 
 export enum RootStackScreenName {
+  Splash = 'Splash',
   Main = 'Main',
   Login = 'Login',
   SignUp = 'SignUp',
@@ -21,18 +22,19 @@ export type RootStackParamList = {
   HomeMain: undefined;
 };
 
-interface RootStackProps {
-  isLoggedIn: boolean;
-}
-
-const RootStack = ({ isLoggedIn }: RootStackProps) => {
+const RootStack = () => {
+  // 실제 서비스 시에는 전역 상태(Zustand 등)를 통해 isLoggedIn 값을 가져옵니다.
+  const isLoggedIn = false;
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Splash"
+        initialRouteName={RootStackScreenName.Splash}
         screenOptions={{ headerShown: false }}
       >
-        <Stack.Screen name="Splash" component={SplashScreen} />
+        <Stack.Screen
+          name={RootStackScreenName.Splash}
+          component={SplashScreen}
+        />
 
         {isLoggedIn ? (
           <Stack.Screen
