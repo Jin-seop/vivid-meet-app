@@ -50,7 +50,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
               <View style={styles.logoRow}>
                 <Sparkles size={40} color="#4A90E2" />
                 <VIText style={styles.logoText} fontWeight={700}>
-                  VividMeet
+                  AimoChat
                 </VIText>
               </View>
               <VIText style={styles.description}>
@@ -110,7 +110,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
               style={styles.footer}
             >
               <VIText style={styles.policyText}>
-                로그인 시 VividMeet의 {'\n'}
+                로그인 시 AimoChat의 {'\n'}
                 <VIText style={styles.underline}>이용약관</VIText> 및{' '}
                 <VIText style={styles.underline}>개인정보 처리방침</VIText>에
                 동의하게 됩니다.

@@ -1,4 +1,4 @@
-package com.vividmeetapp
+package com.AimoChatapp
 
 import android.app.Application
 import com.facebook.react.PackageList

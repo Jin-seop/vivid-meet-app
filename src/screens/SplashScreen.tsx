@@ -77,7 +77,7 @@ export function SplashScreen({ navigation }: Props) {
             transition={{ type: 'timing', delay: 300 }}
             style={styles.title}
           >
-            VividMeet
+            AimoChat
           </MotiText>
 
           {/* 슬로건 */}

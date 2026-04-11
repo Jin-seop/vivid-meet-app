@@ -63,7 +63,7 @@ const SignUpStep4 = ({ profileData, navigation }: SignUpStep4Props) => {
           end={{ x: 1, y: 0 }}
           style={styles.gradientButton}
         >
-          <VIText style={styles.nextButtonText}>VividMeet 시작하기</VIText>
+          <VIText style={styles.nextButtonText}>AimoChat 시작하기</VIText>
         </LinearGradient>
       </VITouchableOpacity>
     </MotiView>
