@@ -9,9 +9,9 @@ import {
 } from './navigation/RootStack';
 import { StackNavigationProp } from '@react-navigation/stack';
 import SignUpStep1 from '../components/sighUp/step_1';
-import SignUpStep2 from '../components/sighUp/step_2';
-import SignUpStep4 from '../components/sighUp/step_4';
 import SignUpStep3 from '../components/sighUp/step_3';
+import SignUpStep4 from '../components/sighUp/step_4';
+import SignUpStep2 from '../components/sighUp/step_2';
 import { RouteProp, useRoute } from '@react-navigation/native';
 
 export type SignUpScreenNavigationProp = StackNavigationProp<
@@ -28,11 +28,14 @@ export interface SignUpData {
   nickname: string;
   provider: string;
   providerId: string;
-  region: string;
-  gender: string;
+  region: 'KR' | 'JP' | null;
+  gender: 'MALE' | 'FEMALE' | null;
   aiPhotoUrl: string;
   posePhotoUrl: string;
   realPhotos: string[];
+}
+export interface AIData {
+  mbti: string | null;
 }
 
 const SignUpScreen = ({ navigation }: SignUpScreenProps) => {
@@ -46,11 +49,14 @@ const SignUpScreen = ({ navigation }: SignUpScreenProps) => {
     nickname: '',
     provider: '',
     providerId: '',
-    region: '',
-    gender: '',
+    region: null,
+    gender: null,
     aiPhotoUrl: '',
     posePhotoUrl: '',
     realPhotos: [],
+  });
+  const [aiData, setAIData] = useState<AIData>({
+    mbti: null,
   });
 
   const totalSteps = 4;
@@ -98,17 +104,17 @@ const SignUpScreen = ({ navigation }: SignUpScreenProps) => {
 
         {/* 취향 + ai 사진생성 만들기 */}
         {/* Step 3: 취향 설정 */}
-        {step === 3 && (
-          <SignUpStep3
-            profileData={profileData}
-            setProfileData={setProfileData}
+        {step === 2 && (
+          <SignUpStep2
+            aiData={aiData}
+            setAIData={setAIData}
             setStep={setStep}
           />
         )}
 
         {/* Step 2: ai 사진 생성 */}
-        {step === 2 && (
-          <SignUpStep2
+        {step === 3 && (
+          <SignUpStep3
             setStep={setStep}
             uploadedPhotos={uploadedPhotos}
             removePhoto={removePhoto}

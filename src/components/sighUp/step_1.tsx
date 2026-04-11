@@ -35,7 +35,41 @@ const SignUpStep1 = ({
           }
           placeholder="닉네임을 입력해주세요"
         />
+        <VIText style={styles.label}>성별</VIText>
+        <View style={styles.btnContainer}>
+          <VITouchableOpacity
+            style={
+              profileData.gender === 'MALE' ? styles.btnActive : styles.btn
+            }
+            onPress={() => setProfileData({ ...profileData, gender: 'MALE' })}
+          >
+            <VIText style={styles.btnText}>남</VIText>
+          </VITouchableOpacity>
+          <VITouchableOpacity
+            style={
+              profileData.gender === 'FEMALE' ? styles.btnActive : styles.btn
+            }
+            onPress={() => setProfileData({ ...profileData, gender: 'FEMALE' })}
+          >
+            <VIText style={styles.btnText}>여</VIText>
+          </VITouchableOpacity>
+        </View>
 
+        <VIText style={styles.label}>지역</VIText>
+        <View style={styles.btnContainer}>
+          <VITouchableOpacity
+            style={profileData.region === 'KR' ? styles.btnActive : styles.btn}
+            onPress={() => setProfileData({ ...profileData, region: 'KR' })}
+          >
+            <VIText style={styles.btnText}>한국</VIText>
+          </VITouchableOpacity>
+          <VITouchableOpacity
+            style={profileData.region === 'JP' ? styles.btnActive : styles.btn}
+            onPress={() => setProfileData({ ...profileData, region: 'JP' })}
+          >
+            <VIText style={styles.btnText}>일본</VIText>
+          </VITouchableOpacity>
+        </View>
         {/* <View style={styles.infoCard}>
           <CheckCircle2 size={20} color="#4A90E2" />
           <View style={styles.infoTextWrapper}>
@@ -50,7 +84,10 @@ const SignUpStep1 = ({
       <VITouchableOpacity
         style={[
           styles.nextButton,
-          !profileData?.nickname && styles.disabledButton,
+          !profileData?.nickname &&
+            !profileData.gender &&
+            !profileData.region &&
+            styles.disabledButton,
         ]}
         disabled={!profileData?.nickname}
         onPress={() => setStep(2)}
@@ -77,6 +114,32 @@ const styles = StyleSheet.create({
     borderColor: '#E5E7EB',
     borderRadius: 12,
     paddingHorizontal: 16,
+    fontSize: 16,
+  },
+  btnContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    columnGap: 8,
+  },
+  btnActive: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    paddingVertical: 10,
+    borderRadius: 12,
+    borderColor: '#1E40AF',
+  },
+  btn: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    paddingVertical: 10,
+    borderRadius: 12,
+    borderColor: '#E5E7EB',
+  },
+  btnText: {
     fontSize: 16,
   },
   infoCard: {
