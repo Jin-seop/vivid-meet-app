@@ -1,34 +1,59 @@
 import { MotiView } from 'moti';
-import { Dimensions, Image, StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 import VIText from '../common/VIText';
-import { X, Upload, Camera } from 'lucide-react-native';
 import VITouchableOpacity from '../common/VITouchableOpacity';
-
-const { width } = Dimensions.get('window');
+import { SignUpData } from '../../screens/SignUpScreen';
+import { PretendardFont } from '../../utils/fonts';
 
 interface SignUpStep3Props {
   setStep: React.Dispatch<React.SetStateAction<number>>;
-  uploadedPhotos: string[];
-  removePhoto: (index: number) => void;
-  handlePhotoUpload: () => Promise<void>;
+  onPhotoSelect: (isPose: boolean) => Promise<void>;
+  profileData: SignUpData;
 }
 
 const SignUpStep3 = ({
   setStep,
-  uploadedPhotos,
-  removePhoto,
-  handlePhotoUpload,
+  onPhotoSelect,
+  profileData,
 }: SignUpStep3Props) => {
   return (
     <MotiView
       from={{ opacity: 0, translateX: 20 }}
       animate={{ opacity: 1, translateX: 0 }}
     >
-      <VIText style={styles.title}>사진을 업로드해주세요</VIText>
-      <VIText style={styles.subtitle}>최소 5장의 실물 사진이 필요합니다</VIText>
+      <VIText style={styles.title} fontFamily={PretendardFont.Bold}>
+        사진을 업로드해주세요
+      </VIText>
+      <VIText style={styles.subtitle}>
+        포즈 사진과 실물 사진이 필요합니다.
+      </VIText>
 
       <View style={styles.photoGrid}>
-        {uploadedPhotos.map((photo, index) => (
+        <View style={styles.uploadBoxContainer}>
+          <VITouchableOpacity
+            style={styles.uploadBox}
+            onPress={() => onPhotoSelect(true)}
+          >
+            <Image style={styles.photoImage} />
+          </VITouchableOpacity>
+          <VIText style={styles.uploadBoxText} fontWeight={500}>
+            포즈사진
+          </VIText>
+        </View>
+
+        <View style={styles.uploadBoxContainer}>
+          <VITouchableOpacity
+            style={styles.uploadBox}
+            onPress={() => onPhotoSelect(false)}
+          >
+            <Image style={styles.photoImage} />
+          </VITouchableOpacity>
+          <VIText style={styles.uploadBoxText} fontWeight={500}>
+            실물사진
+          </VIText>
+        </View>
+
+        {/* {uploadedPhotos.map((photo, index) => (
           <View key={index} style={styles.photoBox}>
             <Image source={{ uri: photo }} style={styles.photoImage} />
             <VITouchableOpacity
@@ -38,8 +63,8 @@ const SignUpStep3 = ({
               <X size={14} color="white" />
             </VITouchableOpacity>
           </View>
-        ))}
-        {uploadedPhotos.length < 6 && (
+        ))} */}
+        {/* {uploadedPhotos.length < 6 && (
           <VITouchableOpacity
             style={styles.uploadBox}
             onPress={handlePhotoUpload}
@@ -49,10 +74,10 @@ const SignUpStep3 = ({
               {uploadedPhotos.length}/6
             </VIText>
           </VITouchableOpacity>
-        )}
+        )} */}
       </View>
 
-      <View style={styles.guideCard}>
+      {/* <View style={styles.guideCard}>
         <Camera size={20} color="#D97706" />
         <View style={styles.infoTextWrapper}>
           <VIText style={styles.guideTitle}>사진 가이드</VIText>
@@ -61,19 +86,20 @@ const SignUpStep3 = ({
           </VIText>
           <VIText style={styles.guideText}>• 다양한 각도와 표정</VIText>
         </View>
-      </View>
+      </View> */}
 
       <VITouchableOpacity
         style={[
           styles.nextButton,
-          uploadedPhotos.length < 5 && styles.disabledButton,
+          (!profileData.posePhotoUrl || profileData.realPhotos.length === 0) &&
+            styles.disabledButton,
         ]}
-        disabled={uploadedPhotos.length < 5}
-        onPress={() => setStep(3)}
+        disabled={
+          !profileData.posePhotoUrl || profileData.realPhotos.length === 0
+        }
+        onPress={() => setStep(4)}
       >
-        <VIText style={styles.nextButtonText}>
-          다음 ({uploadedPhotos.length}/5)
-        </VIText>
+        <VIText style={styles.nextButtonText}>다음</VIText>
       </VITouchableOpacity>
     </MotiView>
   );
@@ -82,29 +108,25 @@ const SignUpStep3 = ({
 const styles = StyleSheet.create({
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
     color: '#111827',
     marginBottom: 8,
   },
   subtitle: { fontSize: 16, color: '#6B7280', marginBottom: 32 },
-  photoGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
-  photoBox: {
-    width: (width - 68) / 3,
-    aspectRatio: 1,
-    borderRadius: 12,
-    overflow: 'hidden',
-  },
-  photoImage: { width: '100%', height: '100%' },
-  removeIcon: {
-    position: 'absolute',
-    top: 5,
-    right: 5,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    borderRadius: 10,
-    padding: 2,
+  // photoGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
+  // photoBox: {
+  //   width: (width - 68) / 3,
+  //   aspectRatio: 1,
+  //   borderRadius: 12,
+  //   overflow: 'hidden',
+  // },
+  // photoImage: { width: '100%', height: '100%' },
+  photoGrid: { flexDirection: 'row', gap: 10, justifyContent: 'space-between' },
+  uploadBoxContainer: {
+    flex: 1,
+    justifyContent: 'center',
   },
   uploadBox: {
-    width: (width - 68) / 3,
+    flex: 1,
     aspectRatio: 1,
     borderRadius: 12,
     borderStyle: 'dashed',
@@ -112,6 +134,11 @@ const styles = StyleSheet.create({
     borderColor: '#D1D5DB',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  photoImage: { width: '100%', height: '100%' },
+  uploadBoxText: {
+    marginTop: 12,
+    textAlign: 'center',
   },
   uploadCount: { fontSize: 12, color: '#9CA3AF', marginTop: 4 },
   guideCard: {

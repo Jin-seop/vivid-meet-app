@@ -25,6 +25,8 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
       () =>
         navigation.navigate(RootStackScreenName.SignUp, {
           email: 'test@example.com',
+          provider: 'GooGle',
+          providerId: '123',
         }),
       500,
     );

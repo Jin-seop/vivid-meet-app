@@ -84,12 +84,18 @@ const SignUpStep1 = ({
       <VITouchableOpacity
         style={[
           styles.nextButton,
-          !profileData?.nickname &&
-            !profileData.gender &&
-            !profileData.region &&
+          (!profileData?.nickname ||
+            !profileData.gender ||
+            !profileData.region ||
+            !profileData.region) &&
             styles.disabledButton,
         ]}
-        disabled={!profileData?.nickname}
+        disabled={
+          !profileData?.nickname ||
+          !profileData.gender ||
+          !profileData.region ||
+          !profileData.region
+        }
         onPress={() => setStep(2)}
       >
         <VIText style={styles.nextButtonText}>다음</VIText>

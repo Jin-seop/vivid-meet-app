@@ -26,7 +26,7 @@ interface SignUpScreenProps {
 export interface SignUpData {
   email: string;
   nickname: string;
-  provider: string;
+  provider: 'GooGle' | 'Apple' | 'Line';
   providerId: string;
   region: 'KR' | 'JP' | null;
   gender: 'MALE' | 'FEMALE' | null;
@@ -36,6 +36,7 @@ export interface SignUpData {
 }
 export interface AIData {
   mbti: string | null;
+  tags: string[];
 }
 
 const SignUpScreen = ({ navigation }: SignUpScreenProps) => {
@@ -43,12 +44,11 @@ const SignUpScreen = ({ navigation }: SignUpScreenProps) => {
     useRoute<RouteProp<RootStackParamList, RootStackScreenName.SignUp>>();
 
   const [step, setStep] = useState(1);
-  const [uploadedPhotos, setUploadedPhotos] = useState<string[]>([]);
   const [profileData, setProfileData] = useState<SignUpData>({
     email: route.params.email,
     nickname: '',
-    provider: '',
-    providerId: '',
+    provider: route.params.provider,
+    providerId: route.params.providerId,
     region: null,
     gender: null,
     aiPhotoUrl: '',
@@ -57,26 +57,28 @@ const SignUpScreen = ({ navigation }: SignUpScreenProps) => {
   });
   const [aiData, setAIData] = useState<AIData>({
     mbti: null,
+    tags: [],
   });
 
   const totalSteps = 4;
   const progress = (step / totalSteps) * 100;
 
-  // 사진 업로드 로직
-  const handlePhotoUpload = async () => {
+  // 사진 선택 로직
+  const onPhotoSelect = async (isPose: boolean) => {
     const result = await launchImageLibrary({
       mediaType: 'photo',
       selectionLimit: 1,
       quality: 0.8,
     });
 
-    if (result.assets && result.assets[0].uri) {
-      setUploadedPhotos([...uploadedPhotos, result.assets[0].uri]);
+    if (result.assets && result.assets[0].uri && isPose) {
+      setProfileData({ ...profileData, posePhotoUrl: result.assets[0].uri });
+    } else if (result.assets && result.assets[0].uri && !isPose) {
+      setProfileData({
+        ...profileData,
+        realPhotos: [result.assets[0].uri],
+      });
     }
-  };
-
-  const removePhoto = (index: number) => {
-    setUploadedPhotos(uploadedPhotos.filter((_, i) => i !== index));
   };
 
   return (
@@ -102,8 +104,7 @@ const SignUpScreen = ({ navigation }: SignUpScreenProps) => {
           />
         )}
 
-        {/* 취향 + ai 사진생성 만들기 */}
-        {/* Step 3: 취향 설정 */}
+        {/* Step 2: 취향 설정 */}
         {step === 2 && (
           <SignUpStep2
             aiData={aiData}
@@ -112,13 +113,12 @@ const SignUpScreen = ({ navigation }: SignUpScreenProps) => {
           />
         )}
 
-        {/* Step 2: ai 사진 생성 */}
+        {/* Step 3: ai 사진 선택 */}
         {step === 3 && (
           <SignUpStep3
             setStep={setStep}
-            uploadedPhotos={uploadedPhotos}
-            removePhoto={removePhoto}
-            handlePhotoUpload={handlePhotoUpload}
+            onPhotoSelect={onPhotoSelect}
+            profileData={profileData}
           />
         )}
 

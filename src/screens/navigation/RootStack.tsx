@@ -18,7 +18,11 @@ const Stack = createStackNavigator();
 export type RootStackParamList = {
   Splash: undefined;
   Login: undefined;
-  SignUp: { email: string };
+  SignUp: {
+    email: string;
+    provider: 'GooGle' | 'Apple' | 'Line';
+    providerId: string;
+  };
   HomeMain: undefined;
 };
 
