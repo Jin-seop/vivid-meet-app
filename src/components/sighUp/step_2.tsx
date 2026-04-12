@@ -1,5 +1,7 @@
-import { MotiView } from 'moti';
+import React from 'react';
 import { StyleSheet, View, ScrollView } from 'react-native';
+import { MotiView } from 'moti';
+import { useTranslation } from 'react-i18next'; // 추가
 import AMText from '../common/AMText';
 import AMTouchableOpacity from '../common/AMTouchableOpacity';
 import { AIData } from '../../screens/SignUpScreen';
@@ -10,7 +12,7 @@ interface SignUpStep2Props {
   setStep: React.Dispatch<React.SetStateAction<number>>;
 }
 
-// 프론트엔드 노출용 한글 태그와 서버 전송용 영문 프롬프트 매핑
+// 태그의 label도 i18n 처리가 필요할 수 있으나, 현재는 value 기반으로 UI에 표시되는 label을 정의합니다.
 const TAG_CATEGORIES = {
   style: [
     { label: 'K-웹툰', value: 'K-Webtoon style' },
@@ -28,7 +30,8 @@ const TAG_CATEGORIES = {
 };
 
 const SignUpStep2 = ({ aiData, setAIData, setStep }: SignUpStep2Props) => {
-  // 태그 선택 및 해제 로직
+  const { t } = useTranslation(); // 추가
+
   const toggleTag = (tagValue: string) => {
     const currentTags = aiData.tags || [];
     const nextTags = currentTags.includes(tagValue)
@@ -43,11 +46,17 @@ const SignUpStep2 = ({ aiData, setAIData, setStep }: SignUpStep2Props) => {
         from={{ opacity: 0, translateX: 20 }}
         animate={{ opacity: 1, translateX: 0 }}
       >
-        <AMText style={styles.title}>나를 표현해주세요</AMText>
-        <AMText style={styles.subtitle}>AI 캐릭터 생성에 활용됩니다</AMText>
+        <AMText style={styles.title} fontWeight={700}>
+          {t('signup.step2_title')}
+        </AMText>
+        <AMText style={styles.subtitle}>
+          {/* ko.json에 "AI 캐릭터 생성에 활용됩니다" 추가 권장 */}
+          AI 캐릭터 생성에 활용됩니다
+        </AMText>
 
-        {/* 1. MBTI 섹션 */}
-        <AMText style={styles.label}>MBTI (선택)</AMText>
+        <AMText style={styles.label} fontWeight={600}>
+          MBTI (선택)
+        </AMText>
         <View style={styles.interestGrid}>
           {['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP'].map(
             mbti => (
@@ -69,13 +78,14 @@ const SignUpStep2 = ({ aiData, setAIData, setStep }: SignUpStep2Props) => {
           )}
         </View>
 
-        {/* 2. AI 스타일 및 분위기 태그 섹션 */}
         <View style={styles.tagSection}>
-          <AMText style={styles.label}>원하는 스타일 및 분위기 (선택)</AMText>
+          <AMText style={styles.label} fontWeight={600}>
+            원하는 스타일 및 분위기 (선택)
+          </AMText>
 
           {Object.entries(TAG_CATEGORIES).map(([category, tags]) => (
             <View key={category} style={styles.categoryContainer}>
-              <AMText style={styles.subLabel}>
+              <AMText style={styles.subLabel} fontWeight={700}>
                 {category === 'style' ? '그림체' : '조명 및 감성'}
               </AMText>
               <View style={styles.interestGrid}>
@@ -106,12 +116,13 @@ const SignUpStep2 = ({ aiData, setAIData, setStep }: SignUpStep2Props) => {
           ))}
         </View>
 
-        {/* 하단 버튼 */}
         <AMTouchableOpacity
-          style={[styles.nextButton]}
+          style={styles.nextButton}
           onPress={() => setStep(3)}
         >
-          <AMText style={styles.nextButtonText}>다음</AMText>
+          <AMText style={styles.nextButtonText} fontWeight={700}>
+            {t('common.next')}
+          </AMText>
         </AMTouchableOpacity>
       </MotiView>
     </ScrollView>

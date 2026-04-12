@@ -1,10 +1,12 @@
-import { MotiView } from 'moti';
+import React from 'react';
 import { Image, StyleSheet, View } from 'react-native';
+import { MotiView } from 'moti';
+import { useTranslation } from 'react-i18next'; // 추가
 import AMText from '../common/AMText';
 import AMTouchableOpacity from '../common/AMTouchableOpacity';
 import { AIData, SignUpData } from '../../screens/SignUpScreen';
 import { PretendardFont } from '../../utils/fonts';
-import axios from 'axios';
+
 interface SignUpStep3Props {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   onPhotoSelect: (isPose: boolean) => Promise<void>;
@@ -18,40 +20,7 @@ const SignUpStep3 = ({
   profileData,
   aiData,
 }: SignUpStep3Props) => {
-  const onNextStepPress = async () => {
-    try {
-      // const formData = new FormData();
-      // formData.append('poseImage', {
-      //   uri: profileData.posePhotoUrl,
-      //   name: 'pose.jpg',
-      //   type: 'image/jpeg',
-      // });
-
-      // formData.append('personImage', {
-      //   uri: profileData.realPhotos[0],
-      //   name: 'person.jpg',
-      //   type: 'image/jpeg',
-      // });
-      // const combinedPos = [aiData.mbti, ...aiData.tags]
-      //   .filter(Boolean)
-      //   .join(', ');
-      // formData.append('pos', combinedPos);
-      // const res = await axios.post(
-      //   'http://192.168.1.238:3000/ai/generate',
-      //   formData,
-      //   {
-      //     headers: {
-      //       'Content-Type': 'multipart/form-data',
-      //     },
-      //   },
-      // );
-      // console.log(res.data);
-
-      setStep(4);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const { t } = useTranslation(); // 추가
 
   return (
     <MotiView
@@ -59,9 +28,10 @@ const SignUpStep3 = ({
       animate={{ opacity: 1, translateX: 0 }}
     >
       <AMText style={styles.title} fontFamily={PretendardFont.Bold}>
-        사진을 업로드해주세요
+        {t('signup.step3_title')}
       </AMText>
       <AMText style={styles.subtitle}>
+        {/* ko.json에 "포즈 사진과 실물 사진이 필요합니다." 추가 권장 */}
         포즈 사진과 실물 사진이 필요합니다.
       </AMText>
 
@@ -71,7 +41,12 @@ const SignUpStep3 = ({
             style={styles.uploadBox}
             onPress={() => onPhotoSelect(true)}
           >
-            <Image style={styles.photoImage} src={profileData.posePhotoUrl} />
+            {profileData.posePhotoUrl ? (
+              <Image
+                style={styles.photoImage}
+                source={{ uri: profileData.posePhotoUrl }}
+              />
+            ) : null}
           </AMTouchableOpacity>
           <AMText style={styles.uploadBoxText} fontWeight={500}>
             포즈사진
@@ -83,47 +58,18 @@ const SignUpStep3 = ({
             style={styles.uploadBox}
             onPress={() => onPhotoSelect(false)}
           >
-            <Image style={styles.photoImage} src={profileData.realPhotos[0]} />
+            {profileData.realPhotos[0] ? (
+              <Image
+                style={styles.photoImage}
+                source={{ uri: profileData.realPhotos[0] }}
+              />
+            ) : null}
           </AMTouchableOpacity>
           <AMText style={styles.uploadBoxText} fontWeight={500}>
             실물사진
           </AMText>
         </View>
-
-        {/* {uploadedPhotos.map((photo, index) => (
-          <View key={index} style={styles.photoBox}>
-            <Image source={{ uri: photo }} style={styles.photoImage} />
-            <VITouchableOpacity
-              style={styles.removeIcon}
-              onPress={() => removePhoto(index)}
-            >
-              <X size={14} color="white" />
-            </VITouchableOpacity>
-          </View>
-        ))} */}
-        {/* {uploadedPhotos.length < 6 && (
-          <VITouchableOpacity
-            style={styles.uploadBox}
-            onPress={handlePhotoUpload}
-          >
-            <Upload size={24} color="#9CA3AF" />
-            <VIText style={styles.uploadCount}>
-              {uploadedPhotos.length}/6
-            </VIText>
-          </VITouchableOpacity>
-        )} */}
       </View>
-
-      {/* <View style={styles.guideCard}>
-        <Camera size={20} color="#D97706" />
-        <View style={styles.infoTextWrapper}>
-          <VIText style={styles.guideTitle}>사진 가이드</VIText>
-          <VIText style={styles.guideText}>
-            • 얼굴이 명확하게 보이는 사진
-          </VIText>
-          <VIText style={styles.guideText}>• 다양한 각도와 표정</VIText>
-        </View>
-      </View> */}
 
       <AMTouchableOpacity
         style={[
@@ -134,9 +80,11 @@ const SignUpStep3 = ({
         disabled={
           !profileData.posePhotoUrl || profileData.realPhotos.length === 0
         }
-        onPress={onNextStepPress}
+        onPress={() => setStep(4)}
       >
-        <AMText style={styles.nextButtonText}>다음</AMText>
+        <AMText style={styles.nextButtonText} fontWeight={700}>
+          {t('common.next')}
+        </AMText>
       </AMTouchableOpacity>
     </MotiView>
   );

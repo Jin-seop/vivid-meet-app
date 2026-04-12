@@ -2,76 +2,59 @@ import React, { useState } from 'react';
 import {
   StyleSheet,
   View,
-  TouchableOpacity,
   ScrollView,
-  Image,
-  Dimensions,
-  StatusBar,
+  TouchableOpacity,
+  Alert,
 } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
-import { MotiView } from 'moti';
+import { useTranslation } from 'react-i18next';
 import {
-  Settings,
-  Edit,
-  Camera,
-  Heart,
-  MessageCircle,
-  Star,
-  ChevronRight,
-  LogOut,
   Bell,
-  Shield,
-  HelpCircle,
-  FileText,
-  Sparkles,
+  ShieldCheck,
+  Headphones,
+  LogOut,
+  UserX,
+  ChevronRight,
+  Settings,
 } from 'lucide-react-native';
+import { useAuth } from '../context/AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AMText from '../components/common/AMText';
+import CenterModal, { ModalButton } from '../components/common/CenterModal';
 
-const { width } = Dimensions.get('window');
+export function ProfileScreen() {
+  const { t } = useTranslation();
+  const { user, logout, withdraw } = useAuth();
+  const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
 
-const ProfileScreen = ({ navigation }: any) => {
-  const [isPremium, setIsPremium] = useState(false);
-
-  const userProfile = {
-    name: '김민지',
-    age: 26,
-    mbti: 'ENFP',
-    interests: ['음악', '영화', '여행', '사진', '요리'],
-    bio: '새로운 사람들과의 만남을 좋아하는 긍정적인 사람입니다 ✨',
-    photos: [
-      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400',
-      'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=400',
-      'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400',
-      'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=400',
-      'https://images.unsplash.com/photo-1496440737103-cd596325d314?w=400',
-    ],
-    stats: {
-      matches: 127,
-      chats: 45,
-      likes: 283,
-    },
+  // 회원 탈퇴 실행
+  const handleWithdraw = async () => {
+    try {
+      await withdraw();
+      setIsWithdrawModalOpen(false);
+      // AuthContext에서 isLoggedIn이 false가 되면 RootStack이 자동으로 Login 화면으로 이동시킵니다.
+    } catch {
+      Alert.alert(t('common.error'), t('profile.withdraw_failed'));
+    }
   };
 
+  // 메뉴 아이템 렌더링 함수
   const renderMenuItem = (
     icon: React.ReactNode,
     title: string,
     onPress: () => void,
     isLast = false,
-    isDestructive = false,
+    isDanger = false,
   ) => (
     <TouchableOpacity
-      style={[styles.menuItem, isLast && styles.noBorder]}
+      style={[styles.menuItem, isLast && styles.lastMenuItem]}
       onPress={onPress}
+      activeOpacity={0.7}
     >
-      <View style={styles.menuItemLeft}>
-        {icon}
-        <AMText
-          style={[
-            styles.menuItemTitle,
-            isDestructive && styles.destructiveText,
-          ]}
-        >
+      <View style={styles.menuLeft}>
+        <View style={[styles.iconContainer, isDanger && styles.dangerIcon]}>
+          {icon}
+        </View>
+        <AMText style={[styles.menuTitle, isDanger && styles.dangerText]}>
           {title}
         </AMText>
       </View>
@@ -80,417 +63,264 @@ const ProfileScreen = ({ navigation }: any) => {
   );
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
+    <SafeAreaView style={styles.container}>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {/* 헤더 섹션 */}
+        <View style={styles.header}>
+          <AMText style={styles.headerTitle} fontWeight={700}>
+            {t('profile.title')}
+          </AMText>
+          <TouchableOpacity>
+            <Settings size={24} color="#374151" />
+          </TouchableOpacity>
+        </View>
 
-      {/* Header */}
-      <SafeAreaView edges={['top']} style={styles.header}>
-        <AMText style={styles.headerTitle} fontWeight={700}>
-          마이페이지
-        </AMText>
-        <TouchableOpacity style={styles.iconButton}>
-          <Settings size={24} color="#1F2937" />
-        </TouchableOpacity>
-      </SafeAreaView>
-
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
-        {/* Profile Card */}
-        <MotiView
-          from={{ opacity: 0, translateY: 20 }}
-          animate={{ opacity: 1, translateY: 0 }}
-        >
-          <View style={styles.profileCard}>
-            <LinearGradient
-              colors={['#4A90E2', '#50E3C2']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.cover}
-            />
-
-            <View style={styles.avatarSection}>
-              <View style={styles.avatarWrapper}>
-                <Image
-                  source={{ uri: userProfile.photos[0] }}
-                  style={styles.avatar}
-                />
-                <TouchableOpacity style={styles.cameraButton}>
-                  <Camera size={16} color="white" />
-                </TouchableOpacity>
-              </View>
-              {isPremium && (
-                <LinearGradient
-                  colors={['#8B5CF6', '#EC4899']}
-                  style={styles.premiumBadge}
-                >
-                  <Sparkles
-                    size={10}
-                    color="white"
-                    style={{ marginRight: 4 }}
-                  />
-                  <AMText style={styles.premiumBadgeText} fontWeight={600}>
-                    프리미엄
-                  </AMText>
-                </LinearGradient>
-              )}
-            </View>
-
-            <View style={styles.profileInfo}>
-              <View style={styles.nameRow}>
-                <View style={{ flex: 1 }}>
-                  <AMText style={styles.userName} fontWeight={700}>
-                    {userProfile.name}, {userProfile.age}
-                  </AMText>
-                  <View style={styles.badgeRow}>
-                    <View style={styles.mbtiBadge}>
-                      <AMText style={styles.mbtiText} fontWeight={600}>
-                        {userProfile.mbti}
-                      </AMText>
-                    </View>
-                    {userProfile.interests.slice(0, 2).map(interest => (
-                      <View key={interest} style={styles.interestBadge}>
-                        <AMText style={styles.interestText}>{interest}</AMText>
-                      </View>
-                    ))}
-                  </View>
-                </View>
-                <TouchableOpacity style={styles.editButton}>
-                  <Edit size={16} color="#4B5563" />
-                  <AMText style={styles.editButtonText} fontWeight={600}>
-                    편집
-                  </AMText>
-                </TouchableOpacity>
-              </View>
-
-              <AMText style={styles.bioText}>{userProfile.bio}</AMText>
-
-              <View style={styles.statsRow}>
-                <View style={styles.statItem}>
-                  <View style={styles.statIconRow}>
-                    <Heart size={16} color="#4A90E2" />
-                    <AMText style={styles.statValue} fontWeight={700}>
-                      {userProfile.stats.matches}
-                    </AMText>
-                  </View>
-                  <AMText style={styles.statLabel}>매칭</AMText>
-                </View>
-                <View style={[styles.statItem, styles.statBorder]}>
-                  <View style={styles.statIconRow}>
-                    <MessageCircle size={16} color="#50E3C2" />
-                    <AMText style={styles.statValue} fontWeight={700}>
-                      {userProfile.stats.chats}
-                    </AMText>
-                  </View>
-                  <AMText style={styles.statLabel}>대화</AMText>
-                </View>
-                <View style={styles.statItem}>
-                  <View style={styles.statIconRow}>
-                    <Star size={16} color="#F59E0B" />
-                    <AMText style={styles.statValue} fontWeight={700}>
-                      {userProfile.stats.likes}
-                    </AMText>
-                  </View>
-                  <AMText style={styles.statLabel}>받은 좋아요</AMText>
-                </View>
-              </View>
-            </View>
-          </View>
-        </MotiView>
-
-        {/* Photos Grid */}
-        <MotiView
-          from={{ opacity: 0, translateY: 20 }}
-          animate={{ opacity: 1, translateY: 0 }}
-          transition={{ delay: 100 }}
-          style={styles.sectionCard}
-        >
-          <View style={styles.sectionHeader}>
-            <AMText style={styles.sectionTitle} fontWeight={600}>
-              내 사진
+        {/* 유저 정보 카드 */}
+        <View style={styles.profileCard}>
+          <View style={styles.avatarPlaceholder}>
+            <AMText style={styles.avatarText}>
+              {user?.nickname?.[0] || 'A'}
             </AMText>
-            <TouchableOpacity style={styles.row}>
-              <Edit size={14} color="#4A90E2" />
-              <AMText style={styles.actionText} fontWeight={600}>
-                관리
-              </AMText>
-            </TouchableOpacity>
           </View>
-          <View style={styles.photoGrid}>
-            {userProfile.photos.map((photo, index) => (
-              <View key={index} style={styles.photoItem}>
-                <Image source={{ uri: photo }} style={styles.photoImage} />
-              </View>
-            ))}
-            <TouchableOpacity style={styles.addPhotoBox}>
-              <Camera size={24} color="#9CA3AF" />
-            </TouchableOpacity>
+          <View style={styles.userInfo}>
+            <AMText style={styles.userName} fontWeight={700}>
+              {user?.nickname || 'User'}
+            </AMText>
+            <AMText style={styles.userEmail}>{user?.email}</AMText>
           </View>
-        </MotiView>
+        </View>
 
-        {/* Premium Banner */}
-        {!isPremium && (
-          <MotiView
-            from={{ opacity: 0, translateY: 20 }}
-            animate={{ opacity: 1, translateY: 0 }}
-            transition={{ delay: 200 }}
-          >
-            <LinearGradient
-              colors={['#8B5CF6', '#EC4899']}
-              style={styles.upgradeCard}
-            >
-              <View style={styles.upgradeHeader}>
-                <View style={{ flex: 1 }}>
-                  <AMText style={styles.upgradeTitle} fontWeight={700}>
-                    프리미엄 멤버십
-                  </AMText>
-                  <AMText style={styles.upgradeSubtitle}>
-                    더 많은 기능으로 완벽한 만남을 경험하세요
-                  </AMText>
-                </View>
-                <Sparkles size={32} color="white" />
-              </View>
-              <TouchableOpacity style={styles.upgradeButton}>
-                <AMText style={styles.upgradeButtonText} fontWeight={700}>
-                  지금 시작하기
-                </AMText>
-              </TouchableOpacity>
-            </LinearGradient>
-          </MotiView>
-        )}
+        {/* 통계 섹션 */}
+        <View style={styles.statsContainer}>
+          <View style={styles.statItem}>
+            <AMText style={styles.statValue} fontWeight={700}>
+              12
+            </AMText>
+            <AMText style={styles.statLabel}>
+              {t('profile.stats.matches')}
+            </AMText>
+          </View>
+          <View style={styles.statDivider} />
+          <View style={styles.statItem}>
+            <AMText style={styles.statValue} fontWeight={700}>
+              48
+            </AMText>
+            <AMText style={styles.statLabel}>{t('profile.stats.chats')}</AMText>
+          </View>
+          <View style={styles.statDivider} />
+          <View style={styles.statItem}>
+            <AMText style={styles.statValue} fontWeight={700}>
+              156
+            </AMText>
+            <AMText style={styles.statLabel}>{t('profile.stats.likes')}</AMText>
+          </View>
+        </View>
 
-        {/* Settings Menu */}
-        <MotiView
-          from={{ opacity: 0, translateY: 20 }}
-          animate={{ opacity: 1, translateY: 0 }}
-          transition={{ delay: 300 }}
-          style={styles.menuCard}
-        >
+        {/* 메뉴 리스트 */}
+        <View style={styles.menuSection}>
           {renderMenuItem(
-            <Bell size={20} color="#6B7280" />,
-            '알림 설정',
+            <Bell size={22} color="#4B5563" />,
+            t('profile.menu.notification'),
             () => {},
           )}
           {renderMenuItem(
-            <Shield size={20} color="#6B7280" />,
-            '개인정보 보호',
+            <ShieldCheck size={22} color="#4B5563" />,
+            t('profile.menu.privacy'),
             () => {},
           )}
           {renderMenuItem(
-            <HelpCircle size={20} color="#6B7280" />,
-            '고객 지원',
+            <Headphones size={22} color="#4B5563" />,
+            t('profile.menu.support'),
             () => {},
           )}
           {renderMenuItem(
-            <FileText size={20} color="#6B7280" />,
-            '이용약관 및 정책',
-            () => {},
+            <LogOut size={22} color="#4B5563" />,
+            t('profile.menu.logout'),
+            logout,
           )}
           {renderMenuItem(
-            <LogOut size={20} color="#EF4444" />,
-            '로그아웃',
-            () => navigation.replace('Login'),
+            <UserX size={22} color="#EF4444" />,
+            t('common.withdraw'),
+            () => setIsWithdrawModalOpen(true),
             true,
             true,
           )}
-        </MotiView>
+        </View>
 
-        <AMText style={styles.versionText}>AimoMeet v1.0.0</AMText>
+        <AMText style={styles.versionText}>AimoChat v1.0.0</AMText>
       </ScrollView>
-    </View>
+
+      {/* 회원 탈퇴 확인 모달 */}
+      <CenterModal
+        isOpen={isWithdrawModalOpen}
+        onClose={() => setIsWithdrawModalOpen(false)}
+        title={t('common.withdraw')}
+      >
+        <View style={styles.modalContent}>
+          <AMText style={styles.modalDescription}>
+            {t('profile.withdraw_confirm')}
+          </AMText>
+
+          <View style={styles.modalButtonContainer}>
+            <ModalButton
+              variant="secondary"
+              onClick={() => setIsWithdrawModalOpen(false)}
+            >
+              {t('common.cancel')}
+            </ModalButton>
+            <ModalButton variant="danger" onClick={handleWithdraw}>
+              {t('common.withdraw')}
+            </ModalButton>
+          </View>
+        </View>
+      </CenterModal>
+    </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F9FAFB' },
+  container: {
+    flex: 1,
+    backgroundColor: '#F9FAFB',
+  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    backgroundColor: 'white',
-    borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
-    paddingBottom: 12,
+    paddingVertical: 15,
   },
-  headerTitle: { fontSize: 24, color: '#111827' },
-  iconButton: { padding: 4 },
-  scrollContent: { padding: 20, gap: 20 },
+  headerTitle: {
+    fontSize: 24,
+    color: '#111827',
+  },
   profileCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 20,
     backgroundColor: 'white',
-    borderRadius: 20,
-    overflow: 'hidden',
+    marginHorizontal: 20,
+    borderRadius: 16,
+    marginTop: 10,
     elevation: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
-    shadowRadius: 8,
+    shadowRadius: 10,
   },
-  cover: { height: 100 },
-  avatarSection: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    marginTop: -48,
-  },
-  avatarWrapper: { position: 'relative' },
-  avatar: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
-    borderWidth: 4,
-    borderColor: 'white',
-    backgroundColor: '#F3F4F6',
-  },
-  cameraButton: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    backgroundColor: '#4A90E2',
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: 'white',
-  },
-  premiumBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
-    marginBottom: 8,
-  },
-  premiumBadgeText: { color: 'white', fontSize: 12 },
-  profileInfo: { padding: 16, paddingTop: 12 },
-  nameRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 12,
-  },
-  userName: { fontSize: 20, color: '#111827', marginBottom: 6 },
-  badgeRow: { flexDirection: 'row', gap: 6, flexWrap: 'wrap' },
-  mbtiBadge: {
-    backgroundColor: '#F3F4F6',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 6,
-  },
-  mbtiText: { fontSize: 12, color: '#4B5563' },
-  interestBadge: {
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 6,
-  },
-  interestText: { fontSize: 11, color: '#6B7280' },
-  editButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 8,
-  },
-  editButtonText: { fontSize: 13, color: '#4B5563' },
-  bioText: { fontSize: 14, color: '#6B7280', lineHeight: 20, marginBottom: 16 },
-  statsRow: {
-    flexDirection: 'row',
-    borderTopWidth: 1,
-    borderTopColor: '#F3F4F6',
-    pt: 16,
-  },
-  statItem: { flex: 1, alignItems: 'center' },
-  statBorder: {
-    borderLeftWidth: 1,
-    borderRightWidth: 1,
-    borderColor: '#F3F4F6',
-  },
-  statIconRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    marginBottom: 2,
-  },
-  statValue: { fontSize: 18, color: '#111827' },
-  statLabel: { fontSize: 11, color: '#9CA3AF' },
-  sectionCard: { backgroundColor: 'white', borderRadius: 16, padding: 16 },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  sectionTitle: { fontSize: 16, color: '#1F2937' },
-  row: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  actionText: { fontSize: 14, color: '#4A90E2' },
-  photoGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  photoItem: {
-    width: (width - 88) / 3,
-    aspectRatio: 1,
-    borderRadius: 8,
-    overflow: 'hidden',
-    backgroundColor: '#F3F4F6',
-  },
-  photoImage: { width: '100%', height: '100%' },
-  addPhotoBox: {
-    width: (width - 88) / 3,
-    aspectRatio: 1,
-    borderRadius: 8,
-    borderWidth: 2,
-    borderStyle: 'dashed',
-    borderColor: '#E5E7EB',
+  avatarPlaceholder: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#E5E7EB',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  upgradeCard: { padding: 24, borderRadius: 20 },
-  upgradeHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 20,
-    gap: 12,
+  avatarText: {
+    fontSize: 24,
+    color: '#4B5563',
   },
-  upgradeTitle: { fontSize: 20, color: 'white', marginBottom: 4 },
-  upgradeSubtitle: {
+  userInfo: {
+    marginLeft: 15,
+  },
+  userName: {
+    fontSize: 18,
+    color: '#111827',
+  },
+  userEmail: {
     fontSize: 14,
-    color: 'rgba(255,255,255,0.9)',
-    lineHeight: 18,
+    color: '#6B7280',
+    marginTop: 2,
   },
-  upgradeButton: {
-    height: 48,
+  statsContainer: {
+    flexDirection: 'row',
     backgroundColor: 'white',
-    borderRadius: 12,
-    justifyContent: 'center',
+    marginHorizontal: 20,
+    marginTop: 20,
+    borderRadius: 16,
+    paddingVertical: 15,
+    justifyContent: 'space-around',
     alignItems: 'center',
   },
-  upgradeButtonText: { color: '#8B5CF6', fontSize: 16 },
-  menuCard: { backgroundColor: 'white', borderRadius: 16, overflow: 'hidden' },
+  statItem: {
+    alignItems: 'center',
+  },
+  statValue: {
+    fontSize: 18,
+    color: '#111827',
+  },
+  statLabel: {
+    fontSize: 12,
+    color: '#6B7280',
+    marginTop: 4,
+  },
+  statDivider: {
+    width: 1,
+    height: 30,
+    backgroundColor: '#F3F4F6',
+  },
+  menuSection: {
+    backgroundColor: 'white',
+    marginHorizontal: 20,
+    marginTop: 20,
+    borderRadius: 16,
+    overflow: 'hidden',
+  },
   menuItem: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    justifyContent: 'space-between',
     padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#F3F4F6',
   },
-  noBorder: { borderBottomWidth: 0 },
-  menuItemLeft: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  menuItemTitle: { fontSize: 15, color: '#374151' },
-  destructiveText: { color: '#EF4444' },
+  lastMenuItem: {
+    borderBottomWidth: 0,
+  },
+  menuLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  iconContainer: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    backgroundColor: '#F3F4F6',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  dangerIcon: {
+    backgroundColor: '#FEF2F2',
+  },
+  menuTitle: {
+    fontSize: 16,
+    color: '#374151',
+    marginLeft: 12,
+  },
+  dangerText: {
+    color: '#EF4444',
+  },
   versionText: {
     textAlign: 'center',
-    fontSize: 12,
     color: '#9CA3AF',
+    fontSize: 12,
+    marginTop: 30,
+    marginBottom: 20,
+  },
+  modalContent: {
     paddingVertical: 10,
+    alignItems: 'center',
+  },
+  modalDescription: {
+    fontSize: 16,
+    color: '#4B5563',
+    textAlign: 'center',
+    lineHeight: 24,
+    marginBottom: 24,
+  },
+  modalButtonContainer: {
+    flexDirection: 'row',
+    gap: 12,
+    width: '100%',
   },
 });
-
-export default ProfileScreen;

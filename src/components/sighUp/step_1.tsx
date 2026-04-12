@@ -1,5 +1,7 @@
-import { MotiView } from 'moti';
+import React from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
+import { MotiView } from 'moti';
+import { useTranslation } from 'react-i18next'; // 추가
 import AMText from '../common/AMText';
 import AMTouchableOpacity from '../common/AMTouchableOpacity';
 import { SignUpData } from '../../screens/SignUpScreen';
@@ -15,27 +17,35 @@ const SignUpStep1 = ({
   setProfileData,
   setStep,
 }: SignUpStep1Props) => {
+  const { t } = useTranslation(); // 추가
+
   return (
     <MotiView
       from={{ opacity: 0, translateX: 20 }}
       animate={{ opacity: 1, translateX: 0 }}
     >
-      <AMText style={styles.title}>기본 정보를 입력해주세요</AMText>
-      <AMText style={styles.subtitle}>
-        안전한 만남을 위해 필요한 정보입니다
+      <AMText style={styles.title} fontWeight={700}>
+        {t('signup.step1_title')}
       </AMText>
+      <AMText style={styles.subtitle}>{t('signup.step1_subtitle')}</AMText>
 
       <View style={styles.form}>
-        <AMText style={styles.label}>닉네임</AMText>
+        <AMText style={styles.label} fontWeight={600}>
+          {t('signup.nickname')}
+        </AMText>
         <TextInput
           style={styles.input}
           value={profileData?.nickname}
           onChangeText={text =>
             setProfileData({ ...profileData, nickname: text })
           }
-          placeholder="닉네임을 입력해주세요"
+          placeholder={t('signup.nickname')} // 수정
+          placeholderTextColor="#9CA3AF"
         />
-        <AMText style={styles.label}>성별</AMText>
+
+        <AMText style={styles.label} fontWeight={600}>
+          {t('signup.gender')}
+        </AMText>
         <View style={styles.btnContainer}>
           <AMTouchableOpacity
             style={
@@ -43,7 +53,7 @@ const SignUpStep1 = ({
             }
             onPress={() => setProfileData({ ...profileData, gender: 'MALE' })}
           >
-            <AMText style={styles.btnText}>남</AMText>
+            <AMText style={styles.btnText}>{t('signup.male')}</AMText>
           </AMTouchableOpacity>
           <AMTouchableOpacity
             style={
@@ -51,34 +61,27 @@ const SignUpStep1 = ({
             }
             onPress={() => setProfileData({ ...profileData, gender: 'FEMALE' })}
           >
-            <AMText style={styles.btnText}>여</AMText>
+            <AMText style={styles.btnText}>{t('signup.female')}</AMText>
           </AMTouchableOpacity>
         </View>
 
-        <AMText style={styles.label}>지역</AMText>
+        <AMText style={styles.label} fontWeight={600}>
+          {t('signup.region')}
+        </AMText>
         <View style={styles.btnContainer}>
           <AMTouchableOpacity
             style={profileData.region === 'KR' ? styles.btnActive : styles.btn}
             onPress={() => setProfileData({ ...profileData, region: 'KR' })}
           >
-            <AMText style={styles.btnText}>한국</AMText>
+            <AMText style={styles.btnText}>{t('signup.korea')}</AMText>
           </AMTouchableOpacity>
           <AMTouchableOpacity
             style={profileData.region === 'JP' ? styles.btnActive : styles.btn}
             onPress={() => setProfileData({ ...profileData, region: 'JP' })}
           >
-            <AMText style={styles.btnText}>일본</AMText>
+            <AMText style={styles.btnText}>{t('signup.japan')}</AMText>
           </AMTouchableOpacity>
         </View>
-        {/* <View style={styles.infoCard}>
-          <CheckCircle2 size={20} color="#4A90E2" />
-          <View style={styles.infoTextWrapper}>
-            <VIText style={styles.infoTitle}>본인 인증이 필요합니다</VIText>
-            <VIText style={styles.infoDesc}>
-              19세 미만 및 악성 유저 차단을 위해 국내 본인 확인 API를 사용합니다
-            </VIText>
-          </View>
-        </View> */}
       </View>
 
       <AMTouchableOpacity
@@ -86,34 +89,27 @@ const SignUpStep1 = ({
           styles.nextButton,
           (!profileData?.nickname ||
             !profileData.gender ||
-            !profileData.region ||
             !profileData.region) &&
             styles.disabledButton,
         ]}
         disabled={
-          !profileData?.nickname ||
-          !profileData.gender ||
-          !profileData.region ||
-          !profileData.region
+          !profileData?.nickname || !profileData.gender || !profileData.region
         }
         onPress={() => setStep(2)}
       >
-        <AMText style={styles.nextButtonText}>다음</AMText>
+        <AMText style={styles.nextButtonText} fontWeight={700}>
+          {t('common.next')}
+        </AMText>
       </AMTouchableOpacity>
     </MotiView>
   );
 };
 
 const styles = StyleSheet.create({
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#111827',
-    marginBottom: 8,
-  },
+  title: { fontSize: 24, color: '#111827', marginBottom: 8 },
   subtitle: { fontSize: 16, color: '#6B7280', marginBottom: 32 },
   form: { gap: 12 },
-  label: { fontSize: 14, fontWeight: '600', color: '#374151', marginBottom: 8 },
+  label: { fontSize: 14, color: '#374151', marginBottom: 8 },
   input: {
     height: 48,
     borderWidth: 1,
@@ -121,6 +117,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 16,
     fontSize: 16,
+    color: '#111827',
   },
   btnContainer: {
     flexDirection: 'row',
@@ -145,25 +142,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderColor: '#E5E7EB',
   },
-  btnText: {
-    fontSize: 16,
-  },
-  infoCard: {
-    flexDirection: 'row',
-    backgroundColor: '#EFF6FF',
-    padding: 16,
-    borderRadius: 12,
-    marginTop: 20,
-    gap: 12,
-  },
-  infoTextWrapper: { flex: 1 },
-  infoTitle: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#1E40AF',
-    marginBottom: 4,
-  },
-  infoDesc: { fontSize: 12, color: '#1E40AF', opacity: 0.8 },
+  btnText: { fontSize: 16, color: '#374151' },
   nextButton: {
     height: 56,
     backgroundColor: '#4A90E2',
@@ -172,7 +151,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 32,
   },
-  nextButtonText: { color: 'white', fontSize: 18, fontWeight: 'bold' },
+  nextButtonText: { color: 'white', fontSize: 18 },
   disabledButton: { backgroundColor: '#E5E7EB' },
 });
 

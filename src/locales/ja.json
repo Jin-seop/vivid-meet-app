@@ -2,10 +2,48 @@
   "common": {
     "confirm": "確認",
     "cancel": "キャンセル",
-    "withdraw": "退회"
+    "withdraw": "退会",
+    "next": "次へ",
+    "start": "始める"
+  },
+  "login": {
+    "title": "AimoChat",
+    "slogan": "待機なしのAIリバースチャット、\n今すぐつながる",
+    "google": "Googleで始める",
+    "apple": "Appleで始める",
+    "line": "Lineで始める",
+    "policy": "ログインするとAimoChatの\n{{terms}}および{{privacy}}に同意한 것과 간주됩니다.",
+    "terms": "利用規約",
+    "privacy": "プライバシーポリシー"
+  },
+  "signup": {
+    "step1_title": "基本情報を入力してください",
+    "step1_subtitle": "安全な出会いのために必要な情報です",
+    "nickname": "ニックネーム",
+    "gender": "性別",
+    "male": "男",
+    "female": "女",
+    "region": "地域",
+    "korea": "韓国",
+    "japan": "日本",
+    "step2_title": "自分を表現してください",
+    "step3_title": "写真をアップロードしてください",
+    "step4_title": "AIキャラクターが生成されました",
+    "complete_btn": "AimoChatを始める"
   },
   "profile": {
-    "title": "마이프로필",
+    "title": "マイプロフィール",
+    "stats": {
+      "matches": "マッチング",
+      "chats": "トーク",
+      "likes": "もらったいいね"
+    },
+    "menu": {
+      "notification": "通知設定",
+      "privacy": "プライバシー保護",
+      "support": "カスタマーサポート",
+      "logout": "ログアウト"
+    },
     "withdraw_confirm": "本当に退会しますか？\n会話内容がすべて削除されます。"
   }
 }

@@ -2,10 +2,48 @@
   "common": {
     "confirm": "확인",
     "cancel": "취소",
-    "withdraw": "회원 탈퇴"
+    "withdraw": "회원 탈퇴",
+    "next": "다음",
+    "start": "시작하기"
+  },
+  "login": {
+    "title": "AimoChat",
+    "slogan": "기다림 없는 AI 반전 채팅,\n지금 바로 연결",
+    "google": "Google로 시작하기",
+    "apple": "Apple로 시작하기",
+    "line": "Line으로 시작하기",
+    "policy": "로그인 시 AimoChat의 \n{{terms}} 및 {{privacy}}에 동의하게 됩니다.",
+    "terms": "이용약관",
+    "privacy": "개인정보 처리방침"
+  },
+  "signup": {
+    "step1_title": "기본 정보를 입력해주세요",
+    "step1_subtitle": "안전한 만남을 위해 필요한 정보입니다",
+    "nickname": "닉네임",
+    "gender": "성별",
+    "male": "남",
+    "female": "여",
+    "region": "지역",
+    "korea": "한국",
+    "japan": "일본",
+    "step2_title": "나를 표현해주세요",
+    "step3_title": "사진을 업로드해주세요",
+    "step4_title": "AI 캐릭터가 생성되었습니다",
+    "complete_btn": "AimoChat 시작하기"
   },
   "profile": {
     "title": "내 프로필",
+    "stats": {
+      "matches": "매칭",
+      "chats": "대화",
+      "likes": "받은 좋아요"
+    },
+    "menu": {
+      "notification": "알림 설정",
+      "privacy": "개인정보 보호",
+      "support": "고객 지원",
+      "logout": "로그아웃"
+    },
     "withdraw_confirm": "정말 탈퇴하시겠어요?\n대화 내용이 모두 삭제됩니다."
   }
 }

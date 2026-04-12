@@ -1,13 +1,15 @@
-import { MotiView } from 'moti';
+import React from 'react';
 import { Image, StyleSheet, View } from 'react-native';
-import AMText from '../common/AMText';
+import { MotiView } from 'moti';
 import LinearGradient from 'react-native-linear-gradient';
 import { CheckCircle2 } from 'lucide-react-native';
+import { useTranslation } from 'react-i18next'; // 추가
+import AMText from '../common/AMText';
+import AMTouchableOpacity from '../common/AMTouchableOpacity';
 import {
   SignUpData,
   SignUpScreenNavigationProp,
 } from '../../screens/SignUpScreen';
-import AMTouchableOpacity from '../common/AMTouchableOpacity';
 
 interface SignUpStep4Props {
   profileData: SignUpData;
@@ -15,6 +17,8 @@ interface SignUpStep4Props {
 }
 
 const SignUpStep4 = ({ profileData, navigation }: SignUpStep4Props) => {
+  const { t } = useTranslation(); // 추가
+
   const onCompletePress = () => {
     navigation.replace('HomeMain');
   };
@@ -24,7 +28,9 @@ const SignUpStep4 = ({ profileData, navigation }: SignUpStep4Props) => {
       from={{ opacity: 0, translateX: 20 }}
       animate={{ opacity: 1, translateX: 0 }}
     >
-      <AMText style={styles.title}>AI 캐릭터가 생성되었습니다</AMText>
+      <AMText style={styles.title} fontWeight={700}>
+        {t('signup.step4_title')}
+      </AMText>
       <AMText style={styles.subtitle}>이 캐릭터로 첫 대화가 시작됩니다</AMText>
 
       <LinearGradient
@@ -32,21 +38,24 @@ const SignUpStep4 = ({ profileData, navigation }: SignUpStep4Props) => {
         style={styles.aiCard}
       >
         <View style={styles.aiAvatarContainer}>
-          <Image style={styles.aiAvatarImage} src={profileData.aiPhotoUrl} />
+          {profileData.aiPhotoUrl ? (
+            <Image
+              style={styles.aiAvatarImage}
+              source={{ uri: profileData.aiPhotoUrl }}
+            />
+          ) : null}
         </View>
-        <AMText style={styles.aiName}>
+        <AMText style={styles.aiName} fontWeight={700}>
           {profileData.nickname}님의 AI 페르소나
-        </AMText>
-        <AMText style={styles.aiInfo}>
-          {/* {profileData.mbti && `${profileData.mbti} • `}
-          {profileData.interests.slice(0, 2).join(', ')} */}
         </AMText>
       </LinearGradient>
 
       <View style={styles.infoCard}>
         <CheckCircle2 size={20} color="#4A90E2" />
         <View style={styles.infoTextWrapper}>
-          <AMText style={styles.infoTitle}>AI 투명성 고지</AMText>
+          <AMText style={styles.infoTitle} fontWeight={700}>
+            AI 투명성 고지
+          </AMText>
           <AMText style={styles.infoDesc}>
             상대방에게는 AI 캐릭터가 노출됩니다.
           </AMText>
@@ -63,7 +72,9 @@ const SignUpStep4 = ({ profileData, navigation }: SignUpStep4Props) => {
           end={{ x: 1, y: 0 }}
           style={styles.gradientButton}
         >
-          <AMText style={styles.nextButtonText}>AimoChat 시작하기</AMText>
+          <AMText style={styles.nextButtonText} fontWeight={700}>
+            {t('signup.complete_btn')}
+          </AMText>
         </LinearGradient>
       </AMTouchableOpacity>
     </MotiView>

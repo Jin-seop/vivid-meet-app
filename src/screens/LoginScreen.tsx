@@ -11,12 +11,15 @@ import {
   RootStackScreenName,
 } from './navigation/RootStack';
 import AMTouchableOpacity from '../components/common/AMTouchableOpacity';
+import { useTranslation } from 'react-i18next';
 
 type LoginScreenProps = {
   navigation: StackNavigationProp<RootStackParamList, 'Login'>;
 };
 
 const LoginScreen = ({ navigation }: LoginScreenProps) => {
+  const { t } = useTranslation();
+
   const onSocialLoginPress = (provider: string) => {
     console.log(`Login with ${provider}`);
     // TODO: 실제 소셜 로그인 로직 구현 후 이메일 전달
@@ -53,9 +56,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
                   AimoChat
                 </AMText>
               </View>
-              <AMText style={styles.description}>
-                기다림 없는 AI 반전 채팅,{'\n'}지금 바로 연결
-              </AMText>
+              <AMText style={styles.description}>{t('login.slogan')}</AMText>
             </MotiView>
 
             {/* 히어로 이미지 */}
@@ -86,8 +87,8 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
                 style={[styles.loginButton, styles.googleButton]}
                 onPress={() => onSocialLoginPress('Google')}
               >
-                <AMText style={styles.googleButtonText} fontWeight={600}>
-                  Google로 시작하기
+                <AMText style={styles.googleButtonText}>
+                  {t('login.google')}
                 </AMText>
               </AMTouchableOpacity>
 
@@ -96,8 +97,8 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
                 style={[styles.loginButton, styles.appleButton]}
                 onPress={() => onSocialLoginPress('Apple')}
               >
-                <AMText style={styles.appleButtonText} fontWeight={600}>
-                  Apple로 시작하기
+                <AMText style={styles.appleButtonText}>
+                  {t('login.apple')}
                 </AMText>
               </AMTouchableOpacity>
 
@@ -105,9 +106,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
                 style={[styles.loginButton, styles.LineButton]}
                 onPress={() => onSocialLoginPress('Line')}
               >
-                <AMText style={styles.LineButtonText} fontWeight={600}>
-                  Line로 시작하기
-                </AMText>
+                <AMText style={styles.LineButtonText}>{t('login.line')}</AMText>
               </AMTouchableOpacity>
             </MotiView>
 
@@ -119,10 +118,10 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
               style={styles.footer}
             >
               <AMText style={styles.policyText}>
-                로그인 시 AimoChat의 {'\n'}
-                <AMText style={styles.underline}>이용약관</AMText> 및{' '}
-                <AMText style={styles.underline}>개인정보 처리방침</AMText>에
-                동의하게 됩니다.
+                {t('login.policy', {
+                  terms: t('login.terms'),
+                  privacy: t('login.privacy'),
+                })}
               </AMText>
             </MotiView>
           </View>
