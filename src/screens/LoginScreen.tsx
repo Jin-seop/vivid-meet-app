@@ -14,6 +14,7 @@ import AMTouchableOpacity from '../components/common/AMTouchableOpacity';
 import { useTranslation } from 'react-i18next';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { useGoogleAuth } from '../hooks/useGoogleAuth';
+import { GOOGLE_WEB_CLIENT_ID } from '@env';
 
 type LoginScreenProps = {
   navigation: StackNavigationProp<
@@ -48,20 +49,19 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
         break;
 
       default:
+        // TODO: 실제 소셜 로그인 로직 구현 후 이메일 전달
+        // setTimeout(() => navigation.replace('HomeMain'), 500);
+        setTimeout(
+          () =>
+            navigation.navigate(RootStackScreenName.SignUp, {
+              email: 'test@example.com',
+              provider: 'GooGle',
+              providerId: '123',
+            }),
+          500,
+        );
         break;
     }
-
-    // TODO: 실제 소셜 로그인 로직 구현 후 이메일 전달
-    // setTimeout(() => navigation.replace('HomeMain'), 500);
-    setTimeout(
-      () =>
-        navigation.navigate(RootStackScreenName.SignUp, {
-          email: 'test@example.com',
-          provider: 'GooGle',
-          providerId: '123',
-        }),
-      500,
-    );
   };
 
   const autoLogin = () => {
@@ -70,8 +70,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
 
   useEffect(() => {
     GoogleSignin.configure({
-      webClientId:
-        '985196508402-scf8ajv2kls1866r0g1b55vjlto670rh.apps.googleusercontent.com',
+      webClientId: GOOGLE_WEB_CLIENT_ID,
     });
   }, []);
 
