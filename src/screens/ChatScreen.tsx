@@ -23,7 +23,18 @@ import {
   Gift,
 } from 'lucide-react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import { useTranslation } from 'react-i18next';
+import { StackScreenProps } from '@react-navigation/stack';
 import AMText from '../components/common/AMText';
+import {
+  RootStackParamList,
+  RootStackScreenName,
+} from './navigation/RootStack';
+
+type ChatScreenProps = StackScreenProps<
+  RootStackParamList,
+  RootStackScreenName.Chat
+>;
 
 interface Message {
   id: string;
@@ -79,7 +90,10 @@ const mockMessages: Message[] = [
   },
 ];
 
-const ChatScreen = ({ navigation, route }: any) => {
+// 2. Props 타입 적용
+const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
+  const { id } = route.params; // 내비게이션을 통해 전달된 채팅방 ID 추출
+  const { t } = useTranslation();
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<Message[]>(mockMessages);
   const [photosUnlocked, setPhotosUnlocked] = useState(2);
@@ -111,7 +125,7 @@ const ChatScreen = ({ navigation, route }: any) => {
     setMessages(prev => [...prev, newMessage]);
     setMessage('');
 
-    // Simulate response
+    // 응답 시뮬레이션
     setTimeout(() => {
       const response: Message = {
         id: (Date.now() + 1).toString(),
@@ -236,7 +250,7 @@ const ChatScreen = ({ navigation, route }: any) => {
             <View style={styles.row}>
               <Lock size={14} color="white" />
               <AMText style={styles.bannerText}>
-                실물 사진 {5 - photosUnlocked}장 잠금됨
+                {t('chat_detail.photo_locked', { count: 5 - photosUnlocked })}
               </AMText>
             </View>
             <TouchableOpacity
@@ -245,7 +259,7 @@ const ChatScreen = ({ navigation, route }: any) => {
             >
               <Unlock size={14} color="#4A90E2" style={{ marginRight: 4 }} />
               <AMText style={styles.bannerButtonText} fontWeight={600}>
-                즉시 해제
+                {t('chat_detail.instant_unlock')}
               </AMText>
             </TouchableOpacity>
           </View>
@@ -279,7 +293,7 @@ const ChatScreen = ({ navigation, route }: any) => {
               style={styles.input}
               value={message}
               onChangeText={setMessage}
-              placeholder="메시지를 입력하세요..."
+              placeholder={t('chat_detail.input_placeholder')}
               placeholderTextColor="#9CA3AF"
               multiline
             />

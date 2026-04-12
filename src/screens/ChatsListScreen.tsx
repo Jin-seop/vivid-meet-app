@@ -11,6 +11,7 @@ import {
 import { MotiView } from 'moti';
 import { Search, MoreVertical, Lock } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 import AMText from '../components/common/AMText';
 import { RootStackScreenName } from './navigation/RootStack';
 
@@ -90,6 +91,8 @@ const mockChats: Chat[] = [
 ];
 
 const ChatsListScreen = ({ navigation }: any) => {
+  const { t } = useTranslation();
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
@@ -98,7 +101,7 @@ const ChatsListScreen = ({ navigation }: any) => {
       <View style={styles.header}>
         <View style={styles.headerTop}>
           <AMText style={styles.headerTitle} fontWeight={700}>
-            채팅
+            {t('chat_list.title')}
           </AMText>
           <TouchableOpacity style={styles.iconButton}>
             <MoreVertical size={24} color="#1F2937" />
@@ -109,7 +112,7 @@ const ChatsListScreen = ({ navigation }: any) => {
         <View style={styles.searchContainer}>
           <Search size={18} color="#9CA3AF" style={styles.searchIcon} />
           <TextInput
-            placeholder="대화 검색"
+            placeholder={t('chat_list.search_placeholder')}
             style={styles.searchInput}
             placeholderTextColor="#9CA3AF"
           />
@@ -193,10 +196,10 @@ const ChatsListScreen = ({ navigation }: any) => {
               <Search size={40} color="#D1D5DB" />
             </View>
             <AMText style={styles.emptyTitle} fontWeight={600}>
-              아직 대화가 없습니다
+              {t('chat_list.empty_title')}
             </AMText>
             <AMText style={styles.emptyDesc}>
-              홈에서 즉시 매칭으로 새로운 친구를 만나보세요
+              {t('chat_list.empty_desc')}
             </AMText>
           </View>
         )}

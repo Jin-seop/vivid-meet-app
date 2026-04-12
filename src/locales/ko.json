@@ -45,5 +45,36 @@
       "logout": "로그아웃"
     },
     "withdraw_confirm": "정말 탈퇴하시겠어요?\n대화 내용이 모두 삭제됩니다."
+  },
+  "home": {
+    "title": "홈",
+    "instant_match": "즉시 매칭",
+    "instant_match_desc": "3초 안에 새로운 친구와 연결",
+    "matching_status": "매칭 중...",
+    "start_chat": "지금 바로 대화 시작",
+    "free_remains": "{{count}}회 남음",
+    "reset_notice": "내일 00시에 무료 기회가 초기화됩니다",
+    "footer_info": "매일 무료 10회 제공 • 성별/취향 필터 가능",
+    "filter_title": "대화 취향 설정",
+    "filter_change": "변경",
+    "recent_matches": "최근 매칭된 친구들",
+    "view_all": "전체보기",
+    "premium_title": "프리미엄 기능",
+    "premium_desc": "더 빠르게 친구를 만나보세요",
+    "premium_subscribe": "프리미엄 구독하기"
+  },
+  "chat_list": {
+    "title": "채팅",
+    "search_placeholder": "대화 검색",
+    "timestamp_now": "방금",
+    "timestamp_minutes": "{{count}}분 전",
+    "empty_title": "아직 대화가 없습니다",
+    "empty_desc": "홈에서 즉시 매칭으로 새로운 친구를 만나보세요"
+  },
+  "chat_detail": {
+    "photo_locked": "실물 사진 {{count}}장 잠금됨",
+    "instant_unlock": "즉시 해제",
+    "input_placeholder": "메시지를 입력하세요...",
+    "system_unlocked": "대화가 활발해졌어요! 사진 1장이 해제되었습니다 🎉"
   }
 }

@@ -4,7 +4,9 @@
     "cancel": "キャンセル",
     "withdraw": "退会",
     "next": "次へ",
-    "start": "始める"
+    "start": "始める",
+    "error": "エラー",
+    "withdraw_success": "退会処理が完了しました。"
   },
   "login": {
     "title": "AimoChat",
@@ -12,7 +14,7 @@
     "google": "Googleで始める",
     "apple": "Appleで始める",
     "line": "Lineで始める",
-    "policy": "ログインするとAimoChatの\n{{terms}}および{{privacy}}に同意한 것과 간주됩니다.",
+    "policy": "ログインするとAimoChatの\n{{terms}}および{{privacy}}に同意したものとみなされます。",
     "terms": "利用規約",
     "privacy": "プライバシーポリシー"
   },
@@ -27,9 +29,42 @@
     "korea": "韓国",
     "japan": "日本",
     "step2_title": "自分を表現してください",
+    "step2_subtitle": "AIキャラクター生成に活用されます",
     "step3_title": "写真をアップロードしてください",
+    "step3_subtitle": "ポーズ写真と実物写真が必要です。",
     "step4_title": "AIキャラクターが生成されました",
     "complete_btn": "AimoChatを始める"
+  },
+  "home": {
+    "title": "ホーム",
+    "instant_match": "即時マッチング",
+    "instant_match_desc": "3秒以内に新しい友達とつながる",
+    "matching_status": "マッチング中...",
+    "start_chat": "今すぐトーク開始",
+    "free_remains": "残り{{count}}回",
+    "reset_notice": "明日00時に無料回数がリセットされます",
+    "footer_info": "毎日無料10回提供 • 性別/好みフィルター可能",
+    "filter_title": "トークの好み設定",
+    "filter_change": "変更",
+    "recent_matches": "最近マッチングした友達",
+    "view_all": "すべて見る",
+    "premium_title": "プレミアム機能",
+    "premium_desc": "より早く友達に出会いましょう",
+    "premium_subscribe": "プレミアム購読する"
+  },
+  "chat_list": {
+    "title": "チャット",
+    "search_placeholder": "トークを検索",
+    "timestamp_now": "たった今",
+    "timestamp_minutes": "{{count}}分前",
+    "empty_title": "まだトークがありません",
+    "empty_desc": "ホームの即時マッチングで新しい友達に出会いましょう"
+  },
+  "chat_detail": {
+    "photo_locked": "実物写真{{count}}枚ロック中",
+    "instant_unlock": "今すぐ解除",
+    "input_placeholder": "メッセージを入力してください...",
+    "system_unlocked": "トークが盛り上がりました！写真が1枚解除されました 🎉"
   },
   "profile": {
     "title": "マイプロフィール",
@@ -41,9 +76,10 @@
     "menu": {
       "notification": "通知設定",
       "privacy": "プライバシー保護",
-      "support": "カスタマーサポート",
+      "support": "カスタ머サポート",
       "logout": "ログアウト"
     },
-    "withdraw_confirm": "本当に退会しますか？\n会話内容がすべて削除されます。"
+    "withdraw_confirm": "本当に退会しますか？\n会話内容がすべて削除されます。",
+    "withdraw_failed": "退会処理に失敗しました。もう一度お試しください。"
   }
 }

@@ -15,18 +15,19 @@ export enum RootStackScreenName {
   Chat = 'Chat',
 }
 
-const Stack = createStackNavigator();
-
 export type RootStackParamList = {
-  Splash: undefined;
-  Login: undefined;
-  SignUp: {
+  [RootStackScreenName.Splash]: undefined;
+  [RootStackScreenName.Login]: undefined;
+  [RootStackScreenName.SignUp]: {
     email: string;
     provider: 'GooGle' | 'Apple' | 'Line';
     providerId: string;
   };
-  HomeMain: undefined;
+  [RootStackScreenName.HomeMain]: undefined;
+  [RootStackScreenName.Chat]: { id: string }; // 👈 ID 파라미터 정의
 };
+
+const Stack = createStackNavigator<RootStackParamList>();
 
 const RootStack = () => {
   return (

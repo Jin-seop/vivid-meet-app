@@ -20,8 +20,10 @@ import {
 import AMText from '../components/common/AMText';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { RootStackScreenName } from './navigation/RootStack';
+import { useTranslation } from 'react-i18next';
 
 const HomeScreen = ({ navigation }: any) => {
+  const { t } = useTranslation();
   const [freeMatches, setFreeMatches] = useState(10);
   const [isMatching, setIsMatching] = useState(false);
 
@@ -30,7 +32,6 @@ const HomeScreen = ({ navigation }: any) => {
     setTimeout(() => {
       setIsMatching(false);
       setFreeMatches(prev => Math.max(0, prev - 1));
-      // 네비게이션 경로에 맞춰 수정 필요
       navigation.navigate(RootStackScreenName.Chat, { id: '1' });
     }, 2000);
   };
@@ -44,13 +45,13 @@ const HomeScreen = ({ navigation }: any) => {
         <View style={styles.headerLeft}>
           <Sparkles size={24} color="#4A90E2" />
           <AMText style={styles.logoText} fontWeight={700}>
-            AimoMeet
+            AimoChat
           </AMText>
         </View>
         <View style={styles.badge}>
           <Zap size={12} color="#50E3C2" />
           <AMText style={styles.badgeText} fontWeight={600}>
-            {freeMatches}회 남음
+            {t('home.free_remains', { count: freeMatches })}
           </AMText>
         </View>
       </View>
@@ -74,10 +75,10 @@ const HomeScreen = ({ navigation }: any) => {
             <View style={styles.matchCardHeader}>
               <View>
                 <AMText style={styles.matchTitle} fontWeight={700}>
-                  즉시 매칭
+                  {t('home.instant_match')}
                 </AMText>
                 <AMText style={styles.matchSubtitle}>
-                  3초 안에 새로운 친구와 연결
+                  {t('home.instant_match_desc')}
                 </AMText>
               </View>
               <Zap size={40} color="white" opacity={0.8} />
@@ -106,29 +107,27 @@ const HomeScreen = ({ navigation }: any) => {
                     <Sparkles size={20} color="#4A90E2" />
                   </MotiView>
                   <AMText style={styles.matchButtonText} fontWeight={700}>
-                    매칭 중...
+                    {t('home.matching_status')}
                   </AMText>
                 </View>
               ) : (
                 <View style={styles.row}>
                   <MessageCircle size={20} color="#4A90E2" />
                   <AMText style={styles.matchButtonText} fontWeight={700}>
-                    지금 바로 대화 시작
+                    {t('home.start_chat')}
                   </AMText>
                 </View>
               )}
             </TouchableOpacity>
 
             {freeMatches === 0 && (
-              <AMText style={styles.resetText}>
-                내일 00시에 무료 기회가 초기화됩니다
-              </AMText>
+              <AMText style={styles.resetText}>{t('home.reset_notice')}</AMText>
             )}
           </LinearGradient>
           <View style={styles.matchCardFooter}>
             <Star size={16} color="#4A90E2" />
             <AMText style={styles.matchCardFooterText}>
-              매일 무료 10회 제공 • 성별/취향 필터 가능
+              {t('home.footer_info')}
             </AMText>
           </View>
         </MotiView>
@@ -144,26 +143,30 @@ const HomeScreen = ({ navigation }: any) => {
             <View style={styles.row}>
               <Filter size={18} color="#717182" />
               <AMText style={styles.sectionTitle} fontWeight={600}>
-                대화 취향 설정
+                {t('home.filter_title')}
               </AMText>
             </View>
             <TouchableOpacity>
               <AMText style={styles.actionText} fontWeight={600}>
-                변경
+                {t('home.filter_change')}
               </AMText>
             </TouchableOpacity>
           </View>
 
           <View style={styles.filterItem}>
-            <AMText style={styles.filterLabel}>선호하는 친구 성별</AMText>
+            <AMText style={styles.filterLabel}>{t('signup.gender')}</AMText>
             <View style={styles.filterBadge}>
-              <AMText style={styles.filterBadgeText}>모두</AMText>
+              <AMText style={styles.filterBadgeText}>
+                {t('signup.male')}/{t('signup.female')}
+              </AMText>
             </View>
           </View>
           <View style={styles.filterItem}>
-            <AMText style={styles.filterLabel}>연령대</AMText>
+            <AMText style={styles.filterLabel}>{t('signup.region')}</AMText>
             <View style={styles.filterBadge}>
-              <AMText style={styles.filterBadgeText}>20-30대</AMText>
+              <AMText style={styles.filterBadgeText}>
+                {t('signup.korea')}/{t('signup.japan')}
+              </AMText>
             </View>
           </View>
         </MotiView>
@@ -176,11 +179,11 @@ const HomeScreen = ({ navigation }: any) => {
         >
           <View style={styles.sectionHeader}>
             <AMText style={styles.sectionTitle} fontWeight={600}>
-              최근 매칭된 친구들
+              {t('home.recent_matches')}
             </AMText>
             <TouchableOpacity>
               <AMText style={styles.actionText} fontWeight={600}>
-                전체보기
+                {t('home.view_all')}
               </AMText>
             </TouchableOpacity>
           </View>
@@ -242,17 +245,17 @@ const HomeScreen = ({ navigation }: any) => {
             <View style={styles.premiumHeader}>
               <View>
                 <AMText style={styles.premiumTitle} fontWeight={700}>
-                  프리미엄 기능
+                  {t('home.premium_title')}
                 </AMText>
                 <AMText style={styles.premiumSubtitle}>
-                  더 빠르게 친구를 만나보세요
+                  {t('home.premium_desc')}
                 </AMText>
               </View>
               <Heart size={32} color="white" />
             </View>
             <TouchableOpacity style={styles.premiumButton}>
               <AMText style={styles.premiumButtonText} fontWeight={700}>
-                프리미엄 구독하기
+                {t('home.premium_subscribe')}
               </AMText>
             </TouchableOpacity>
           </LinearGradient>
