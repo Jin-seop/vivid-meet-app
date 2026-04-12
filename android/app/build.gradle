@@ -1,27 +1,14 @@
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
-apply plugin: "com.google.gms.google-services"
+apply plugin: "com.google.gms.google-services" // 구글 서비스 플러그인
 
-/**
- * react-native-config 설정
- * 이 줄은 반드시 com.android.application 플러그인 적용 후에 위치해야 합니다.
- */
-apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 
 react {
-    /* Autolinking */
     autolinkLibrariesWithApp()
 }
 
-/**
- * Set this to true to Run Proguard on Release builds to minify the Java bytecode.
- */
 def enableProguardInReleaseBuilds = false
-
-/**
- * The preferred build flavor of JavaScriptCore (JSC)
- */
 def jscFlavor = 'io.github.react-native-community:jsc-android:2026004.+'
 
 android {
@@ -29,10 +16,10 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    // ✅ 추가된 부분: 모든 flavor가 속할 차원을 정의합니다.
-    flavorDimensions "default"
+    namespace "com.AimoChat" // 프로젝트 네임스페이스
+    
+    flavorDimensions "default" // 플래버 차원 정의
 
-    namespace "com.AimoChat"
     defaultConfig {
         applicationId "com.AimoChat"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -61,11 +48,11 @@ android {
         }
     }
 
-    // ✅ 각 flavor에 dimension "default"를 연결했습니다.
+    // 제품 플래버 설정
     productFlavors {
         dev {
             dimension "default"
-            applicationIdSuffix ".dev"
+            applicationIdSuffix ".dev" // 패키지명이 com.AimoChat.dev가 됨
             resValue "string", "app_name", "(Dev) AimoChat"
         }
         prod {
@@ -77,7 +64,10 @@ android {
 
 dependencies {
     implementation("com.facebook.react:react-android")
+    
+    // Firebase BoM 적용
     implementation platform('com.google.firebase:firebase-bom:34.12.0')
+    implementation 'com.google.firebase:firebase-analytics'
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")

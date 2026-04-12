@@ -125,7 +125,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
               {/* Google 로그인 */}
               <AMTouchableOpacity
                 style={[styles.loginButton, styles.googleButton]}
-                onPress={() => onSocialLoginPress('Google')}
+                onPress={() => onSocialLoginPress('GooGle')}
               >
                 <AMText style={styles.googleButtonText}>
                   {t('login.google')}

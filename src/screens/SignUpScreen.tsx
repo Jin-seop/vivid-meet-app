@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, ScrollView } from 'react-native';
+import { StyleSheet, ScrollView, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { launchImageLibrary } from 'react-native-image-picker';
 import SignUpHeader from '../components/sighUp/header';
@@ -14,6 +14,7 @@ import SignUpStep4 from '../components/sighUp/step_4';
 import SignUpStep2 from '../components/sighUp/step_2';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { useAuth } from '../context/AuthContext';
+import { aiApi } from '../api/ai';
 
 export type SignUpScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -83,6 +84,50 @@ const SignUpScreen = ({ navigation }: SignUpScreenProps) => {
     }
   };
 
+  const makeAiPhoto = async () => {
+    if (!profileData.posePhotoUrl || profileData.realPhotos.length === 0) {
+      Alert.alert('알림', '포즈 사진과 실물 사진을 모두 등록해주세요.');
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+
+      // 1. 이미지 데이터 FormData 구성
+      formData.append('poseImage', {
+        uri: profileData.posePhotoUrl,
+        name: 'pose.jpg',
+        type: 'image/jpeg',
+      } as any);
+
+      formData.append('personImage', {
+        uri: profileData.realPhotos[0],
+        name: 'real.jpg',
+        type: 'image/jpeg',
+      } as any);
+
+      // 2. Step 2에서 선택한 태그 정보를 프롬프트로 변환하여 전달
+      formData.append('pos', aiData.tags.join(', '));
+      formData.append('neg', 'low quality, blurry, distorted');
+      formData.append('seed', String(Math.floor(Math.random() * 1000000)));
+
+      // 3. API 호출
+      const response = await aiApi.generatePersona(formData);
+
+      if (response.data && response.data.imageUrl) {
+        // 4. 생성된 AI 이미지 URL 저장 및 다음 단계 이동
+        setProfileData(prev => ({
+          ...prev,
+          aiPhotoUrl: response.data.imageUrl,
+        }));
+        setStep(4);
+      }
+    } catch (error) {
+      console.error('AI Generation Error:', error);
+      Alert.alert('오류', 'AI 캐릭터 생성에 실패했습니다. 다시 시도해주세요.');
+    }
+  };
+
   const onSignUp = () => {
     // login({
     //   name: profileData.name,
@@ -128,10 +173,9 @@ const SignUpScreen = ({ navigation }: SignUpScreenProps) => {
         {/* Step 3: ai 사진 선택 */}
         {step === 3 && (
           <SignUpStep3
-            setStep={setStep}
             onPhotoSelect={onPhotoSelect}
             profileData={profileData}
-            aiData={aiData}
+            makeAiPhoto={makeAiPhoto}
           />
         )}
 

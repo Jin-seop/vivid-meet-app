@@ -4,21 +4,19 @@ import { MotiView } from 'moti';
 import { useTranslation } from 'react-i18next';
 import AMText from '../common/AMText';
 import AMTouchableOpacity from '../common/AMTouchableOpacity';
-import { AIData, SignUpData } from '../../screens/SignUpScreen';
+import { SignUpData } from '../../screens/SignUpScreen';
 import { PretendardFont } from '../../utils/fonts';
 
 interface SignUpStep3Props {
-  setStep: React.Dispatch<React.SetStateAction<number>>;
   onPhotoSelect: (isPose: boolean) => Promise<void>;
   profileData: SignUpData;
-  aiData: AIData;
+  makeAiPhoto: () => Promise<void>;
 }
 
 const SignUpStep3 = ({
-  setStep,
   onPhotoSelect,
   profileData,
-  aiData,
+  makeAiPhoto,
 }: SignUpStep3Props) => {
   const { t } = useTranslation();
 
@@ -77,7 +75,7 @@ const SignUpStep3 = ({
         disabled={
           !profileData.posePhotoUrl || profileData.realPhotos.length === 0
         }
-        onPress={() => setStep(4)}
+        onPress={makeAiPhoto}
       >
         <AMText style={styles.nextButtonText} fontWeight={700}>
           {t('common.next')}

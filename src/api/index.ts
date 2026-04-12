@@ -1,16 +1,10 @@
+import { API_URL } from '@env';
 import axios from 'axios';
 import { Platform } from 'react-native';
-import Config from 'react-native-config'; // 환경 변수 접근을 위해 추가
 import EncryptedStorage from 'react-native-encrypted-storage'; // 보안 저장소 사용
 
-/**
- * 환경 변수 적용:
- * Config.API_URL은 .env 파일의 API_URL 값을 가져옵니다.
- */
-const BASE_URL = Config.API_URL || 'https://api.aimochat.com';
-
 const api = axios.create({
-  baseURL: BASE_URL,
+  baseURL: API_URL,
   timeout: 10000, // 사진 업로드를 고려하여 10초 설정
   headers: {
     'Content-Type': 'application/json',

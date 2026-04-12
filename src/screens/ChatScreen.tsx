@@ -24,9 +24,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { useTranslation } from 'react-i18next';
 import { StackScreenProps } from '@react-navigation/stack';
 import { io, Socket } from 'socket.io-client';
-import Config from 'react-native-config';
 import EncryptedStorage from 'react-native-encrypted-storage';
-
 import AMText from '../components/common/AMText';
 import {
   RootStackParamList,
@@ -35,6 +33,7 @@ import {
 import { chatApi } from '../api/chat';
 import { matchApi } from '../api/match';
 import { useAuth } from '../context/AuthContext';
+import { API_URL } from '@env';
 
 type ChatScreenProps = StackScreenProps<
   RootStackParamList,
@@ -69,9 +68,8 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
 
       // 2. 소켓 연결 및 룸 입장
       const token = await EncryptedStorage.getItem('user_token');
-      const BASE_URL = Config.API_URL || 'https://api-dev.aimochat.com';
 
-      socketRef.current = io(`${BASE_URL}/chat`, {
+      socketRef.current = io(`${API_URL}/chat`, {
         auth: { token: `Bearer ${token}` },
         transports: ['websocket'],
       });

@@ -1,6 +1,6 @@
 import { io, Socket } from 'socket.io-client';
-import Config from 'react-native-config';
 import EncryptedStorage from 'react-native-encrypted-storage';
+import { API_BASE } from '@env';
 
 class SocketService {
   public socket: Socket | null = null;
@@ -10,7 +10,7 @@ class SocketService {
     if (this.socket?.connected) return;
 
     const token = await EncryptedStorage.getItem('user_token');
-    const BASE_URL = Config.API_URL || 'https://api.aimochat.com';
+    const BASE_URL = API_BASE;
 
     this.socket = io(`${BASE_URL}/chat`, {
       auth: {

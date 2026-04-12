@@ -5,12 +5,12 @@
     "withdraw": "退会",
     "next": "次へ",
     "start": "始める",
-    "error": "エラー",
-    "withdraw_success": "退会処理が完了しました。",
     "select": "選択してください",
     "no_result": "検索結果がありません",
     "error_title": "通知",
-    "upload_failed": "写真のアップロードに失敗しました。もう一度お試しください。",
+    "error": "エラー",
+    "withdraw_success": "退会処理が完了しました。",
+    "upload_failed": "アップロードに失敗しました。もう一度お試しください。",
     "network_error": "サーバーとの接続が円滑ではありません。",
     "search_placeholder": "検索..."
   },
@@ -20,7 +20,7 @@
     "google": "Googleで始める",
     "apple": "Appleで始める",
     "line": "Lineで始める",
-    "policy": "ログインするとAimoChatの\n{{terms}}および{{privacy}}に同意したものとみなされます。",
+    "policy": "ログインするとAimoChat의 \n{{terms}}および{{privacy}}に同意したものとみなされます。",
     "terms": "利用規約",
     "privacy": "プライバシーポリシー"
   },
@@ -36,16 +36,6 @@
     "japan": "日本",
     "step2_title": "自分を表現してください",
     "step2_subtitle": "AIキャラクター生成に活用されます",
-    "step3_title": "写真をアップロードしてください",
-    "step4_title": "AIキャラクターが生成されました",
-    "complete_btn": "AimoChatを始める",
-    "step3_subtitle": "ポーズ写真と実物写真が必要です。",
-    "pose_photo": "ポーズ写真",
-    "real_photo": "実物写真",
-    "step4_subtitle": "このキャラクターで最初の会話が始まります",
-    "ai_persona_name": "{{name}}さんのAIペルソナ",
-    "ai_transparency_title": "AI透明性の告知",
-    "ai_transparency_desc": "相手にはAIキャラクターが表示されます。",
     "step2_tags": {
       "style_label": "絵のスタイル",
       "mood_label": "照明と感性",
@@ -56,9 +46,20 @@
       "golden_hour": "暖かい日差し",
       "neon_light": "ネオンサイン",
       "studio": "スタジオ",
-      "dreamy": "幻想的な",
-      "calm": "落ち着いた"
-    }
+      "dreamy": "幻想적인",
+      "calm": "落ち着いた",
+      "fashion": "ファッション"
+    },
+    "step3_title": "写真をアップロードしてください",
+    "step3_subtitle": "ポーズ写真と実物写真が必要です。",
+    "pose_photo": "ポーズ写真",
+    "real_photo": "実物写真",
+    "step4_title": "AIキャラクターが生成されました",
+    "step4_subtitle": "このキャラクターで最初の会話が始まります",
+    "complete_btn": "AimoChatを始める",
+    "ai_persona_name": "{{name}}さんのAIペルソナ",
+    "ai_transparency_title": "AI透明性の告知",
+    "ai_transparency_desc": "相手にはAIキャラクターが表示されます。"
   },
   "home": {
     "title": "ホーム",
@@ -86,7 +87,7 @@
     "empty_desc": "ホームの即時マッチングで新しい友達に出会いましょう"
   },
   "chat_detail": {
-    "photo_locked": "実物写真{{count}}枚ロック中",
+    "photo_locked": "実物写真 {{count}}枚ロック中",
     "instant_unlock": "今すぐ解除",
     "input_placeholder": "メッセージを入力してください...",
     "system_unlocked": "トークが盛り上がりました！写真が1枚解除されました 🎉"
