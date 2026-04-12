@@ -1,0 +1,11 @@
+{
+  "common": {
+    "confirm": "確認",
+    "cancel": "キャンセル",
+    "withdraw": "退회"
+  },
+  "profile": {
+    "title": "마이프로필",
+    "withdraw_confirm": "本当に退会しますか？\n会話内容がすべて削除されます。"
+  }
+}
