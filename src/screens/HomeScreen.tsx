@@ -21,11 +21,35 @@ import AMText from '../components/common/AMText';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { RootStackScreenName } from './navigation/RootStack';
 import { useTranslation } from 'react-i18next';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { userApi } from '../api/user';
+import { matchApi } from '../api/match';
 
 const HomeScreen = ({ navigation }: any) => {
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
+
   const [freeMatches, setFreeMatches] = useState(10);
   const [isMatching, setIsMatching] = useState(false);
+
+  const { data, isLoading, isError, refetch } = useQuery({
+    queryKey: ['myPoints'],
+    queryFn: () => userApi.getMyPoints().then(res => res.data),
+  });
+
+  const unlockMutation = useMutation({
+    // mutationFn: (matchId: string) => matchApi.unlockPhoto(matchId), //
+    // onSuccess: () => {
+    //   // 포인트가 차감되었으므로 내 포인트 정보를 최신화
+    //   queryClient.invalidateQueries({ queryKey: ['myPoints'] });
+    //   // 채팅방 목록이나 상세 정보도 새로고침할 수 있음
+    //   queryClient.invalidateQueries({ queryKey: ['chatRooms'] });
+    //   console.log('잠금 해제 성공!');
+    // },
+    // onError: error => {
+    //   console.error('잠금 해제 실패:', error);
+    // },
+  });
 
   const handleInstantMatch = () => {
     setIsMatching(true);
@@ -181,11 +205,11 @@ const HomeScreen = ({ navigation }: any) => {
             <AMText style={styles.sectionTitle} fontWeight={600}>
               {t('home.recent_matches')}
             </AMText>
-            <TouchableOpacity>
+            {/* <TouchableOpacity>
               <AMText style={styles.actionText} fontWeight={600}>
                 {t('home.view_all')}
               </AMText>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
 
           <View style={styles.recentGrid}>

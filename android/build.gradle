@@ -8,14 +8,34 @@ buildscript {
         kotlinVersion = "2.1.20"
     }
     repositories {
-        google()
+        google() // ✅ Google 저장소가 최상단에 있어야 플러그인을 찾을 수 있습니다.
         mavenCentral()
     }
     dependencies {
         classpath("com.android.tools.build:gradle")
         classpath("com.facebook.react:react-native-gradle-plugin")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
+        // ✅ 구글 서비스 플러그인을 클래스패스에 추가합니다. (버전은 안정적인 4.4.1 권장)
+        classpath("com.google.gms:google-services:4.4.4")
     }
 }
 
+// 기존 plugins 블록의 구글 서비스 설정은 삭제하고 아래 플러그인만 유지합니다.
 apply plugin: "com.facebook.react.rootproject"
+
+allprojects {
+    repositories {
+        maven {
+            // Android용 로컬 리포지토리 설정
+            url("$rootDir/../node_modules/react-native/android")
+        }
+        maven {
+            // Android용 JSC 리포지토리 설정
+            url("$rootDir/../node_modules/jsc-android/dist")
+        }
+        
+        google()
+        mavenCentral()
+        maven { url 'https://www.jitpack.io' }
+    }
+}

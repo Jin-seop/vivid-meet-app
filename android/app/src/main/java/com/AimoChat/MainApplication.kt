@@ -1,4 +1,4 @@
-package com.AimoChatapp
+package com.AimoChat
 
 import android.app.Application
 import com.facebook.react.PackageList

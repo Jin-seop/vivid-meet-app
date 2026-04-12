@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, View, Image, StatusBar } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import LinearGradient from 'react-native-linear-gradient';
@@ -12,6 +12,8 @@ import {
 } from './navigation/RootStack';
 import AMTouchableOpacity from '../components/common/AMTouchableOpacity';
 import { useTranslation } from 'react-i18next';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { useGoogleAuth } from '../hooks/useGoogleAuth';
 
 type LoginScreenProps = {
   navigation: StackNavigationProp<
@@ -23,8 +25,32 @@ type LoginScreenProps = {
 const LoginScreen = ({ navigation }: LoginScreenProps) => {
   const { t } = useTranslation();
 
-  const onSocialLoginPress = (provider: string) => {
+  const googleAuth = useGoogleAuth(data => {
+    if (data.isNewUser) {
+      // 신규 유저: SignUpScreen으로 이동 (파라미터 전달)
+      navigation.navigate(RootStackScreenName.SignUp, {
+        email: data.email,
+        provider: 'GooGle',
+        providerId: data.providerId,
+      });
+    } else {
+      // 기존 유저: HomeMain으로 이동
+      navigation.replace(RootStackScreenName.HomeMain);
+    }
+  });
+
+  const onSocialLoginPress = (provider: 'GooGle' | 'Apple' | 'Line') => {
     console.log(`Login with ${provider}`);
+
+    switch (provider) {
+      case 'GooGle':
+        googleAuth.mutate();
+        break;
+
+      default:
+        break;
+    }
+
     // TODO: 실제 소셜 로그인 로직 구현 후 이메일 전달
     // setTimeout(() => navigation.replace('HomeMain'), 500);
     setTimeout(
@@ -41,6 +67,13 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
   const autoLogin = () => {
     navigation.replace(RootStackScreenName.HomeMain);
   };
+
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId:
+        '985196508402-scf8ajv2kls1866r0g1b55vjlto670rh.apps.googleusercontent.com',
+    });
+  }, []);
 
   return (
     <View style={styles.container}>

@@ -1,19 +1,22 @@
 {
-  "name": "AimoChatApp",
+  "name": "AimoChat",
   "version": "0.0.1",
   "private": true,
   "scripts": {
     "start": "react-native start",
     "lint": "eslint .",
     "test": "jest",
-    "android:dev": "ENVFILE=.env.development react-native run-android --mode devDebug",
+    "android:dev": "ENVFILE=.env.development react-native run-android --mode devDebug --appIdSuffix dev",
     "android:prod": "ENVFILE=.env.production react-native run-android --mode prodRelease",
     "ios:dev": "ENVFILE=.env.development react-native run-ios",
     "ios:prod": "ENVFILE=.env.production react-native run-ios --configuration Release",
-    "android": "react-native run-android",
+    "android": "react-native run-android --mode devDebug --appIdSuffix dev",
     "ios": "react-native run-ios"
   },
   "dependencies": {
+    "@react-native-firebase/app": "^24.0.0",
+    "@react-native-firebase/auth": "^24.0.0",
+    "@react-native-google-signin/google-signin": "^16.1.2",
     "@react-native/new-app-screen": "0.84.1",
     "@react-navigation/bottom-tabs": "^7.15.9",
     "@react-navigation/native": "^7.2.2",
