@@ -105,6 +105,17 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
+    productFlavors {
+        dev {
+            dimension "default"
+            applicationIdSuffix ".dev"
+            resValue "string", "app_name", "(Dev) AimoChat"
+        }
+        prod {
+            dimension "default"
+            resValue "string", "app_name", "AimoChat"
+        }
+    }
 }
 
 dependencies {
