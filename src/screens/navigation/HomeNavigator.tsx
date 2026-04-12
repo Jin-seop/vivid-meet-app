@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from '../HomeScreen';
 import { MessageCircle, Home, User } from 'lucide-react-native';
 import ChatsListScreen from '../ChatsListScreen';
-import ProfileScreen from '../ProfileScreen';
+import { ProfileScreen } from '../ProfileScreen';
 
 const Tab = createBottomTabNavigator();
 

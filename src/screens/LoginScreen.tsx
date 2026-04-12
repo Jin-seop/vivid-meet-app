@@ -38,6 +38,10 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
     );
   };
 
+  const autoLogin = () => {
+    navigation.replace(RootStackScreenName.HomeMain);
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
@@ -107,7 +111,8 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
 
               <AMTouchableOpacity
                 style={[styles.loginButton, styles.LineButton]}
-                onPress={() => onSocialLoginPress('Line')}
+                // onPress={() => onSocialLoginPress('Line')}
+                onPress={autoLogin}
               >
                 <AMText style={styles.LineButtonText}>{t('login.line')}</AMText>
               </AMTouchableOpacity>
