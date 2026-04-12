@@ -32,8 +32,6 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
     );
   };
 
-  // useEffect(() => {}, []);
-
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
