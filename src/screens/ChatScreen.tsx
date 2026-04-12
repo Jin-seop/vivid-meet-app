@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {
   StyleSheet,
   View,
@@ -8,10 +8,9 @@ import {
   KeyboardAvoidingView,
   Platform,
   StatusBar,
-  Image,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MotiView } from 'moti';
 import {
   ArrowLeft,
   MoreVertical,
@@ -20,16 +19,22 @@ import {
   Smile,
   Lock,
   Unlock,
-  Gift,
 } from 'lucide-react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { useTranslation } from 'react-i18next';
 import { StackScreenProps } from '@react-navigation/stack';
+import { io, Socket } from 'socket.io-client';
+import Config from 'react-native-config';
+import EncryptedStorage from 'react-native-encrypted-storage';
+
 import AMText from '../components/common/AMText';
 import {
   RootStackParamList,
   RootStackScreenName,
 } from './navigation/RootStack';
+import { chatApi } from '../api/chat';
+import { matchApi } from '../api/match';
+import { useAuth } from '../context/AuthContext';
 
 type ChatScreenProps = StackScreenProps<
   RootStackParamList,
@@ -38,156 +43,114 @@ type ChatScreenProps = StackScreenProps<
 
 interface Message {
   id: string;
-  sender: 'me' | 'them';
+  senderId: string;
   content: string;
-  timestamp: string;
-  type: 'text' | 'image' | 'system';
+  createdAt: string;
+  type?: 'text' | 'image' | 'system';
 }
 
-const mockMessages: Message[] = [
-  {
-    id: '1',
-    sender: 'them',
-    content: '안녕하세요! 반갑습니다 😊',
-    timestamp: '14:20',
-    type: 'text',
-  },
-  {
-    id: '2',
-    sender: 'me',
-    content: '네 안녕하세요! MBTI가 같네요!',
-    timestamp: '14:21',
-    type: 'text',
-  },
-  {
-    id: '3',
-    sender: 'them',
-    content:
-      '오! 그러게요 ㅎㅎ 저는 음악 듣는 걸 좋아하는데 취미가 어떻게 되세요?',
-    timestamp: '14:22',
-    type: 'text',
-  },
-  {
-    id: '4',
-    sender: 'me',
-    content: '저도 음악 좋아해요! 요즘 뭐 듣고 계세요?',
-    timestamp: '14:23',
-    type: 'text',
-  },
-  {
-    id: 'system',
-    sender: 'them',
-    content: '대화가 활발해졌어요! 사진 1장이 해제되었습니다 🎉',
-    timestamp: '14:24',
-    type: 'system',
-  },
-  {
-    id: '5',
-    sender: 'them',
-    content: '요즘 인디 음악에 빠져있어요. 추천해드릴까요?',
-    timestamp: '14:25',
-    type: 'text',
-  },
-];
-
-// 2. Props 타입 적용
 const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
-  const { id } = route.params; // 내비게이션을 통해 전달된 채팅방 ID 추출
+  const { id: matchId } = route.params;
   const { t } = useTranslation();
+  const { user } = useAuth();
+
   const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState<Message[]>(mockMessages);
-  const [photosUnlocked, setPhotosUnlocked] = useState(2);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [photosUnlocked, setPhotosUnlocked] = useState(false);
+
+  const socketRef = useRef<Socket | null>(null);
   const flatListRef = useRef<FlatList>(null);
 
-  const chatUser = {
-    name: '지수',
-    mbti: 'ENFP',
-    interests: ['음악', '영화', '여행'],
-    online: true,
-    avatar:
-      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400',
-  };
+  const initChat = useCallback(async () => {
+    try {
+      // 1. 기존 메시지 내역 불러오기
+      const response = await chatApi.getMessages(matchId);
+      setMessages(response.data);
+
+      // 2. 소켓 연결 및 룸 입장
+      const token = await EncryptedStorage.getItem('user_token');
+      const BASE_URL = Config.API_URL || 'https://api-dev.aimochat.com';
+
+      socketRef.current = io(`${BASE_URL}/chat`, {
+        auth: { token: `Bearer ${token}` },
+        transports: ['websocket'],
+      });
+
+      socketRef.current.on('connect', () => {
+        socketRef.current?.emit('joinRoom', { matchId });
+      });
+
+      // 3. 실시간 메시지 수신
+      socketRef.current.on('newMessage', (payload: Message) => {
+        setMessages(prev => [...prev, payload]);
+      });
+
+      // 4. 상대방 나감 감지
+      socketRef.current.on('userLeft', (data: { message: string }) => {
+        Alert.alert(t('common.error_title'), data.message);
+      });
+    } catch (error) {
+      console.error('Chat Init Error:', error);
+    }
+  }, [matchId, t]);
 
   const handleSend = () => {
-    if (!message.trim()) return;
+    if (!message.trim() || !socketRef.current) return;
 
-    const newMessage: Message = {
-      id: Date.now().toString(),
-      sender: 'me',
+    // 서버로 메시지 전송
+    socketRef.current.emit('sendMessage', {
+      matchId,
       content: message,
-      timestamp: new Date().toLocaleTimeString('ko-KR', {
-        hour: '2-digit',
-        minute: '2-digit',
-      }),
-      type: 'text',
-    };
+    });
 
-    setMessages(prev => [...prev, newMessage]);
     setMessage('');
+  };
 
-    // 응답 시뮬레이션
-    setTimeout(() => {
-      const response: Message = {
-        id: (Date.now() + 1).toString(),
-        sender: 'them',
-        content: '네, 좋아요! 😊',
-        timestamp: new Date().toLocaleTimeString('ko-KR', {
-          hour: '2-digit',
-          minute: '2-digit',
-        }),
-        type: 'text',
-      };
-      setMessages(prev => [...prev, response]);
-    }, 1000);
+  const handleUnlockPhoto = async () => {
+    try {
+      await matchApi.unlockPhoto(matchId); //
+      setPhotosUnlocked(true);
+      Alert.alert(t('common.confirm'), t('chat_detail.system_unlocked'));
+    } catch {
+      Alert.alert(t('common.error_title'), t('profile.withdraw_failed'));
+    }
   };
 
   const renderMessage = ({ item }: { item: Message }) => {
-    if (item.type === 'system') {
-      return (
-        <MotiView
-          from={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          style={styles.systemMsgContainer}
-        >
-          <View style={styles.systemMsgBadge}>
-            <Gift size={14} color="#50E3C2" style={{ marginRight: 6 }} />
-            <AMText style={styles.systemMsgText}>{item.content}</AMText>
-          </View>
-        </MotiView>
-      );
-    }
+    const isMe = item.senderId === user?.id; // 실제 연동 시 발신자 ID 비교 로직
 
-    const isMe = item.sender === 'me';
     return (
       <View
         style={[styles.messageRow, isMe ? styles.myMsgRow : styles.theirMsgRow]}
       >
-        {!isMe && (
-          <Image source={{ uri: chatUser.avatar }} style={styles.miniAvatar} />
-        )}
         <View
-          style={[
-            styles.bubbleContainer,
-            isMe ? styles.myBubbleContainer : styles.theirBubbleContainer,
-          ]}
+          style={[styles.bubble, isMe ? styles.myBubble : styles.theirBubble]}
         >
-          <View
-            style={[styles.bubble, isMe ? styles.myBubble : styles.theirBubble]}
+          <AMText
+            style={[
+              styles.bubbleText,
+              isMe ? styles.myBubbleText : styles.theirBubbleText,
+            ]}
           >
-            <AMText
-              style={[
-                styles.bubbleText,
-                isMe ? styles.myBubbleText : styles.theirBubbleText,
-              ]}
-            >
-              {item.content}
-            </AMText>
-          </View>
-          <AMText style={styles.timestampText}>{item.timestamp}</AMText>
+            {item.content}
+          </AMText>
         </View>
+        <AMText style={styles.timestampText}>
+          {new Date(item.createdAt).toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+          })}
+        </AMText>
       </View>
     );
   };
+
+  useEffect(() => {
+    initChat();
+    return () => {
+      socketRef.current?.disconnect();
+    };
+  }, [initChat, matchId]);
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
@@ -198,48 +161,18 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <ArrowLeft size={24} color="#1F2937" />
         </TouchableOpacity>
-
         <View style={styles.headerCenter}>
-          <View style={styles.avatarWrapper}>
-            <Image
-              source={{ uri: chatUser.avatar }}
-              style={styles.headerAvatar}
-            />
-            {chatUser.online && <View style={styles.onlineDot} />}
-          </View>
-          <View style={styles.userInfo}>
-            <View style={styles.nameRow}>
-              <AMText style={styles.userName} fontWeight={600}>
-                {chatUser.name}
-              </AMText>
-              <View style={styles.dotRow}>
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <View
-                    key={i}
-                    style={[
-                      styles.progressDot,
-                      {
-                        backgroundColor:
-                          i < photosUnlocked ? '#50E3C2' : '#E5E7EB',
-                      },
-                    ]}
-                  />
-                ))}
-              </View>
-            </View>
-            <AMText style={styles.userMeta}>
-              {chatUser.mbti} • {chatUser.interests.slice(0, 2).join(', ')}
-            </AMText>
-          </View>
+          <AMText style={styles.userName} fontWeight={600}>
+            {t('chat_list.title')}
+          </AMText>
         </View>
-
         <TouchableOpacity>
           <MoreVertical size={24} color="#1F2937" />
         </TouchableOpacity>
       </View>
 
       {/* Photo Unlock Banner */}
-      {photosUnlocked < 5 && (
+      {!photosUnlocked && (
         <LinearGradient
           colors={['#4A90E2', '#50E3C2']}
           start={{ x: 0, y: 0 }}
@@ -250,12 +183,12 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
             <View style={styles.row}>
               <Lock size={14} color="white" />
               <AMText style={styles.bannerText}>
-                {t('chat_detail.photo_locked', { count: 5 - photosUnlocked })}
+                {t('chat_detail.photo_locked', { count: 5 })}
               </AMText>
             </View>
             <TouchableOpacity
               style={styles.bannerButton}
-              onPress={() => setPhotosUnlocked(5)}
+              onPress={handleUnlockPhoto}
             >
               <Unlock size={14} color="#4A90E2" style={{ marginRight: 4 }} />
               <AMText style={styles.bannerButtonText} fontWeight={600}>
@@ -266,7 +199,6 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
         </LinearGradient>
       )}
 
-      {/* Messages List */}
       <FlatList
         ref={flatListRef}
         data={messages}
@@ -281,13 +213,12 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
       {/* Input Area */}
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+        keyboardVerticalOffset={90}
       >
         <View style={styles.inputArea}>
           <TouchableOpacity style={styles.inputIconButton}>
             <ImageIcon size={22} color="#9CA3AF" />
           </TouchableOpacity>
-
           <View style={styles.inputWrapper}>
             <TextInput
               style={styles.input}
@@ -301,7 +232,6 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
               <Smile size={20} color="#9CA3AF" />
             </TouchableOpacity>
           </View>
-
           <TouchableOpacity
             style={[
               styles.sendButton,
@@ -329,36 +259,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#F3F4F6',
   },
-  headerCenter: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: 12,
-  },
-  avatarWrapper: { position: 'relative' },
-  headerAvatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#F3F4F6',
-  },
-  onlineDot: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: '#50E3C2',
-    borderWidth: 2,
-    borderColor: 'white',
-  },
-  userInfo: { marginLeft: 10 },
-  nameRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  headerCenter: { flex: 1, alignItems: 'center' },
   userName: { fontSize: 16, color: '#111827' },
-  dotRow: { flexDirection: 'row', gap: 2 },
-  progressDot: { width: 4, height: 4, borderRadius: 2 },
-  userMeta: { fontSize: 11, color: '#9CA3AF' },
   banner: { paddingVertical: 10, paddingHorizontal: 16 },
   bannerContent: {
     flexDirection: 'row',
@@ -375,29 +277,21 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   bannerButtonText: { color: '#4A90E2', fontSize: 12 },
-  messageList: { padding: 16, paddingBottom: 32 },
-  systemMsgContainer: { alignItems: 'center', marginVertical: 16 },
-  systemMsgBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(80, 227, 194, 0.15)',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-  },
-  systemMsgText: { fontSize: 13, color: '#50E3C2' },
+  messageList: { padding: 16 },
   messageRow: {
     flexDirection: 'row',
     marginBottom: 16,
     alignItems: 'flex-end',
+    gap: 8,
   },
-  myMsgRow: { justifyContent: 'flex-end' },
+  myMsgRow: { justifyContent: 'flex-end', flexDirection: 'row-reverse' },
   theirMsgRow: { justifyContent: 'flex-start' },
-  miniAvatar: { width: 32, height: 32, borderRadius: 16, marginRight: 8 },
-  bubbleContainer: { maxWidth: '75%', alignItems: 'flex-start' },
-  myBubbleContainer: { alignItems: 'flex-end' },
-  theirBubbleContainer: { alignItems: 'flex-start' },
-  bubble: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 20 },
+  bubble: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 20,
+    maxWidth: '75%',
+  },
   myBubble: { backgroundColor: '#4A90E2', borderBottomRightRadius: 4 },
   theirBubble: {
     backgroundColor: 'white',
@@ -408,12 +302,7 @@ const styles = StyleSheet.create({
   bubbleText: { fontSize: 15, lineHeight: 20 },
   myBubbleText: { color: 'white' },
   theirBubbleText: { color: '#1F2937' },
-  timestampText: {
-    fontSize: 10,
-    color: '#9CA3AF',
-    marginTop: 4,
-    marginHorizontal: 4,
-  },
+  timestampText: { fontSize: 10, color: '#9CA3AF' },
   inputArea: {
     flexDirection: 'row',
     alignItems: 'center',
