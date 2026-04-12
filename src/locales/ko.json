@@ -97,5 +97,30 @@
     "instant_unlock": "즉시 해제",
     "input_placeholder": "메시지를 입력하세요...",
     "system_unlocked": "대화가 활발해졌어요! 사진 1장이 해제되었습니다 🎉"
+  },
+  "edit_profile": {
+    "title": "프로필 수정",
+    "save": "저장",
+    "photo_section": "프로필 사진",
+    "photo_help": "클릭하여 사진 변경",
+    "basic_info": "기본 정보",
+    "nickname": "닉네임",
+    "nickname_placeholder": "닉네임을 입력하세요",
+    "email": "이메일",
+    "phone": "전화번호",
+    "birthdate": "생년월일",
+    "gender": "성별",
+    "additional_info": "추가 정보",
+    "language": "사용 언어",
+    "interests": "관심사 (최대 5개)",
+    "status_msg": "상태 메시지",
+    "status_msg_placeholder": "상태 메시지를 입력하세요",
+    "guide_msg": "프로필 정보는 다른 사용자에게 공개됩니다. 개인정보 보호에 유의해주세요.",
+    "save_modal_title": "변경사항 저장",
+    "save_modal_desc": "프로필 변경사항을 저장하시겠습니까?",
+    "cancel_modal_title": "변경사항 취소",
+    "cancel_modal_desc": "변경사항이 저장되지 않았습니다. 정말 나가시겠습니까?",
+    "stay": "계속 수정",
+    "leave": "나가기"
   }
 }

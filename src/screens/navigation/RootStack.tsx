@@ -6,6 +6,7 @@ import { SplashScreen } from '../SplashScreen';
 import SignUpScreen from '../SignUpScreen';
 import HomeTabNavigator from './HomeNavigator';
 import ChatScreen from '../ChatScreen';
+import EditProfileScreen from '../EditProfileScreen';
 
 export enum RootStackScreenName {
   Splash = 'Splash',
@@ -13,6 +14,7 @@ export enum RootStackScreenName {
   Login = 'Login',
   SignUp = 'SignUp',
   Chat = 'Chat',
+  EditProfile = 'EditProfile',
 }
 
 export type RootStackParamList = {
@@ -24,7 +26,8 @@ export type RootStackParamList = {
     providerId: string;
   };
   [RootStackScreenName.HomeMain]: undefined;
-  [RootStackScreenName.Chat]: { id: string }; // 👈 ID 파라미터 정의
+  [RootStackScreenName.Chat]: { id: string };
+  [RootStackScreenName.EditProfile]: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -53,6 +56,10 @@ const RootStack = () => {
           component={HomeTabNavigator}
         />
         <Stack.Screen name={RootStackScreenName.Chat} component={ChatScreen} />
+        <Stack.Screen
+          name={RootStackScreenName.EditProfile}
+          component={EditProfileScreen}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

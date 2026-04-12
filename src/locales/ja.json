@@ -106,5 +106,30 @@
     },
     "withdraw_confirm": "本当に退会しますか？\n会話内容がすべて削除されます。",
     "withdraw_failed": "退会処理に失敗しました。もう一度お試しください。"
+  },
+  "edit_profile": {
+    "title": "プロフィール修正",
+    "save": "保存",
+    "photo_section": "プロフィール写真",
+    "photo_help": "クリックして写真を変更",
+    "basic_info": "基本情報",
+    "nickname": "ニックネーム",
+    "nickname_placeholder": "ニックネームを入力してください",
+    "email": "メールアドレス",
+    "phone": "電話番号",
+    "birthdate": "生年月日",
+    "gender": "性別",
+    "additional_info": "追加情報",
+    "language": "使用言語",
+    "interests": "関心事 (最大5個)",
+    "status_msg": "ステータスメッセージ",
+    "status_msg_placeholder": "メッセージを入力してください",
+    "guide_msg": "プロフィール情報は他のユーザーに公開されます。個人情報の保護にご注意ください。",
+    "save_modal_title": "変更内容の保存",
+    "save_modal_desc": "プロフィールの変更内容を保存しますか？",
+    "cancel_modal_title": "変更の取り消し",
+    "cancel_modal_desc": "変更内容が保存されていません。本当に戻りますか？",
+    "stay": "修正を続ける",
+    "leave": "戻る"
   }
 }

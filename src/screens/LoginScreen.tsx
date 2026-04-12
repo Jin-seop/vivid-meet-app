@@ -14,7 +14,10 @@ import AMTouchableOpacity from '../components/common/AMTouchableOpacity';
 import { useTranslation } from 'react-i18next';
 
 type LoginScreenProps = {
-  navigation: StackNavigationProp<RootStackParamList, 'Login'>;
+  navigation: StackNavigationProp<
+    RootStackParamList,
+    RootStackScreenName.Login
+  >;
 };
 
 const LoginScreen = ({ navigation }: LoginScreenProps) => {
