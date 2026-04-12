@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, ScrollView } from 'react-native';
 import { MotiView } from 'moti';
-import { useTranslation } from 'react-i18next'; // 추가
+import { useTranslation } from 'react-i18next';
 import AMText from '../common/AMText';
 import AMTouchableOpacity from '../common/AMTouchableOpacity';
 import { AIData } from '../../screens/SignUpScreen';
@@ -12,25 +12,25 @@ interface SignUpStep2Props {
   setStep: React.Dispatch<React.SetStateAction<number>>;
 }
 
-// 태그의 label도 i18n 처리가 필요할 수 있으나, 현재는 value 기반으로 UI에 표시되는 label을 정의합니다.
-const TAG_CATEGORIES = {
-  style: [
-    { label: 'K-웹툰', value: 'K-Webtoon style' },
-    { label: '애니메이션', value: 'Anime style' },
-    { label: '실사풍', value: 'Photorealistic' },
-    { label: '디지털 아트', value: 'Digital art' },
-  ],
-  mood: [
-    { label: '따뜻한 햇살', value: 'Golden hour' },
-    { label: '네온 사인', value: 'Neon light' },
-    { label: '스튜디오', value: 'Studio lighting' },
-    { label: '몽환적인', value: 'Dreamy' },
-    { label: '차분한', value: 'Calm' },
-  ],
-};
-
 const SignUpStep2 = ({ aiData, setAIData, setStep }: SignUpStep2Props) => {
-  const { t } = useTranslation(); // 추가
+  const { t } = useTranslation();
+
+  // 태그 리스트를 번역 키 구조로 관리
+  const TAG_CATEGORIES = {
+    style: [
+      { labelKey: 'signup.step2_tags.kwebtoon', value: 'K-Webtoon style' },
+      { labelKey: 'signup.step2_tags.anime', value: 'Anime style' },
+      { labelKey: 'signup.step2_tags.photorealistic', value: 'Photorealistic' },
+      { labelKey: 'signup.step2_tags.digital_art', value: 'Digital art' },
+    ],
+    mood: [
+      { labelKey: 'signup.step2_tags.golden_hour', value: 'Golden hour' },
+      { labelKey: 'signup.step2_tags.neon_light', value: 'Neon light' },
+      { labelKey: 'signup.step2_tags.studio', value: 'Studio lighting' },
+      { labelKey: 'signup.step2_tags.dreamy', value: 'Dreamy' },
+      { labelKey: 'signup.step2_tags.calm', value: 'Calm' },
+    ],
+  };
 
   const toggleTag = (tagValue: string) => {
     const currentTags = aiData.tags || [];
@@ -49,10 +49,7 @@ const SignUpStep2 = ({ aiData, setAIData, setStep }: SignUpStep2Props) => {
         <AMText style={styles.title} fontWeight={700}>
           {t('signup.step2_title')}
         </AMText>
-        <AMText style={styles.subtitle}>
-          {/* ko.json에 "AI 캐릭터 생성에 활용됩니다" 추가 권장 */}
-          AI 캐릭터 생성에 활용됩니다
-        </AMText>
+        <AMText style={styles.subtitle}>{t('signup.step2_subtitle')}</AMText>
 
         <AMText style={styles.label} fontWeight={600}>
           MBTI (선택)
@@ -80,13 +77,15 @@ const SignUpStep2 = ({ aiData, setAIData, setStep }: SignUpStep2Props) => {
 
         <View style={styles.tagSection}>
           <AMText style={styles.label} fontWeight={600}>
-            원하는 스타일 및 분위기 (선택)
+            {t('signup.step2_subtitle')} {/* 혹은 적절한 키로 대체 가능 */}
           </AMText>
 
           {Object.entries(TAG_CATEGORIES).map(([category, tags]) => (
             <View key={category} style={styles.categoryContainer}>
               <AMText style={styles.subLabel} fontWeight={700}>
-                {category === 'style' ? '그림체' : '조명 및 감성'}
+                {category === 'style'
+                  ? t('signup.step2_tags.style_label')
+                  : t('signup.step2_tags.mood_label')}
               </AMText>
               <View style={styles.interestGrid}>
                 {tags.map(tag => {
@@ -106,7 +105,7 @@ const SignUpStep2 = ({ aiData, setAIData, setStep }: SignUpStep2Props) => {
                           isSelected && styles.tagTextActive,
                         ]}
                       >
-                        {tag.label}
+                        {t(tag.labelKey)} {/* 번역 키 호출 */}
                       </AMText>
                     </AMTouchableOpacity>
                   );
@@ -130,22 +129,10 @@ const SignUpStep2 = ({ aiData, setAIData, setStep }: SignUpStep2Props) => {
 };
 
 const styles = StyleSheet.create({
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#111827',
-    marginBottom: 8,
-  },
+  title: { fontSize: 24, color: '#111827', marginBottom: 8 },
   subtitle: { fontSize: 16, color: '#6B7280', marginBottom: 32 },
-  label: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#374151',
-    marginBottom: 12,
-  },
+  label: { fontSize: 14, color: '#374151', marginBottom: 12 },
   interestGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-
-  // MBTI 칩 스타일
   chip: {
     paddingHorizontal: 16,
     paddingVertical: 10,
@@ -156,8 +143,6 @@ const styles = StyleSheet.create({
   chipActive: { backgroundColor: '#4A90E2', borderColor: '#4A90E2' },
   chipText: { color: '#4B5563' },
   chipTextActive: { color: 'white', fontWeight: 'bold' },
-
-  // 스타일/분위기 태그 전용 스타일
   tagSection: { marginTop: 24 },
   categoryContainer: { marginBottom: 16 },
   subLabel: {
@@ -174,13 +159,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E5E7EB',
   },
-  tagChipActive: {
-    backgroundColor: '#4A90E2',
-    borderColor: '#4A90E2',
-  },
+  tagChipActive: { backgroundColor: '#4A90E2', borderColor: '#4A90E2' },
   tagText: { fontSize: 14, color: '#374151' },
   tagTextActive: { color: 'white' },
-
   nextButton: {
     height: 56,
     backgroundColor: '#4A90E2',

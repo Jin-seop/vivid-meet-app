@@ -9,6 +9,7 @@ import {
 import { ChevronDown, Check } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import AMText from './AMText';
+import { useTranslation } from 'react-i18next';
 
 export interface DropdownOption {
   value: string;
@@ -32,12 +33,14 @@ const Dropdown = ({
   options,
   value,
   onChange,
-  placeholder = '선택하세요',
+  placeholder,
   label,
   disabled = false,
   error,
   fullWidth = false,
 }: DropdownProps) => {
+  const { t } = useTranslation();
+
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownLayout, setDropdownLayout] = useState({
     x: 0,
@@ -94,7 +97,7 @@ const Dropdown = ({
               ]}
               numberOfLines={1}
             >
-              {selectedOption?.label || placeholder}
+              {selectedOption?.label || placeholder || t('common.select')}
             </AMText>
           </View>
           <MotiView

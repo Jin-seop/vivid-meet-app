@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { Search, X, Check, ChevronDown } from 'lucide-react-native';
 import { MotiView } from 'moti';
+import { useTranslation } from 'react-i18next'; // 추가
 import AMText from './AMText';
 
 export interface SearchableOption {
@@ -36,14 +37,15 @@ const SearchableDropdown = ({
   options,
   value,
   onChange,
-  placeholder = '선택하세요',
-  searchPlaceholder = '검색...',
+  placeholder, // 기본값 제거 (내부에서 t() 처리)
+  searchPlaceholder,
   label,
   disabled = false,
   error,
   fullWidth = false,
-  noResultsText = '검색 결과가 없습니다',
+  noResultsText,
 }: SearchableDropdownProps) => {
+  const { t } = useTranslation(); // i18n hook 추가
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [dropdownLayout, setDropdownLayout] = useState({
@@ -52,6 +54,10 @@ const SearchableDropdown = ({
     width: 0,
   });
   const anchorRef = useRef<View>(null);
+
+  const displayPlaceholder = placeholder || t('common.select');
+  const displaySearchPlaceholder = searchPlaceholder || t('common.select'); // 기존 '검색...' 대신 공통 선택 문구 사용 가능
+  const displayNoResultsText = noResultsText || t('common.no_result');
 
   const selectedOption = options.find(opt => opt.value === value);
 
@@ -110,7 +116,7 @@ const SearchableDropdown = ({
                 ]}
                 numberOfLines={1}
               >
-                {selectedOption?.label || placeholder}
+                {selectedOption?.label || displayPlaceholder}
               </AMText>
               {selectedOption?.description && (
                 <AMText style={styles.descriptionText} numberOfLines={1}>
@@ -154,7 +160,7 @@ const SearchableDropdown = ({
                 autoFocus
                 value={searchQuery}
                 onChangeText={setSearchQuery}
-                placeholder={searchPlaceholder}
+                placeholder={displaySearchPlaceholder}
                 style={styles.searchInput}
                 placeholderTextColor="#9CA3AF"
               />
@@ -207,7 +213,9 @@ const SearchableDropdown = ({
                 ))
               ) : (
                 <View style={styles.noResults}>
-                  <AMText style={styles.noResultsText}>{noResultsText}</AMText>
+                  <AMText style={styles.noResultsText}>
+                    {displayNoResultsText}
+                  </AMText>
                 </View>
               )}
             </ScrollView>

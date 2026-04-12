@@ -6,7 +6,13 @@
     "next": "次へ",
     "start": "始める",
     "error": "エラー",
-    "withdraw_success": "退会処理が完了しました。"
+    "withdraw_success": "退会処理が完了しました。",
+    "select": "選択してください",
+    "no_result": "検索結果がありません",
+    "error_title": "通知",
+    "upload_failed": "写真のアップロードに失敗しました。もう一度お試しください。",
+    "network_error": "サーバーとの接続が円滑ではありません。",
+    "search_placeholder": "検索..."
   },
   "login": {
     "title": "AimoChat",
@@ -31,9 +37,28 @@
     "step2_title": "自分を表現してください",
     "step2_subtitle": "AIキャラクター生成に活用されます",
     "step3_title": "写真をアップロードしてください",
-    "step3_subtitle": "ポーズ写真と実物写真が必要です。",
     "step4_title": "AIキャラクターが生成されました",
-    "complete_btn": "AimoChatを始める"
+    "complete_btn": "AimoChatを始める",
+    "step3_subtitle": "ポーズ写真と実物写真が必要です。",
+    "pose_photo": "ポーズ写真",
+    "real_photo": "実物写真",
+    "step4_subtitle": "このキャラクターで最初の会話が始まります",
+    "ai_persona_name": "{{name}}さんのAIペルソナ",
+    "ai_transparency_title": "AI透明性の告知",
+    "ai_transparency_desc": "相手にはAIキャラクターが表示されます。",
+    "step2_tags": {
+      "style_label": "絵のスタイル",
+      "mood_label": "照明と感性",
+      "kwebtoon": "K-ウェブトゥーン",
+      "anime": "アニメーション",
+      "photorealistic": "実写風",
+      "digital_art": "デジタルアート",
+      "golden_hour": "暖かい日差し",
+      "neon_light": "ネオンサイン",
+      "studio": "スタジオ",
+      "dreamy": "幻想的な",
+      "calm": "落ち着いた"
+    }
   },
   "home": {
     "title": "ホーム",
@@ -76,7 +101,7 @@
     "menu": {
       "notification": "通知設定",
       "privacy": "プライバシー保護",
-      "support": "カスタ머サポート",
+      "support": "カスタマーサポート",
       "logout": "ログアウト"
     },
     "withdraw_confirm": "本当に退会しますか？\n会話内容がすべて削除されます。",

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 import { MotiView } from 'moti';
-import { useTranslation } from 'react-i18next'; // 추가
+import { useTranslation } from 'react-i18next';
 import AMText from '../common/AMText';
 import AMTouchableOpacity from '../common/AMTouchableOpacity';
 import { AIData, SignUpData } from '../../screens/SignUpScreen';
@@ -20,7 +20,7 @@ const SignUpStep3 = ({
   profileData,
   aiData,
 }: SignUpStep3Props) => {
-  const { t } = useTranslation(); // 추가
+  const { t } = useTranslation();
 
   return (
     <MotiView
@@ -30,10 +30,7 @@ const SignUpStep3 = ({
       <AMText style={styles.title} fontFamily={PretendardFont.Bold}>
         {t('signup.step3_title')}
       </AMText>
-      <AMText style={styles.subtitle}>
-        {/* ko.json에 "포즈 사진과 실물 사진이 필요합니다." 추가 권장 */}
-        포즈 사진과 실물 사진이 필요합니다.
-      </AMText>
+      <AMText style={styles.subtitle}>{t('signup.step3_subtitle')}</AMText>
 
       <View style={styles.photoGrid}>
         <View style={styles.uploadBoxContainer}>
@@ -49,7 +46,7 @@ const SignUpStep3 = ({
             ) : null}
           </AMTouchableOpacity>
           <AMText style={styles.uploadBoxText} fontWeight={500}>
-            포즈사진
+            {t('signup.pose_photo')}
           </AMText>
         </View>
 
@@ -66,7 +63,7 @@ const SignUpStep3 = ({
             ) : null}
           </AMTouchableOpacity>
           <AMText style={styles.uploadBoxText} fontWeight={500}>
-            실물사진
+            {t('signup.real_photo')}
           </AMText>
         </View>
       </View>

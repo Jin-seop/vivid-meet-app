@@ -3,13 +3,14 @@ import { Image, StyleSheet, View } from 'react-native';
 import { MotiView } from 'moti';
 import LinearGradient from 'react-native-linear-gradient';
 import { CheckCircle2 } from 'lucide-react-native';
-import { useTranslation } from 'react-i18next'; // 추가
+import { useTranslation } from 'react-i18next';
 import AMText from '../common/AMText';
 import AMTouchableOpacity from '../common/AMTouchableOpacity';
 import {
   SignUpData,
   SignUpScreenNavigationProp,
 } from '../../screens/SignUpScreen';
+import { RootStackScreenName } from '../../screens/navigation/RootStack';
 
 interface SignUpStep4Props {
   profileData: SignUpData;
@@ -17,10 +18,10 @@ interface SignUpStep4Props {
 }
 
 const SignUpStep4 = ({ profileData, navigation }: SignUpStep4Props) => {
-  const { t } = useTranslation(); // 추가
+  const { t } = useTranslation();
 
   const onCompletePress = () => {
-    navigation.replace('HomeMain');
+    navigation.replace(RootStackScreenName.HomeMain);
   };
 
   return (
@@ -31,7 +32,7 @@ const SignUpStep4 = ({ profileData, navigation }: SignUpStep4Props) => {
       <AMText style={styles.title} fontWeight={700}>
         {t('signup.step4_title')}
       </AMText>
-      <AMText style={styles.subtitle}>이 캐릭터로 첫 대화가 시작됩니다</AMText>
+      <AMText style={styles.subtitle}>{t('signup.step4_subtitle')}</AMText>
 
       <LinearGradient
         colors={['rgba(74, 144, 226, 0.1)', 'rgba(80, 227, 194, 0.1)']}
@@ -46,7 +47,7 @@ const SignUpStep4 = ({ profileData, navigation }: SignUpStep4Props) => {
           ) : null}
         </View>
         <AMText style={styles.aiName} fontWeight={700}>
-          {profileData.nickname}님의 AI 페르소나
+          {t('signup.ai_persona_name', { name: profileData.nickname })}
         </AMText>
       </LinearGradient>
 
@@ -54,10 +55,10 @@ const SignUpStep4 = ({ profileData, navigation }: SignUpStep4Props) => {
         <CheckCircle2 size={20} color="#4A90E2" />
         <View style={styles.infoTextWrapper}>
           <AMText style={styles.infoTitle} fontWeight={700}>
-            AI 투명성 고지
+            {t('signup.ai_transparency_title')}
           </AMText>
           <AMText style={styles.infoDesc}>
-            상대방에게는 AI 캐릭터가 노출됩니다.
+            {t('signup.ai_transparency_desc')}
           </AMText>
         </View>
       </View>

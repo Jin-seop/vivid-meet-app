@@ -4,7 +4,13 @@
     "cancel": "취소",
     "withdraw": "회원 탈퇴",
     "next": "다음",
-    "start": "시작하기"
+    "start": "시작하기",
+    "select": "선택하세요",
+    "no_result": "검색 결과가 없습니다",
+    "error_title": "알림",
+    "upload_failed": "사진 업로드에 실패했습니다. 다시 시도해주세요.",
+    "network_error": "서버와의 연결이 원활하지 않습니다.",
+    "search_placeholder": "검색..."
   },
   "login": {
     "title": "AimoChat",
@@ -27,9 +33,24 @@
     "korea": "한국",
     "japan": "일본",
     "step2_title": "나를 표현해주세요",
+    "step2_tags": {
+      "kwebtoon": "K-웹툰",
+      "anime": "애니메이션",
+      "neon": "네온 사인",
+      "fashion": "패션",
+      "style_label": "그림체",
+      "mood_label": "조명 및 감성"
+    },
     "step3_title": "사진을 업로드해주세요",
     "step4_title": "AI 캐릭터가 생성되었습니다",
-    "complete_btn": "AimoChat 시작하기"
+    "complete_btn": "AimoChat 시작하기",
+    "step3_subtitle": "포즈 사진과 실물 사진이 필요합니다.",
+    "pose_photo": "포즈사진",
+    "real_photo": "실물사진",
+    "step4_subtitle": "이 캐릭터로 첫 대화가 시작됩니다",
+    "ai_persona_name": "{{name}}님의 AI 페르소나",
+    "ai_transparency_title": "AI 투명성 고지",
+    "ai_transparency_desc": "상대방에게는 AI 캐릭터가 노출됩니다."
   },
   "profile": {
     "title": "내 프로필",
