@@ -13,6 +13,7 @@ import SignUpStep3 from '../components/sighUp/step_3';
 import SignUpStep4 from '../components/sighUp/step_4';
 import SignUpStep2 from '../components/sighUp/step_2';
 import { RouteProp, useRoute } from '@react-navigation/native';
+import { useAuth } from '../context/AuthContext';
 
 export type SignUpScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -42,6 +43,7 @@ export interface AIData {
 const SignUpScreen = ({ navigation }: SignUpScreenProps) => {
   const route =
     useRoute<RouteProp<RootStackParamList, RootStackScreenName.SignUp>>();
+  const { login } = useAuth();
 
   const [step, setStep] = useState(1);
   const [profileData, setProfileData] = useState<SignUpData>({
@@ -79,6 +81,16 @@ const SignUpScreen = ({ navigation }: SignUpScreenProps) => {
         realPhotos: [result.assets[0].uri],
       });
     }
+  };
+
+  const onSignUp = () => {
+    // login({
+    //   name: profileData.name,
+    //   birthYear: profileData.birthYear,
+    //   mbti: profileData.mbti,
+    //   interests: profileData.interests,
+    //   photos: uploadedPhotos,
+    // });
   };
 
   return (
