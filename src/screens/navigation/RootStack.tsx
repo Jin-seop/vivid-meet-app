@@ -1,14 +1,14 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
-import HomeScreen from '../HomeScreen';
 import LoginScreen from '../LoginScreen';
 import { SplashScreen } from '../SplashScreen';
 import SignUpScreen from '../SignUpScreen';
+import HomeTabNavigator from './HomeNavigator';
 
 export enum RootStackScreenName {
   Splash = 'Splash',
-  Main = 'Main',
+  HomeMain = 'HomeMain',
   Login = 'Login',
   SignUp = 'SignUp',
 }
@@ -42,8 +42,8 @@ const RootStack = () => {
 
         {isLoggedIn ? (
           <Stack.Screen
-            name={RootStackScreenName.Main}
-            component={HomeScreen}
+            name={RootStackScreenName.HomeMain}
+            component={HomeTabNavigator}
           />
         ) : (
           <>
@@ -54,6 +54,10 @@ const RootStack = () => {
             <Stack.Screen
               name={RootStackScreenName.SignUp}
               component={SignUpScreen}
+            />
+            <Stack.Screen
+              name={RootStackScreenName.HomeMain}
+              component={HomeTabNavigator}
             />
           </>
         )}

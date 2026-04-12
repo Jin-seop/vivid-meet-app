@@ -119,6 +119,7 @@ const SignUpScreen = ({ navigation }: SignUpScreenProps) => {
             setStep={setStep}
             onPhotoSelect={onPhotoSelect}
             profileData={profileData}
+            aiData={aiData}
           />
         )}
 

@@ -2,20 +2,57 @@ import { MotiView } from 'moti';
 import { Image, StyleSheet, View } from 'react-native';
 import VIText from '../common/VIText';
 import VITouchableOpacity from '../common/VITouchableOpacity';
-import { SignUpData } from '../../screens/SignUpScreen';
+import { AIData, SignUpData } from '../../screens/SignUpScreen';
 import { PretendardFont } from '../../utils/fonts';
-
+import axios from 'axios';
 interface SignUpStep3Props {
   setStep: React.Dispatch<React.SetStateAction<number>>;
   onPhotoSelect: (isPose: boolean) => Promise<void>;
   profileData: SignUpData;
+  aiData: AIData;
 }
 
 const SignUpStep3 = ({
   setStep,
   onPhotoSelect,
   profileData,
+  aiData,
 }: SignUpStep3Props) => {
+  const onNextStepPress = async () => {
+    try {
+      // const formData = new FormData();
+      // formData.append('poseImage', {
+      //   uri: profileData.posePhotoUrl,
+      //   name: 'pose.jpg',
+      //   type: 'image/jpeg',
+      // });
+
+      // formData.append('personImage', {
+      //   uri: profileData.realPhotos[0],
+      //   name: 'person.jpg',
+      //   type: 'image/jpeg',
+      // });
+      // const combinedPos = [aiData.mbti, ...aiData.tags]
+      //   .filter(Boolean)
+      //   .join(', ');
+      // formData.append('pos', combinedPos);
+      // const res = await axios.post(
+      //   'http://192.168.1.238:3000/ai/generate',
+      //   formData,
+      //   {
+      //     headers: {
+      //       'Content-Type': 'multipart/form-data',
+      //     },
+      //   },
+      // );
+      // console.log(res.data);
+
+      setStep(4);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <MotiView
       from={{ opacity: 0, translateX: 20 }}
@@ -34,7 +71,7 @@ const SignUpStep3 = ({
             style={styles.uploadBox}
             onPress={() => onPhotoSelect(true)}
           >
-            <Image style={styles.photoImage} />
+            <Image style={styles.photoImage} src={profileData.posePhotoUrl} />
           </VITouchableOpacity>
           <VIText style={styles.uploadBoxText} fontWeight={500}>
             포즈사진
@@ -46,7 +83,7 @@ const SignUpStep3 = ({
             style={styles.uploadBox}
             onPress={() => onPhotoSelect(false)}
           >
-            <Image style={styles.photoImage} />
+            <Image style={styles.photoImage} src={profileData.realPhotos[0]} />
           </VITouchableOpacity>
           <VIText style={styles.uploadBoxText} fontWeight={500}>
             실물사진
@@ -97,7 +134,7 @@ const SignUpStep3 = ({
         disabled={
           !profileData.posePhotoUrl || profileData.realPhotos.length === 0
         }
-        onPress={() => setStep(4)}
+        onPress={onNextStepPress}
       >
         <VIText style={styles.nextButtonText}>다음</VIText>
       </VITouchableOpacity>

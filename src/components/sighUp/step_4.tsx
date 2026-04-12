@@ -1,5 +1,5 @@
 import { MotiView } from 'moti';
-import { StyleSheet, View } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 import VIText from '../common/VIText';
 import LinearGradient from 'react-native-linear-gradient';
 import { CheckCircle2 } from 'lucide-react-native';
@@ -31,8 +31,8 @@ const SignUpStep4 = ({ profileData, navigation }: SignUpStep4Props) => {
         colors={['rgba(74, 144, 226, 0.1)', 'rgba(80, 227, 194, 0.1)']}
         style={styles.aiCard}
       >
-        <View style={styles.aiAvatar}>
-          <VIText style={styles.aiAvatarText}>AI</VIText>
+        <View style={styles.aiAvatarContainer}>
+          <Image style={styles.aiAvatarImage} src={profileData.aiPhotoUrl} />
         </View>
         <VIText style={styles.aiName}>
           {profileData.nickname}님의 AI 페르소나
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 24,
   },
-  aiAvatar: {
+  aiAvatarContainer: {
     width: 90,
     height: 90,
     borderRadius: 45,
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
   },
-  aiAvatarText: { color: 'white', fontSize: 24, fontWeight: 'bold' },
+  aiAvatarImage: { width: '100%', height: '100%' },
   aiName: {
     fontSize: 18,
     fontWeight: 'bold',
