@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
-  Dimensions,
   StatusBar,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -19,8 +18,8 @@ import {
   Star,
 } from 'lucide-react-native';
 import VIText from '../components/common/VIText';
-
-const { width } = Dimensions.get('window');
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { RootStackScreenName } from './navigation/RootStack';
 
 const HomeScreen = ({ navigation }: any) => {
   const [freeMatches, setFreeMatches] = useState(10);
@@ -32,12 +31,12 @@ const HomeScreen = ({ navigation }: any) => {
       setIsMatching(false);
       setFreeMatches(prev => Math.max(0, prev - 1));
       // 네비게이션 경로에 맞춰 수정 필요
-      navigation.navigate('ChatDetail', { id: '1' });
+      navigation.navigate(RootStackScreenName.Chat, { id: '1' });
     }, 2000);
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
 
       {/* Header */}
@@ -259,7 +258,7 @@ const HomeScreen = ({ navigation }: any) => {
           </LinearGradient>
         </MotiView>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 
