@@ -1,9 +1,9 @@
-// src/screens/navigation/HomeTabNavigator.tsx
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from '../HomeScreen';
 import { MessageCircle, Home, User } from 'lucide-react-native';
-import { View } from 'react-native'; // 임시 컴포넌트용
+import ChatsListScreen from '../ChatsListScreen';
+import ProfileScreen from '../ProfileScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -26,7 +26,7 @@ const HomeTabNavigator = () => {
       />
       <Tab.Screen
         name="ChatList"
-        component={View} // 추후 채팅 목록 컴포넌트로 교체
+        component={ChatsListScreen} // 추후 채팅 목록 컴포넌트로 교체
         options={{
           tabBarIcon: ({ color }) => <MessageCircle color={color} size={24} />,
           tabBarLabel: '채팅',
@@ -34,7 +34,7 @@ const HomeTabNavigator = () => {
       />
       <Tab.Screen
         name="Profile"
-        component={View} // 추후 마이페이지 컴포넌트로 교체
+        component={ProfileScreen} // 추후 마이페이지 컴포넌트로 교체
         options={{
           tabBarIcon: ({ color }) => <User color={color} size={24} />,
           tabBarLabel: '마이',

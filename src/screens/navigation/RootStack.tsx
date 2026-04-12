@@ -5,12 +5,14 @@ import LoginScreen from '../LoginScreen';
 import { SplashScreen } from '../SplashScreen';
 import SignUpScreen from '../SignUpScreen';
 import HomeTabNavigator from './HomeNavigator';
+import ChatScreen from '../ChatScreen';
 
 export enum RootStackScreenName {
   Splash = 'Splash',
   HomeMain = 'HomeMain',
   Login = 'Login',
   SignUp = 'SignUp',
+  Chat = 'Chat',
 }
 
 const Stack = createStackNavigator();
@@ -40,27 +42,19 @@ const RootStack = () => {
           component={SplashScreen}
         />
 
-        {isLoggedIn ? (
-          <Stack.Screen
-            name={RootStackScreenName.HomeMain}
-            component={HomeTabNavigator}
-          />
-        ) : (
-          <>
-            <Stack.Screen
-              name={RootStackScreenName.Login}
-              component={LoginScreen}
-            />
-            <Stack.Screen
-              name={RootStackScreenName.SignUp}
-              component={SignUpScreen}
-            />
-            <Stack.Screen
-              name={RootStackScreenName.HomeMain}
-              component={HomeTabNavigator}
-            />
-          </>
-        )}
+        <Stack.Screen
+          name={RootStackScreenName.Login}
+          component={LoginScreen}
+        />
+        <Stack.Screen
+          name={RootStackScreenName.SignUp}
+          component={SignUpScreen}
+        />
+        <Stack.Screen
+          name={RootStackScreenName.HomeMain}
+          component={HomeTabNavigator}
+        />
+        <Stack.Screen name={RootStackScreenName.Chat} component={ChatScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
