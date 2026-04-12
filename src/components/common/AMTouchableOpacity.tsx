@@ -5,12 +5,12 @@ import {
   GestureResponderEvent,
 } from 'react-native';
 
-interface VITouchableOpacityProps extends TouchableOpacityProps {
+interface AMTouchableOpacityProps extends TouchableOpacityProps {
   children?: React.ReactNode;
   throttleTime?: number;
 }
 
-const VITouchableOpacity = (props: VITouchableOpacityProps) => {
+const AMTouchableOpacity = (props: AMTouchableOpacityProps) => {
   const { onPress, throttleTime = 1000, children, ...rest } = props;
   const lastPress = useRef<number>(0);
 
@@ -32,4 +32,4 @@ const VITouchableOpacity = (props: VITouchableOpacityProps) => {
   );
 };
 
-export default VITouchableOpacity;
+export default AMTouchableOpacity;

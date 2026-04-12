@@ -1,7 +1,7 @@
 import { MotiView } from 'moti';
 import { StyleSheet, View, ScrollView } from 'react-native';
-import VIText from '../common/VIText';
-import VITouchableOpacity from '../common/VITouchableOpacity';
+import AMText from '../common/AMText';
+import AMTouchableOpacity from '../common/AMTouchableOpacity';
 import { AIData } from '../../screens/SignUpScreen';
 
 interface SignUpStep2Props {
@@ -43,46 +43,46 @@ const SignUpStep2 = ({ aiData, setAIData, setStep }: SignUpStep2Props) => {
         from={{ opacity: 0, translateX: 20 }}
         animate={{ opacity: 1, translateX: 0 }}
       >
-        <VIText style={styles.title}>나를 표현해주세요</VIText>
-        <VIText style={styles.subtitle}>AI 캐릭터 생성에 활용됩니다</VIText>
+        <AMText style={styles.title}>나를 표현해주세요</AMText>
+        <AMText style={styles.subtitle}>AI 캐릭터 생성에 활용됩니다</AMText>
 
         {/* 1. MBTI 섹션 */}
-        <VIText style={styles.label}>MBTI (선택)</VIText>
+        <AMText style={styles.label}>MBTI (선택)</AMText>
         <View style={styles.interestGrid}>
           {['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP'].map(
             mbti => (
-              <VITouchableOpacity
+              <AMTouchableOpacity
                 key={mbti}
                 onPress={() => setAIData({ ...aiData, mbti })}
                 style={[styles.chip, aiData.mbti === mbti && styles.chipActive]}
               >
-                <VIText
+                <AMText
                   style={[
                     styles.chipText,
                     aiData.mbti === mbti && styles.chipTextActive,
                   ]}
                 >
                   {mbti}
-                </VIText>
-              </VITouchableOpacity>
+                </AMText>
+              </AMTouchableOpacity>
             ),
           )}
         </View>
 
         {/* 2. AI 스타일 및 분위기 태그 섹션 */}
         <View style={styles.tagSection}>
-          <VIText style={styles.label}>원하는 스타일 및 분위기 (선택)</VIText>
+          <AMText style={styles.label}>원하는 스타일 및 분위기 (선택)</AMText>
 
           {Object.entries(TAG_CATEGORIES).map(([category, tags]) => (
             <View key={category} style={styles.categoryContainer}>
-              <VIText style={styles.subLabel}>
+              <AMText style={styles.subLabel}>
                 {category === 'style' ? '그림체' : '조명 및 감성'}
-              </VIText>
+              </AMText>
               <View style={styles.interestGrid}>
                 {tags.map(tag => {
                   const isSelected = aiData.tags?.includes(tag.value);
                   return (
-                    <VITouchableOpacity
+                    <AMTouchableOpacity
                       key={tag.value}
                       onPress={() => toggleTag(tag.value)}
                       style={[
@@ -90,15 +90,15 @@ const SignUpStep2 = ({ aiData, setAIData, setStep }: SignUpStep2Props) => {
                         isSelected && styles.tagChipActive,
                       ]}
                     >
-                      <VIText
+                      <AMText
                         style={[
                           styles.tagText,
                           isSelected && styles.tagTextActive,
                         ]}
                       >
                         {tag.label}
-                      </VIText>
-                    </VITouchableOpacity>
+                      </AMText>
+                    </AMTouchableOpacity>
                   );
                 })}
               </View>
@@ -107,12 +107,12 @@ const SignUpStep2 = ({ aiData, setAIData, setStep }: SignUpStep2Props) => {
         </View>
 
         {/* 하단 버튼 */}
-        <VITouchableOpacity
+        <AMTouchableOpacity
           style={[styles.nextButton]}
           onPress={() => setStep(3)}
         >
-          <VIText style={styles.nextButtonText}>다음</VIText>
-        </VITouchableOpacity>
+          <AMText style={styles.nextButtonText}>다음</AMText>
+        </AMTouchableOpacity>
       </MotiView>
     </ScrollView>
   );

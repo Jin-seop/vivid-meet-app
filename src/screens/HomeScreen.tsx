@@ -17,7 +17,7 @@ import {
   Filter,
   Star,
 } from 'lucide-react-native';
-import VIText from '../components/common/VIText';
+import AMText from '../components/common/AMText';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { RootStackScreenName } from './navigation/RootStack';
 
@@ -43,15 +43,15 @@ const HomeScreen = ({ navigation }: any) => {
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <Sparkles size={24} color="#4A90E2" />
-          <VIText style={styles.logoText} fontWeight={700}>
+          <AMText style={styles.logoText} fontWeight={700}>
             AimoMeet
-          </VIText>
+          </AMText>
         </View>
         <View style={styles.badge}>
           <Zap size={12} color="#50E3C2" />
-          <VIText style={styles.badgeText} fontWeight={600}>
+          <AMText style={styles.badgeText} fontWeight={600}>
             {freeMatches}회 남음
-          </VIText>
+          </AMText>
         </View>
       </View>
 
@@ -73,12 +73,12 @@ const HomeScreen = ({ navigation }: any) => {
           >
             <View style={styles.matchCardHeader}>
               <View>
-                <VIText style={styles.matchTitle} fontWeight={700}>
+                <AMText style={styles.matchTitle} fontWeight={700}>
                   즉시 매칭
-                </VIText>
-                <VIText style={styles.matchSubtitle}>
+                </AMText>
+                <AMText style={styles.matchSubtitle}>
                   3초 안에 새로운 친구와 연결
-                </VIText>
+                </AMText>
               </View>
               <Zap size={40} color="white" opacity={0.8} />
             </View>
@@ -105,31 +105,31 @@ const HomeScreen = ({ navigation }: any) => {
                   >
                     <Sparkles size={20} color="#4A90E2" />
                   </MotiView>
-                  <VIText style={styles.matchButtonText} fontWeight={700}>
+                  <AMText style={styles.matchButtonText} fontWeight={700}>
                     매칭 중...
-                  </VIText>
+                  </AMText>
                 </View>
               ) : (
                 <View style={styles.row}>
                   <MessageCircle size={20} color="#4A90E2" />
-                  <VIText style={styles.matchButtonText} fontWeight={700}>
+                  <AMText style={styles.matchButtonText} fontWeight={700}>
                     지금 바로 대화 시작
-                  </VIText>
+                  </AMText>
                 </View>
               )}
             </TouchableOpacity>
 
             {freeMatches === 0 && (
-              <VIText style={styles.resetText}>
+              <AMText style={styles.resetText}>
                 내일 00시에 무료 기회가 초기화됩니다
-              </VIText>
+              </AMText>
             )}
           </LinearGradient>
           <View style={styles.matchCardFooter}>
             <Star size={16} color="#4A90E2" />
-            <VIText style={styles.matchCardFooterText}>
+            <AMText style={styles.matchCardFooterText}>
               매일 무료 10회 제공 • 성별/취향 필터 가능
-            </VIText>
+            </AMText>
           </View>
         </MotiView>
 
@@ -143,27 +143,27 @@ const HomeScreen = ({ navigation }: any) => {
           <View style={styles.sectionHeader}>
             <View style={styles.row}>
               <Filter size={18} color="#717182" />
-              <VIText style={styles.sectionTitle} fontWeight={600}>
+              <AMText style={styles.sectionTitle} fontWeight={600}>
                 대화 취향 설정
-              </VIText>
+              </AMText>
             </View>
             <TouchableOpacity>
-              <VIText style={styles.actionText} fontWeight={600}>
+              <AMText style={styles.actionText} fontWeight={600}>
                 변경
-              </VIText>
+              </AMText>
             </TouchableOpacity>
           </View>
 
           <View style={styles.filterItem}>
-            <VIText style={styles.filterLabel}>선호하는 친구 성별</VIText>
+            <AMText style={styles.filterLabel}>선호하는 친구 성별</AMText>
             <View style={styles.filterBadge}>
-              <VIText style={styles.filterBadgeText}>모두</VIText>
+              <AMText style={styles.filterBadgeText}>모두</AMText>
             </View>
           </View>
           <View style={styles.filterItem}>
-            <VIText style={styles.filterLabel}>연령대</VIText>
+            <AMText style={styles.filterLabel}>연령대</AMText>
             <View style={styles.filterBadge}>
-              <VIText style={styles.filterBadgeText}>20-30대</VIText>
+              <AMText style={styles.filterBadgeText}>20-30대</AMText>
             </View>
           </View>
         </MotiView>
@@ -175,13 +175,13 @@ const HomeScreen = ({ navigation }: any) => {
           transition={{ delay: 200 }}
         >
           <View style={styles.sectionHeader}>
-            <VIText style={styles.sectionTitle} fontWeight={600}>
+            <AMText style={styles.sectionTitle} fontWeight={600}>
               최근 매칭된 친구들
-            </VIText>
+            </AMText>
             <TouchableOpacity>
-              <VIText style={styles.actionText} fontWeight={600}>
+              <AMText style={styles.actionText} fontWeight={600}>
                 전체보기
-              </VIText>
+              </AMText>
             </TouchableOpacity>
           </View>
 
@@ -215,14 +215,14 @@ const HomeScreen = ({ navigation }: any) => {
                   <View style={styles.onlineStatus} />
                 </View>
                 <View style={styles.recentInfo}>
-                  <VIText
+                  <AMText
                     style={styles.recentName}
                     fontWeight={600}
                     numberOfLines={1}
                   >
                     {person.name}
-                  </VIText>
-                  <VIText style={styles.recentMbti}>{person.mbti}</VIText>
+                  </AMText>
+                  <AMText style={styles.recentMbti}>{person.mbti}</AMText>
                 </View>
               </TouchableOpacity>
             ))}
@@ -241,19 +241,19 @@ const HomeScreen = ({ navigation }: any) => {
           >
             <View style={styles.premiumHeader}>
               <View>
-                <VIText style={styles.premiumTitle} fontWeight={700}>
+                <AMText style={styles.premiumTitle} fontWeight={700}>
                   프리미엄 기능
-                </VIText>
-                <VIText style={styles.premiumSubtitle}>
+                </AMText>
+                <AMText style={styles.premiumSubtitle}>
                   더 빠르게 친구를 만나보세요
-                </VIText>
+                </AMText>
               </View>
               <Heart size={32} color="white" />
             </View>
             <TouchableOpacity style={styles.premiumButton}>
-              <VIText style={styles.premiumButtonText} fontWeight={700}>
+              <AMText style={styles.premiumButtonText} fontWeight={700}>
                 프리미엄 구독하기
-              </VIText>
+              </AMText>
             </TouchableOpacity>
           </LinearGradient>
         </MotiView>

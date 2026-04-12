@@ -11,7 +11,7 @@ import {
 import { MotiView } from 'moti';
 import { Search, MoreVertical, Lock } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import VIText from '../components/common/VIText';
+import AMText from '../components/common/AMText';
 import { RootStackScreenName } from './navigation/RootStack';
 
 interface Chat {
@@ -97,9 +97,9 @@ const ChatsListScreen = ({ navigation }: any) => {
       {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerTop}>
-          <VIText style={styles.headerTitle} fontWeight={700}>
+          <AMText style={styles.headerTitle} fontWeight={700}>
             채팅
-          </VIText>
+          </AMText>
           <TouchableOpacity style={styles.iconButton}>
             <MoreVertical size={24} color="#1F2937" />
           </TouchableOpacity>
@@ -147,9 +147,9 @@ const ChatsListScreen = ({ navigation }: any) => {
               <View style={styles.chatInfo}>
                 <View style={styles.chatInfoTop}>
                   <View style={styles.nameRow}>
-                    <VIText style={styles.chatName} fontWeight={600}>
+                    <AMText style={styles.chatName} fontWeight={600}>
                       {chat.name}
-                    </VIText>
+                    </AMText>
                     {/* Progress Indicator dots */}
                     <View style={styles.dotRow}>
                       {Array.from({ length: chat.totalPhotos }).map((_, i) => (
@@ -166,18 +166,18 @@ const ChatsListScreen = ({ navigation }: any) => {
                       ))}
                     </View>
                   </View>
-                  <VIText style={styles.timestamp}>{chat.timestamp}</VIText>
+                  <AMText style={styles.timestamp}>{chat.timestamp}</AMText>
                 </View>
 
                 <View style={styles.chatInfoBottom}>
-                  <VIText style={styles.lastMessage} numberOfLines={1}>
+                  <AMText style={styles.lastMessage} numberOfLines={1}>
                     {chat.lastMessage}
-                  </VIText>
+                  </AMText>
                   {chat.unread > 0 && (
                     <View style={styles.unreadBadge}>
-                      <VIText style={styles.unreadText} fontWeight={600}>
+                      <AMText style={styles.unreadText} fontWeight={600}>
                         {chat.unread}
-                      </VIText>
+                      </AMText>
                     </View>
                   )}
                 </View>
@@ -192,12 +192,12 @@ const ChatsListScreen = ({ navigation }: any) => {
             <View style={styles.emptyIconCircle}>
               <Search size={40} color="#D1D5DB" />
             </View>
-            <VIText style={styles.emptyTitle} fontWeight={600}>
+            <AMText style={styles.emptyTitle} fontWeight={600}>
               아직 대화가 없습니다
-            </VIText>
-            <VIText style={styles.emptyDesc}>
+            </AMText>
+            <AMText style={styles.emptyDesc}>
               홈에서 즉시 매칭으로 새로운 친구를 만나보세요
-            </VIText>
+            </AMText>
           </View>
         )}
       </ScrollView>

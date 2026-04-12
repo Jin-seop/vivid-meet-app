@@ -5,13 +5,13 @@ import {
   PretendardFontWeight,
 } from '../../utils/fonts';
 
-interface VITextProps extends TextProps {
+interface AMTextProps extends TextProps {
   children?: React.ReactNode;
   fontWeight?: PretendardFontWeight;
   fontFamily?: PretendardFont;
 }
 
-const VIText = (props: VITextProps) => {
+const AMText = (props: AMTextProps) => {
   const { style, fontWeight = 400, fontFamily, ...rest } = props;
   const resolvedFontFamily = getPretendardFont(fontWeight, fontFamily);
   return (
@@ -21,4 +21,4 @@ const VIText = (props: VITextProps) => {
   );
 };
 
-export default VIText;
+export default AMText;

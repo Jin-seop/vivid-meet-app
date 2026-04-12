@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { ChevronDown, Check } from 'lucide-react-native';
 import { MotiView } from 'moti';
-import VIText from '../common/VIText';
+import AMText from './AMText';
 
 export interface DropdownOption {
   value: string;
@@ -66,9 +66,9 @@ const Dropdown = ({
   return (
     <View style={[styles.container, fullWidth && styles.fullWidth]}>
       {label && (
-        <VIText style={styles.label} fontWeight={600}>
+        <AMText style={styles.label} fontWeight={600}>
           {label}
-        </VIText>
+        </AMText>
       )}
 
       {/* 선택 버튼 (Anchor) */}
@@ -87,7 +87,7 @@ const Dropdown = ({
             {selectedOption?.icon && (
               <View style={styles.iconPrefix}>{selectedOption.icon}</View>
             )}
-            <VIText
+            <AMText
               style={[
                 styles.selectedLabel,
                 !selectedOption && styles.placeholderText,
@@ -95,7 +95,7 @@ const Dropdown = ({
               numberOfLines={1}
             >
               {selectedOption?.label || placeholder}
-            </VIText>
+            </AMText>
           </View>
           <MotiView
             animate={{ rotate: isOpen ? '180deg' : '0deg' }}
@@ -144,14 +144,14 @@ const Dropdown = ({
                   {option.icon && (
                     <View style={styles.iconPrefix}>{option.icon}</View>
                   )}
-                  <VIText
+                  <AMText
                     style={[
                       styles.optionLabel,
                       option.disabled && styles.disabledText,
                     ]}
                   >
                     {option.label}
-                  </VIText>
+                  </AMText>
                   {option.value === value && (
                     <Check size={18} color="#4A90E2" />
                   )}
@@ -162,7 +162,7 @@ const Dropdown = ({
         </TouchableOpacity>
       </Modal>
 
-      {error && <VIText style={styles.errorText}>{error}</VIText>}
+      {error && <AMText style={styles.errorText}>{error}</AMText>}
     </View>
   );
 };

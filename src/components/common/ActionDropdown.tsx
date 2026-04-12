@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { MoreVertical } from 'lucide-react-native';
 import { MotiView } from 'moti';
-import VIText from '../common/VIText';
+import AMText from './AMText';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -125,12 +125,12 @@ const ActionDropdown = ({
                     {option.icon && (
                       <View style={styles.iconWrapper}>{option.icon}</View>
                     )}
-                    <VIText
+                    <AMText
                       style={[styles.optionLabel, { color: textColor }]}
                       fontWeight={500}
                     >
                       {option.label}
-                    </VIText>
+                    </AMText>
                   </TouchableOpacity>
                 );
               })}

@@ -1,9 +1,9 @@
 import { MotiView } from 'moti';
 import { StyleSheet, View } from 'react-native';
-import VIText from '../common/VIText';
+import AMText from '../common/AMText';
 import { ArrowLeft } from 'lucide-react-native';
 import { SignUpScreenNavigationProp } from '../../screens/SignUpScreen';
-import VITouchableOpacity from '../common/VITouchableOpacity';
+import AMTouchableOpacity from '../common/AMTouchableOpacity';
 
 interface SignUpHeaderProps {
   step: number;
@@ -22,12 +22,12 @@ const SignUpHeader = ({
 }: SignUpHeaderProps) => {
   return (
     <View style={styles.header}>
-      <VITouchableOpacity
+      <AMTouchableOpacity
         onPress={() => (step === 1 ? navigation.goBack() : setStep(step - 1))}
         style={styles.backButton}
       >
         <ArrowLeft size={24} color="#1F2937" />
-      </VITouchableOpacity>
+      </AMTouchableOpacity>
       <View style={styles.progressWrapper}>
         <View style={styles.progressBg}>
           <MotiView
@@ -36,9 +36,9 @@ const SignUpHeader = ({
           />
         </View>
       </View>
-      <VIText style={styles.stepIndicator}>
+      <AMText style={styles.stepIndicator}>
         {step}/{totalSteps}
-      </VIText>
+      </AMText>
     </View>
   );
 };

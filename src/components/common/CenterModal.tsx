@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { X } from 'lucide-react-native';
 import { MotiView } from 'moti';
-import VIText from '../common/VIText';
+import AMText from './AMText';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -80,9 +80,9 @@ const CenterModal = ({
             {(title || showCloseButton) && (
               <View style={styles.header}>
                 {title && (
-                  <VIText style={styles.title} fontWeight={700}>
+                  <AMText style={styles.title} fontWeight={700}>
                     {title}
-                  </VIText>
+                  </AMText>
                 )}
                 {showCloseButton && (
                   <TouchableOpacity
@@ -145,9 +145,9 @@ export function ModalButton({
         disabled && { opacity: 0.5 },
       ]}
     >
-      <VIText style={[styles.buttonText, { color: text }]} fontWeight={600}>
+      <AMText style={[styles.buttonText, { color: text }]} fontWeight={600}>
         {children}
-      </VIText>
+      </AMText>
     </TouchableOpacity>
   );
 }

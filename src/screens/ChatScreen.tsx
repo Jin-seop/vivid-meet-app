@@ -23,7 +23,7 @@ import {
   Gift,
 } from 'lucide-react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import VIText from '../components/common/VIText';
+import AMText from '../components/common/AMText';
 
 interface Message {
   id: string;
@@ -137,7 +137,7 @@ const ChatScreen = ({ navigation, route }: any) => {
         >
           <View style={styles.systemMsgBadge}>
             <Gift size={14} color="#50E3C2" style={{ marginRight: 6 }} />
-            <VIText style={styles.systemMsgText}>{item.content}</VIText>
+            <AMText style={styles.systemMsgText}>{item.content}</AMText>
           </View>
         </MotiView>
       );
@@ -160,16 +160,16 @@ const ChatScreen = ({ navigation, route }: any) => {
           <View
             style={[styles.bubble, isMe ? styles.myBubble : styles.theirBubble]}
           >
-            <VIText
+            <AMText
               style={[
                 styles.bubbleText,
                 isMe ? styles.myBubbleText : styles.theirBubbleText,
               ]}
             >
               {item.content}
-            </VIText>
+            </AMText>
           </View>
-          <VIText style={styles.timestampText}>{item.timestamp}</VIText>
+          <AMText style={styles.timestampText}>{item.timestamp}</AMText>
         </View>
       </View>
     );
@@ -195,9 +195,9 @@ const ChatScreen = ({ navigation, route }: any) => {
           </View>
           <View style={styles.userInfo}>
             <View style={styles.nameRow}>
-              <VIText style={styles.userName} fontWeight={600}>
+              <AMText style={styles.userName} fontWeight={600}>
                 {chatUser.name}
-              </VIText>
+              </AMText>
               <View style={styles.dotRow}>
                 {Array.from({ length: 5 }).map((_, i) => (
                   <View
@@ -213,9 +213,9 @@ const ChatScreen = ({ navigation, route }: any) => {
                 ))}
               </View>
             </View>
-            <VIText style={styles.userMeta}>
+            <AMText style={styles.userMeta}>
               {chatUser.mbti} • {chatUser.interests.slice(0, 2).join(', ')}
-            </VIText>
+            </AMText>
           </View>
         </View>
 
@@ -235,18 +235,18 @@ const ChatScreen = ({ navigation, route }: any) => {
           <View style={styles.bannerContent}>
             <View style={styles.row}>
               <Lock size={14} color="white" />
-              <VIText style={styles.bannerText}>
+              <AMText style={styles.bannerText}>
                 실물 사진 {5 - photosUnlocked}장 잠금됨
-              </VIText>
+              </AMText>
             </View>
             <TouchableOpacity
               style={styles.bannerButton}
               onPress={() => setPhotosUnlocked(5)}
             >
               <Unlock size={14} color="#4A90E2" style={{ marginRight: 4 }} />
-              <VIText style={styles.bannerButtonText} fontWeight={600}>
+              <AMText style={styles.bannerButtonText} fontWeight={600}>
                 즉시 해제
-              </VIText>
+              </AMText>
             </TouchableOpacity>
           </View>
         </LinearGradient>

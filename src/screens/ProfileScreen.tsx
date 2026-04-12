@@ -26,7 +26,7 @@ import {
   Sparkles,
 } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import VIText from '../components/common/VIText';
+import AMText from '../components/common/AMText';
 
 const { width } = Dimensions.get('window');
 
@@ -66,14 +66,14 @@ const ProfileScreen = ({ navigation }: any) => {
     >
       <View style={styles.menuItemLeft}>
         {icon}
-        <VIText
+        <AMText
           style={[
             styles.menuItemTitle,
             isDestructive && styles.destructiveText,
           ]}
         >
           {title}
-        </VIText>
+        </AMText>
       </View>
       <ChevronRight size={20} color="#9CA3AF" />
     </TouchableOpacity>
@@ -85,9 +85,9 @@ const ProfileScreen = ({ navigation }: any) => {
 
       {/* Header */}
       <SafeAreaView edges={['top']} style={styles.header}>
-        <VIText style={styles.headerTitle} fontWeight={700}>
+        <AMText style={styles.headerTitle} fontWeight={700}>
           마이페이지
-        </VIText>
+        </AMText>
         <TouchableOpacity style={styles.iconButton}>
           <Settings size={24} color="#1F2937" />
         </TouchableOpacity>
@@ -130,9 +130,9 @@ const ProfileScreen = ({ navigation }: any) => {
                     color="white"
                     style={{ marginRight: 4 }}
                   />
-                  <VIText style={styles.premiumBadgeText} fontWeight={600}>
+                  <AMText style={styles.premiumBadgeText} fontWeight={600}>
                     프리미엄
-                  </VIText>
+                  </AMText>
                 </LinearGradient>
               )}
             </View>
@@ -140,59 +140,59 @@ const ProfileScreen = ({ navigation }: any) => {
             <View style={styles.profileInfo}>
               <View style={styles.nameRow}>
                 <View style={{ flex: 1 }}>
-                  <VIText style={styles.userName} fontWeight={700}>
+                  <AMText style={styles.userName} fontWeight={700}>
                     {userProfile.name}, {userProfile.age}
-                  </VIText>
+                  </AMText>
                   <View style={styles.badgeRow}>
                     <View style={styles.mbtiBadge}>
-                      <VIText style={styles.mbtiText} fontWeight={600}>
+                      <AMText style={styles.mbtiText} fontWeight={600}>
                         {userProfile.mbti}
-                      </VIText>
+                      </AMText>
                     </View>
                     {userProfile.interests.slice(0, 2).map(interest => (
                       <View key={interest} style={styles.interestBadge}>
-                        <VIText style={styles.interestText}>{interest}</VIText>
+                        <AMText style={styles.interestText}>{interest}</AMText>
                       </View>
                     ))}
                   </View>
                 </View>
                 <TouchableOpacity style={styles.editButton}>
                   <Edit size={16} color="#4B5563" />
-                  <VIText style={styles.editButtonText} fontWeight={600}>
+                  <AMText style={styles.editButtonText} fontWeight={600}>
                     편집
-                  </VIText>
+                  </AMText>
                 </TouchableOpacity>
               </View>
 
-              <VIText style={styles.bioText}>{userProfile.bio}</VIText>
+              <AMText style={styles.bioText}>{userProfile.bio}</AMText>
 
               <View style={styles.statsRow}>
                 <View style={styles.statItem}>
                   <View style={styles.statIconRow}>
                     <Heart size={16} color="#4A90E2" />
-                    <VIText style={styles.statValue} fontWeight={700}>
+                    <AMText style={styles.statValue} fontWeight={700}>
                       {userProfile.stats.matches}
-                    </VIText>
+                    </AMText>
                   </View>
-                  <VIText style={styles.statLabel}>매칭</VIText>
+                  <AMText style={styles.statLabel}>매칭</AMText>
                 </View>
                 <View style={[styles.statItem, styles.statBorder]}>
                   <View style={styles.statIconRow}>
                     <MessageCircle size={16} color="#50E3C2" />
-                    <VIText style={styles.statValue} fontWeight={700}>
+                    <AMText style={styles.statValue} fontWeight={700}>
                       {userProfile.stats.chats}
-                    </VIText>
+                    </AMText>
                   </View>
-                  <VIText style={styles.statLabel}>대화</VIText>
+                  <AMText style={styles.statLabel}>대화</AMText>
                 </View>
                 <View style={styles.statItem}>
                   <View style={styles.statIconRow}>
                     <Star size={16} color="#F59E0B" />
-                    <VIText style={styles.statValue} fontWeight={700}>
+                    <AMText style={styles.statValue} fontWeight={700}>
                       {userProfile.stats.likes}
-                    </VIText>
+                    </AMText>
                   </View>
-                  <VIText style={styles.statLabel}>받은 좋아요</VIText>
+                  <AMText style={styles.statLabel}>받은 좋아요</AMText>
                 </View>
               </View>
             </View>
@@ -207,14 +207,14 @@ const ProfileScreen = ({ navigation }: any) => {
           style={styles.sectionCard}
         >
           <View style={styles.sectionHeader}>
-            <VIText style={styles.sectionTitle} fontWeight={600}>
+            <AMText style={styles.sectionTitle} fontWeight={600}>
               내 사진
-            </VIText>
+            </AMText>
             <TouchableOpacity style={styles.row}>
               <Edit size={14} color="#4A90E2" />
-              <VIText style={styles.actionText} fontWeight={600}>
+              <AMText style={styles.actionText} fontWeight={600}>
                 관리
-              </VIText>
+              </AMText>
             </TouchableOpacity>
           </View>
           <View style={styles.photoGrid}>
@@ -242,19 +242,19 @@ const ProfileScreen = ({ navigation }: any) => {
             >
               <View style={styles.upgradeHeader}>
                 <View style={{ flex: 1 }}>
-                  <VIText style={styles.upgradeTitle} fontWeight={700}>
+                  <AMText style={styles.upgradeTitle} fontWeight={700}>
                     프리미엄 멤버십
-                  </VIText>
-                  <VIText style={styles.upgradeSubtitle}>
+                  </AMText>
+                  <AMText style={styles.upgradeSubtitle}>
                     더 많은 기능으로 완벽한 만남을 경험하세요
-                  </VIText>
+                  </AMText>
                 </View>
                 <Sparkles size={32} color="white" />
               </View>
               <TouchableOpacity style={styles.upgradeButton}>
-                <VIText style={styles.upgradeButtonText} fontWeight={700}>
+                <AMText style={styles.upgradeButtonText} fontWeight={700}>
                   지금 시작하기
-                </VIText>
+                </AMText>
               </TouchableOpacity>
             </LinearGradient>
           </MotiView>
@@ -296,7 +296,7 @@ const ProfileScreen = ({ navigation }: any) => {
           )}
         </MotiView>
 
-        <VIText style={styles.versionText}>AimoMeet v1.0.0</VIText>
+        <AMText style={styles.versionText}>AimoMeet v1.0.0</AMText>
       </ScrollView>
     </View>
   );

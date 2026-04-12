@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { ChevronDown, Check, X } from 'lucide-react-native';
 import { MotiView } from 'moti';
-import VIText from '../common/VIText';
+import AMText from './AMText';
 
 export interface MultiSelectOption {
   value: string;
@@ -73,7 +73,7 @@ const MultiSelectDropdown = ({
 
   const renderSelectedItems = () => {
     if (selectedOptions.length === 0) {
-      return <VIText style={styles.placeholderText}>{placeholder}</VIText>;
+      return <AMText style={styles.placeholderText}>{placeholder}</AMText>;
     }
 
     const displayOptions = selectedOptions.slice(0, maxDisplay);
@@ -88,9 +88,9 @@ const MultiSelectDropdown = ({
             animate={{ opacity: 1, scale: 1 }}
             style={styles.badge}
           >
-            <VIText style={styles.badgeText} fontWeight={500}>
+            <AMText style={styles.badgeText} fontWeight={500}>
               {opt.label}
-            </VIText>
+            </AMText>
             <TouchableOpacity
               onPress={() => handleRemove(opt.value)}
               style={styles.removeIcon}
@@ -101,9 +101,9 @@ const MultiSelectDropdown = ({
         ))}
         {remaining > 0 && (
           <View style={styles.remainingBadge}>
-            <VIText style={styles.remainingText} fontWeight={500}>
+            <AMText style={styles.remainingText} fontWeight={500}>
               +{remaining}
-            </VIText>
+            </AMText>
           </View>
         )}
       </View>
@@ -113,9 +113,9 @@ const MultiSelectDropdown = ({
   return (
     <View style={[styles.container, fullWidth && styles.fullWidth]}>
       {label && (
-        <VIText style={styles.label} fontWeight={600}>
+        <AMText style={styles.label} fontWeight={600}>
           {label}
-        </VIText>
+        </AMText>
       )}
 
       <View ref={anchorRef} collapsable={false}>
@@ -177,14 +177,14 @@ const MultiSelectDropdown = ({
                     {option.icon && (
                       <View style={styles.iconPrefix}>{option.icon}</View>
                     )}
-                    <VIText
+                    <AMText
                       style={[
                         styles.optionLabel,
                         option.disabled && styles.disabledText,
                       ]}
                     >
                       {option.label}
-                    </VIText>
+                    </AMText>
                     <View
                       style={[
                         styles.checkbox,
@@ -201,7 +201,7 @@ const MultiSelectDropdown = ({
         </TouchableOpacity>
       </Modal>
 
-      {error && <VIText style={styles.errorText}>{error}</VIText>}
+      {error && <AMText style={styles.errorText}>{error}</AMText>}
     </View>
   );
 };

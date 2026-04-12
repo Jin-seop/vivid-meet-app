@@ -1,13 +1,13 @@
 import { MotiView } from 'moti';
 import { Image, StyleSheet, View } from 'react-native';
-import VIText from '../common/VIText';
+import AMText from '../common/AMText';
 import LinearGradient from 'react-native-linear-gradient';
 import { CheckCircle2 } from 'lucide-react-native';
 import {
   SignUpData,
   SignUpScreenNavigationProp,
 } from '../../screens/SignUpScreen';
-import VITouchableOpacity from '../common/VITouchableOpacity';
+import AMTouchableOpacity from '../common/AMTouchableOpacity';
 
 interface SignUpStep4Props {
   profileData: SignUpData;
@@ -24,8 +24,8 @@ const SignUpStep4 = ({ profileData, navigation }: SignUpStep4Props) => {
       from={{ opacity: 0, translateX: 20 }}
       animate={{ opacity: 1, translateX: 0 }}
     >
-      <VIText style={styles.title}>AI 캐릭터가 생성되었습니다</VIText>
-      <VIText style={styles.subtitle}>이 캐릭터로 첫 대화가 시작됩니다</VIText>
+      <AMText style={styles.title}>AI 캐릭터가 생성되었습니다</AMText>
+      <AMText style={styles.subtitle}>이 캐릭터로 첫 대화가 시작됩니다</AMText>
 
       <LinearGradient
         colors={['rgba(74, 144, 226, 0.1)', 'rgba(80, 227, 194, 0.1)']}
@@ -34,26 +34,26 @@ const SignUpStep4 = ({ profileData, navigation }: SignUpStep4Props) => {
         <View style={styles.aiAvatarContainer}>
           <Image style={styles.aiAvatarImage} src={profileData.aiPhotoUrl} />
         </View>
-        <VIText style={styles.aiName}>
+        <AMText style={styles.aiName}>
           {profileData.nickname}님의 AI 페르소나
-        </VIText>
-        <VIText style={styles.aiInfo}>
+        </AMText>
+        <AMText style={styles.aiInfo}>
           {/* {profileData.mbti && `${profileData.mbti} • `}
           {profileData.interests.slice(0, 2).join(', ')} */}
-        </VIText>
+        </AMText>
       </LinearGradient>
 
       <View style={styles.infoCard}>
         <CheckCircle2 size={20} color="#4A90E2" />
         <View style={styles.infoTextWrapper}>
-          <VIText style={styles.infoTitle}>AI 투명성 고지</VIText>
-          <VIText style={styles.infoDesc}>
+          <AMText style={styles.infoTitle}>AI 투명성 고지</AMText>
+          <AMText style={styles.infoDesc}>
             상대방에게는 AI 캐릭터가 노출됩니다.
-          </VIText>
+          </AMText>
         </View>
       </View>
 
-      <VITouchableOpacity
+      <AMTouchableOpacity
         style={styles.completeButton}
         onPress={onCompletePress}
       >
@@ -63,9 +63,9 @@ const SignUpStep4 = ({ profileData, navigation }: SignUpStep4Props) => {
           end={{ x: 1, y: 0 }}
           style={styles.gradientButton}
         >
-          <VIText style={styles.nextButtonText}>AimoChat 시작하기</VIText>
+          <AMText style={styles.nextButtonText}>AimoChat 시작하기</AMText>
         </LinearGradient>
-      </VITouchableOpacity>
+      </AMTouchableOpacity>
     </MotiView>
   );
 };

@@ -5,12 +5,12 @@ import LinearGradient from 'react-native-linear-gradient';
 import { MotiView } from 'moti';
 import { Sparkles } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import VIText from '../components/common/VIText';
+import AMText from '../components/common/AMText';
 import {
   RootStackParamList,
   RootStackScreenName,
 } from './navigation/RootStack';
-import VITouchableOpacity from '../components/common/VITouchableOpacity';
+import AMTouchableOpacity from '../components/common/AMTouchableOpacity';
 
 type LoginScreenProps = {
   navigation: StackNavigationProp<RootStackParamList, 'Login'>;
@@ -51,13 +51,13 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
             >
               <View style={styles.logoRow}>
                 <Sparkles size={40} color="#4A90E2" />
-                <VIText style={styles.logoText} fontWeight={700}>
+                <AMText style={styles.logoText} fontWeight={700}>
                   AimoChat
-                </VIText>
+                </AMText>
               </View>
-              <VIText style={styles.description}>
+              <AMText style={styles.description}>
                 기다림 없는 AI 반전 채팅,{'\n'}지금 바로 연결
-              </VIText>
+              </AMText>
             </MotiView>
 
             {/* 히어로 이미지 */}
@@ -84,24 +84,33 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
               style={styles.buttonSection}
             >
               {/* Google 로그인 */}
-              <VITouchableOpacity
+              <AMTouchableOpacity
                 style={[styles.loginButton, styles.googleButton]}
                 onPress={() => onSocialLoginPress('Google')}
               >
-                <VIText style={styles.googleButtonText} fontWeight={600}>
+                <AMText style={styles.googleButtonText} fontWeight={600}>
                   Google로 시작하기
-                </VIText>
-              </VITouchableOpacity>
+                </AMText>
+              </AMTouchableOpacity>
 
               {/* Apple 로그인 */}
-              <VITouchableOpacity
+              <AMTouchableOpacity
                 style={[styles.loginButton, styles.appleButton]}
                 onPress={() => onSocialLoginPress('Apple')}
               >
-                <VIText style={styles.appleButtonText} fontWeight={600}>
+                <AMText style={styles.appleButtonText} fontWeight={600}>
                   Apple로 시작하기
-                </VIText>
-              </VITouchableOpacity>
+                </AMText>
+              </AMTouchableOpacity>
+
+              <AMTouchableOpacity
+                style={[styles.loginButton, styles.LineButton]}
+                onPress={() => onSocialLoginPress('Line')}
+              >
+                <AMText style={styles.LineButtonText} fontWeight={600}>
+                  Line로 시작하기
+                </AMText>
+              </AMTouchableOpacity>
             </MotiView>
 
             {/* 하단 링크 */}
@@ -111,12 +120,12 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
               transition={{ delay: 600 }}
               style={styles.footer}
             >
-              <VIText style={styles.policyText}>
+              <AMText style={styles.policyText}>
                 로그인 시 AimoChat의 {'\n'}
-                <VIText style={styles.underline}>이용약관</VIText> 및{' '}
-                <VIText style={styles.underline}>개인정보 처리방침</VIText>에
+                <AMText style={styles.underline}>이용약관</AMText> 및{' '}
+                <AMText style={styles.underline}>개인정보 처리방침</AMText>에
                 동의하게 됩니다.
-              </VIText>
+              </AMText>
             </MotiView>
           </View>
         </SafeAreaView>
@@ -204,6 +213,14 @@ const styles = StyleSheet.create({
     borderColor: 'black',
   },
   appleButtonText: {
+    color: 'white',
+    fontSize: 16,
+  },
+  LineButton: {
+    backgroundColor: '#06C755',
+    borderColor: '#06C755',
+  },
+  LineButtonText: {
     color: 'white',
     fontSize: 16,
   },

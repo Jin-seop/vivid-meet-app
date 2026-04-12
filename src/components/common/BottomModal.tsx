@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { X } from 'lucide-react-native';
 import { MotiView } from 'moti';
-import VIText from '../common/VIText';
+import AMText from './AMText';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -118,9 +118,9 @@ const BottomModal = ({
             {(title || showCloseButton) && (
               <View style={styles.header}>
                 {title && (
-                  <VIText style={styles.title} fontWeight={700}>
+                  <AMText style={styles.title} fontWeight={700}>
                     {title}
-                  </VIText>
+                  </AMText>
                 )}
                 {showCloseButton && (
                   <TouchableOpacity
@@ -163,7 +163,7 @@ export function BottomModalOption({
     >
       <View style={styles.optionLeft}>
         {icon && <View style={styles.optionIcon}>{icon}</View>}
-        <VIText
+        <AMText
           style={[
             styles.optionLabel,
             variant === 'danger' && { color: '#EF4444' },
@@ -171,7 +171,7 @@ export function BottomModalOption({
           fontWeight={500}
         >
           {label}
-        </VIText>
+        </AMText>
       </View>
     </TouchableOpacity>
   );

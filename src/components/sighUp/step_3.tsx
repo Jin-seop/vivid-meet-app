@@ -1,7 +1,7 @@
 import { MotiView } from 'moti';
 import { Image, StyleSheet, View } from 'react-native';
-import VIText from '../common/VIText';
-import VITouchableOpacity from '../common/VITouchableOpacity';
+import AMText from '../common/AMText';
+import AMTouchableOpacity from '../common/AMTouchableOpacity';
 import { AIData, SignUpData } from '../../screens/SignUpScreen';
 import { PretendardFont } from '../../utils/fonts';
 import axios from 'axios';
@@ -58,36 +58,36 @@ const SignUpStep3 = ({
       from={{ opacity: 0, translateX: 20 }}
       animate={{ opacity: 1, translateX: 0 }}
     >
-      <VIText style={styles.title} fontFamily={PretendardFont.Bold}>
+      <AMText style={styles.title} fontFamily={PretendardFont.Bold}>
         사진을 업로드해주세요
-      </VIText>
-      <VIText style={styles.subtitle}>
+      </AMText>
+      <AMText style={styles.subtitle}>
         포즈 사진과 실물 사진이 필요합니다.
-      </VIText>
+      </AMText>
 
       <View style={styles.photoGrid}>
         <View style={styles.uploadBoxContainer}>
-          <VITouchableOpacity
+          <AMTouchableOpacity
             style={styles.uploadBox}
             onPress={() => onPhotoSelect(true)}
           >
             <Image style={styles.photoImage} src={profileData.posePhotoUrl} />
-          </VITouchableOpacity>
-          <VIText style={styles.uploadBoxText} fontWeight={500}>
+          </AMTouchableOpacity>
+          <AMText style={styles.uploadBoxText} fontWeight={500}>
             포즈사진
-          </VIText>
+          </AMText>
         </View>
 
         <View style={styles.uploadBoxContainer}>
-          <VITouchableOpacity
+          <AMTouchableOpacity
             style={styles.uploadBox}
             onPress={() => onPhotoSelect(false)}
           >
             <Image style={styles.photoImage} src={profileData.realPhotos[0]} />
-          </VITouchableOpacity>
-          <VIText style={styles.uploadBoxText} fontWeight={500}>
+          </AMTouchableOpacity>
+          <AMText style={styles.uploadBoxText} fontWeight={500}>
             실물사진
-          </VIText>
+          </AMText>
         </View>
 
         {/* {uploadedPhotos.map((photo, index) => (
@@ -125,7 +125,7 @@ const SignUpStep3 = ({
         </View>
       </View> */}
 
-      <VITouchableOpacity
+      <AMTouchableOpacity
         style={[
           styles.nextButton,
           (!profileData.posePhotoUrl || profileData.realPhotos.length === 0) &&
@@ -136,8 +136,8 @@ const SignUpStep3 = ({
         }
         onPress={onNextStepPress}
       >
-        <VIText style={styles.nextButtonText}>다음</VIText>
-      </VITouchableOpacity>
+        <AMText style={styles.nextButtonText}>다음</AMText>
+      </AMTouchableOpacity>
     </MotiView>
   );
 };

@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { Search, X, Check, ChevronDown } from 'lucide-react-native';
 import { MotiView } from 'moti';
-import VIText from '../common/VIText';
+import AMText from './AMText';
 
 export interface SearchableOption {
   value: string;
@@ -81,9 +81,9 @@ const SearchableDropdown = ({
   return (
     <View style={[styles.container, fullWidth && styles.fullWidth]}>
       {label && (
-        <VIText style={styles.label} fontWeight={600}>
+        <AMText style={styles.label} fontWeight={600}>
           {label}
-        </VIText>
+        </AMText>
       )}
 
       {/* 선택 버튼 (앵커) */}
@@ -103,7 +103,7 @@ const SearchableDropdown = ({
               <View style={styles.iconPrefix}>{selectedOption.icon}</View>
             )}
             <View style={styles.textContainer}>
-              <VIText
+              <AMText
                 style={[
                   styles.selectedLabel,
                   !selectedOption && styles.placeholderText,
@@ -111,11 +111,11 @@ const SearchableDropdown = ({
                 numberOfLines={1}
               >
                 {selectedOption?.label || placeholder}
-              </VIText>
+              </AMText>
               {selectedOption?.description && (
-                <VIText style={styles.descriptionText} numberOfLines={1}>
+                <AMText style={styles.descriptionText} numberOfLines={1}>
                   {selectedOption.description}
-                </VIText>
+                </AMText>
               )}
             </View>
           </View>
@@ -186,18 +186,18 @@ const SearchableDropdown = ({
                       <View style={styles.iconPrefix}>{option.icon}</View>
                     )}
                     <View style={styles.textContainer}>
-                      <VIText
+                      <AMText
                         style={[
                           styles.optionLabel,
                           option.disabled && styles.disabledText,
                         ]}
                       >
                         {option.label}
-                      </VIText>
+                      </AMText>
                       {option.description && (
-                        <VIText style={styles.descriptionText}>
+                        <AMText style={styles.descriptionText}>
                           {option.description}
-                        </VIText>
+                        </AMText>
                       )}
                     </View>
                     {option.value === value && (
@@ -207,7 +207,7 @@ const SearchableDropdown = ({
                 ))
               ) : (
                 <View style={styles.noResults}>
-                  <VIText style={styles.noResultsText}>{noResultsText}</VIText>
+                  <AMText style={styles.noResultsText}>{noResultsText}</AMText>
                 </View>
               )}
             </ScrollView>
@@ -215,7 +215,7 @@ const SearchableDropdown = ({
         </TouchableOpacity>
       </Modal>
 
-      {error && <VIText style={styles.errorText}>{error}</VIText>}
+      {error && <AMText style={styles.errorText}>{error}</AMText>}
     </View>
   );
 };

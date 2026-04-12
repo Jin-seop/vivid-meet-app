@@ -1,7 +1,7 @@
 import { MotiView } from 'moti';
 import { StyleSheet, TextInput, View } from 'react-native';
-import VIText from '../common/VIText';
-import VITouchableOpacity from '../common/VITouchableOpacity';
+import AMText from '../common/AMText';
+import AMTouchableOpacity from '../common/AMTouchableOpacity';
 import { SignUpData } from '../../screens/SignUpScreen';
 
 interface SignUpStep1Props {
@@ -20,13 +20,13 @@ const SignUpStep1 = ({
       from={{ opacity: 0, translateX: 20 }}
       animate={{ opacity: 1, translateX: 0 }}
     >
-      <VIText style={styles.title}>기본 정보를 입력해주세요</VIText>
-      <VIText style={styles.subtitle}>
+      <AMText style={styles.title}>기본 정보를 입력해주세요</AMText>
+      <AMText style={styles.subtitle}>
         안전한 만남을 위해 필요한 정보입니다
-      </VIText>
+      </AMText>
 
       <View style={styles.form}>
-        <VIText style={styles.label}>닉네임</VIText>
+        <AMText style={styles.label}>닉네임</AMText>
         <TextInput
           style={styles.input}
           value={profileData?.nickname}
@@ -35,40 +35,40 @@ const SignUpStep1 = ({
           }
           placeholder="닉네임을 입력해주세요"
         />
-        <VIText style={styles.label}>성별</VIText>
+        <AMText style={styles.label}>성별</AMText>
         <View style={styles.btnContainer}>
-          <VITouchableOpacity
+          <AMTouchableOpacity
             style={
               profileData.gender === 'MALE' ? styles.btnActive : styles.btn
             }
             onPress={() => setProfileData({ ...profileData, gender: 'MALE' })}
           >
-            <VIText style={styles.btnText}>남</VIText>
-          </VITouchableOpacity>
-          <VITouchableOpacity
+            <AMText style={styles.btnText}>남</AMText>
+          </AMTouchableOpacity>
+          <AMTouchableOpacity
             style={
               profileData.gender === 'FEMALE' ? styles.btnActive : styles.btn
             }
             onPress={() => setProfileData({ ...profileData, gender: 'FEMALE' })}
           >
-            <VIText style={styles.btnText}>여</VIText>
-          </VITouchableOpacity>
+            <AMText style={styles.btnText}>여</AMText>
+          </AMTouchableOpacity>
         </View>
 
-        <VIText style={styles.label}>지역</VIText>
+        <AMText style={styles.label}>지역</AMText>
         <View style={styles.btnContainer}>
-          <VITouchableOpacity
+          <AMTouchableOpacity
             style={profileData.region === 'KR' ? styles.btnActive : styles.btn}
             onPress={() => setProfileData({ ...profileData, region: 'KR' })}
           >
-            <VIText style={styles.btnText}>한국</VIText>
-          </VITouchableOpacity>
-          <VITouchableOpacity
+            <AMText style={styles.btnText}>한국</AMText>
+          </AMTouchableOpacity>
+          <AMTouchableOpacity
             style={profileData.region === 'JP' ? styles.btnActive : styles.btn}
             onPress={() => setProfileData({ ...profileData, region: 'JP' })}
           >
-            <VIText style={styles.btnText}>일본</VIText>
-          </VITouchableOpacity>
+            <AMText style={styles.btnText}>일본</AMText>
+          </AMTouchableOpacity>
         </View>
         {/* <View style={styles.infoCard}>
           <CheckCircle2 size={20} color="#4A90E2" />
@@ -81,7 +81,7 @@ const SignUpStep1 = ({
         </View> */}
       </View>
 
-      <VITouchableOpacity
+      <AMTouchableOpacity
         style={[
           styles.nextButton,
           (!profileData?.nickname ||
@@ -98,8 +98,8 @@ const SignUpStep1 = ({
         }
         onPress={() => setStep(2)}
       >
-        <VIText style={styles.nextButtonText}>다음</VIText>
-      </VITouchableOpacity>
+        <AMText style={styles.nextButtonText}>다음</AMText>
+      </AMTouchableOpacity>
     </MotiView>
   );
 };
