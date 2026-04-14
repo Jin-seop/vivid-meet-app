@@ -7,6 +7,7 @@ import {
   TextInput,
   Image,
   Platform,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
@@ -33,6 +34,7 @@ import {
   RootStackScreenName,
 } from './navigation/RootStack';
 import { StackScreenProps } from '@react-navigation/stack';
+import { userApi } from '../api/user'; // 👉 userApi 임포트
 
 type EditProfileScreenProps = StackScreenProps<
   RootStackParamList,
@@ -41,7 +43,7 @@ type EditProfileScreenProps = StackScreenProps<
 
 const EditProfileScreen = ({ navigation }: EditProfileScreenProps) => {
   const { t } = useTranslation();
-  const { user, updateUser } = useAuth();
+  const { user, login } = useAuth(); // 👉 login 함수 추가 (전역 상태 업데이트용)
 
   // 폼 상태
   const [nickname, setNickname] = useState(user?.nickname || '');
@@ -94,11 +96,36 @@ const EditProfileScreen = ({ navigation }: EditProfileScreenProps) => {
     }
   };
 
+  // 👉 백엔드 API 연동을 위한 저장 로직
   const handleSave = async () => {
-    // 실제 API 호출 로직이 들어갈 자리
-    updateUser({ nickname, gender: gender.toUpperCase() as any });
-    setShowSaveConfirm(false);
-    navigation.goBack();
+    try {
+      // 1. 백엔드 DTO(UpdateUserDto) 양식에 맞게 데이터 가공
+      const profileData = {
+        nickname,
+        gender: gender.toUpperCase(), // 백엔드 Enum ('MALE', 'FEMALE') 대응
+        region: language === 'ja' ? 'JP' : 'KR', // 국가 코드 매핑
+        tags: interests,
+        statusMessage,
+      };
+
+      // 2. 백엔드 API로 수정 요청 전송
+      const response = await userApi.updateProfile(profileData);
+
+      if (response.status === 200) {
+        // 3. 수정 성공 시 최신 유저 정보로 AuthContext 전역 상태 갱신
+        if (response.data) {
+          login(response.data);
+        }
+
+        Alert.alert('성공', '프로필 정보가 수정되었습니다.');
+        setShowSaveConfirm(false);
+        navigation.goBack(); // 뒤로 가기
+      }
+    } catch (error) {
+      console.error('Profile update failed:', error);
+      Alert.alert('오류', '프로필 수정 중 문제가 발생했습니다.');
+      setShowSaveConfirm(false);
+    }
   };
 
   return (

@@ -41,4 +41,9 @@ export const userApi = {
 
   /** 회원 탈퇴 */
   withdraw: () => api.delete('/users/me/withdraw'),
+
+  updateProfile: (data: any) => api.patch('/users/me', data),
+
+  // 👉 통계 데이터 조회 API 추가
+  getStats: () => api.get('/users/me/stats'),
 };
