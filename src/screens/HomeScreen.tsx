@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -6,6 +6,7 @@ import {
   ScrollView,
   Image,
   StatusBar,
+  Alert,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { MotiView } from 'moti';
@@ -21,43 +22,115 @@ import AMText from '../components/common/AMText';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { RootStackScreenName } from './navigation/RootStack';
 import { useTranslation } from 'react-i18next';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+
 import { userApi } from '../api/user';
 import { matchApi } from '../api/match';
+import { socketService } from '../api/socket'; // 👉 소켓 이벤트 수신을 위해 임포트
 
 const HomeScreen = ({ navigation }: any) => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
-  const [freeMatches, setFreeMatches] = useState(10);
   const [isMatching, setIsMatching] = useState(false);
 
-  const { data, isLoading, isError, refetch } = useQuery({
+  // 포인트 및 무료 횟수 조회 쿼리
+  const { data } = useQuery({
     queryKey: ['myPoints'],
     queryFn: () => userApi.getMyPoints().then(res => res.data),
   });
 
-  const unlockMutation = useMutation({
-    // mutationFn: (matchId: string) => matchApi.unlockPhoto(matchId), //
-    // onSuccess: () => {
-    //   // 포인트가 차감되었으므로 내 포인트 정보를 최신화
-    //   queryClient.invalidateQueries({ queryKey: ['myPoints'] });
-    //   // 채팅방 목록이나 상세 정보도 새로고침할 수 있음
-    //   queryClient.invalidateQueries({ queryKey: ['chatRooms'] });
-    //   console.log('잠금 해제 성공!');
-    // },
-    // onError: error => {
-    //   console.error('잠금 해제 실패:', error);
-    // },
-  });
+  // API에서 무료 횟수를 받아오면 사용하고, 없으면 기본값 10
+  const freeMatches = data?.freeMatchCount ?? 10;
 
-  const handleInstantMatch = () => {
-    setIsMatching(true);
-    setTimeout(() => {
+  // 👉 소켓 연결 및 'matchFound' 이벤트 리스너 등록
+  useEffect(() => {
+    // 앱 접속 시 소켓 연결
+    socketService.connect();
+
+    // 누군가 나와 매칭되었을 때 (내가 WAITING 상태일 때)
+    const handleMatchFound = (matchData: {
+      matchId: string;
+      partnerId: string;
+    }) => {
+      console.log('✅ Match Found Event Received:', matchData);
       setIsMatching(false);
-      setFreeMatches(prev => Math.max(0, prev - 1));
-      navigation.navigate(RootStackScreenName.Chat, { id: '1' });
-    }, 2000);
+      queryClient.invalidateQueries({ queryKey: ['myPoints'] }); // 무료 횟수 갱신
+
+      Alert.alert('매칭 성공!', '새로운 인연과 대화방이 열렸습니다.', [
+        {
+          text: '채팅방 가기',
+          onPress: () =>
+            navigation.navigate(RootStackScreenName.Chat, {
+              matchId: matchData.matchId,
+            }),
+        },
+      ]);
+    };
+
+    if (socketService.socket) {
+      socketService.socket.on('matchFound', handleMatchFound);
+    }
+
+    // 컴포넌트 언마운트 시 리스너 해제 및 큐에서 제거
+    return () => {
+      if (socketService.socket) {
+        socketService.socket.off('matchFound', handleMatchFound);
+      }
+      matchApi.leaveRandomChat().catch(() => {});
+    };
+  }, [navigation, queryClient]);
+
+  // 👉 실제 매칭 API 호출 로직
+  const handleInstantMatch = async () => {
+    // 1. 이미 매칭 대기 중이라면 취소 처리
+    if (isMatching) {
+      try {
+        await matchApi.leaveRandomChat();
+        setIsMatching(false);
+      } catch (error) {
+        console.error('Failed to leave queue:', error);
+      }
+      return;
+    }
+
+    // 2. 무료 횟수가 없는 경우 방어 로직 (버튼 disabled 로도 막혀있음)
+    if (freeMatches <= 0) {
+      Alert.alert(
+        '알림',
+        t('home.reset_notice', '오늘의 무료 매칭을 모두 사용했습니다.'),
+      );
+      return;
+    }
+
+    // 3. 매칭 시작
+    try {
+      setIsMatching(true);
+
+      // (추후 필터 상태값을 연동할 수 있도록 ALL로 임시 고정)
+      const response = await matchApi.joinRandomChat({
+        targetGender: 'ALL',
+        targetCountry: 'ALL',
+      });
+
+      if (response.data.status === 'MATCHED') {
+        // 상대방이 이미 큐에 있어서 즉시 매칭 성공
+        setIsMatching(false);
+        queryClient.invalidateQueries({ queryKey: ['myPoints'] });
+        navigation.navigate(RootStackScreenName.Chat, {
+          matchId: response.data.matchId,
+        });
+      } else if (response.data.status === 'WAITING') {
+        // 큐에 등록됨. 소켓의 'matchFound' 이벤트를 기다림
+        console.log('⏳ 대기열 진입 완료, 상대방을 찾고 있습니다...');
+      }
+    } catch (error: any) {
+      setIsMatching(false);
+      console.error('Match error:', error);
+      const msg =
+        error.response?.data?.message || '매칭 요청 중 오류가 발생했습니다.';
+      Alert.alert('알림', msg);
+    }
   };
 
   return (
@@ -99,10 +172,13 @@ const HomeScreen = ({ navigation }: any) => {
             <View style={styles.matchCardHeader}>
               <View>
                 <AMText style={styles.matchTitle} fontWeight={700}>
-                  {t('home.instant_match')}
+                  {t('home.instant_match', '랜덤 매칭 시작')}
                 </AMText>
                 <AMText style={styles.matchSubtitle}>
-                  {t('home.instant_match_desc')}
+                  {t(
+                    'home.instant_match_desc',
+                    '지금 당장 대화할 친구를 찾아보세요!',
+                  )}
                 </AMText>
               </View>
               <Zap size={40} color="white" opacity={0.8} />
@@ -111,10 +187,11 @@ const HomeScreen = ({ navigation }: any) => {
             <TouchableOpacity
               style={[
                 styles.matchButton,
-                (isMatching || freeMatches === 0) && styles.disabledButton,
+                // 매칭 중이 아니면서 횟수가 0일 때만 버튼 완전 비활성화
+                !isMatching && freeMatches <= 0 && styles.disabledButton,
               ]}
               onPress={handleInstantMatch}
-              disabled={isMatching || freeMatches === 0}
+              disabled={!isMatching && freeMatches <= 0}
             >
               {isMatching ? (
                 <View style={styles.row}>
@@ -131,27 +208,35 @@ const HomeScreen = ({ navigation }: any) => {
                     <Sparkles size={20} color="#4A90E2" />
                   </MotiView>
                   <AMText style={styles.matchButtonText} fontWeight={700}>
-                    {t('home.matching_status')}
+                    {t('home.matching_status', '상대방 찾는 중... (취소)')}
                   </AMText>
                 </View>
               ) : (
                 <View style={styles.row}>
                   <MessageCircle size={20} color="#4A90E2" />
                   <AMText style={styles.matchButtonText} fontWeight={700}>
-                    {t('home.start_chat')}
+                    {t('home.start_chat', '채팅 시작하기')}
                   </AMText>
                 </View>
               )}
             </TouchableOpacity>
 
-            {freeMatches === 0 && (
-              <AMText style={styles.resetText}>{t('home.reset_notice')}</AMText>
+            {freeMatches <= 0 && (
+              <AMText style={styles.resetText}>
+                {t(
+                  'home.reset_notice',
+                  '매일 밤 자정에 무료 횟수가 초기화됩니다.',
+                )}
+              </AMText>
             )}
           </LinearGradient>
           <View style={styles.matchCardFooter}>
             <Star size={16} color="#4A90E2" />
             <AMText style={styles.matchCardFooterText}>
-              {t('home.footer_info')}
+              {t(
+                'home.footer_info',
+                '매칭 후 24시간 동안 무료로 대화가 가능합니다.',
+              )}
             </AMText>
           </View>
         </MotiView>
@@ -167,29 +252,33 @@ const HomeScreen = ({ navigation }: any) => {
             <View style={styles.row}>
               <Filter size={18} color="#717182" />
               <AMText style={styles.sectionTitle} fontWeight={600}>
-                {t('home.filter_title')}
+                {t('home.filter_title', '매칭 필터 설정')}
               </AMText>
             </View>
             <TouchableOpacity>
               <AMText style={styles.actionText} fontWeight={600}>
-                {t('home.filter_change')}
+                {t('home.filter_change', '변경')}
               </AMText>
             </TouchableOpacity>
           </View>
 
           <View style={styles.filterItem}>
-            <AMText style={styles.filterLabel}>{t('signup.gender')}</AMText>
+            <AMText style={styles.filterLabel}>
+              {t('signup.gender', '성별')}
+            </AMText>
             <View style={styles.filterBadge}>
               <AMText style={styles.filterBadgeText}>
-                {t('signup.male')}/{t('signup.female')}
+                {t('signup.male', '남성')}/{t('signup.female', '여성')}
               </AMText>
             </View>
           </View>
           <View style={styles.filterItem}>
-            <AMText style={styles.filterLabel}>{t('signup.region')}</AMText>
+            <AMText style={styles.filterLabel}>
+              {t('signup.region', '국가')}
+            </AMText>
             <View style={styles.filterBadge}>
               <AMText style={styles.filterBadgeText}>
-                {t('signup.korea')}/{t('signup.japan')}
+                {t('signup.korea', '한국')}/{t('signup.japan', '일본')}
               </AMText>
             </View>
           </View>
@@ -203,13 +292,8 @@ const HomeScreen = ({ navigation }: any) => {
         >
           <View style={styles.sectionHeader}>
             <AMText style={styles.sectionTitle} fontWeight={600}>
-              {t('home.recent_matches')}
+              {t('home.recent_matches', '최근 매칭된 친구들')}
             </AMText>
-            {/* <TouchableOpacity>
-              <AMText style={styles.actionText} fontWeight={600}>
-                {t('home.view_all')}
-              </AMText>
-            </TouchableOpacity> */}
           </View>
 
           <View style={styles.recentGrid}>
@@ -269,17 +353,20 @@ const HomeScreen = ({ navigation }: any) => {
             <View style={styles.premiumHeader}>
               <View>
                 <AMText style={styles.premiumTitle} fontWeight={700}>
-                  {t('home.premium_title')}
+                  {t('home.premium_title', 'Aimo 프리미엄')}
                 </AMText>
                 <AMText style={styles.premiumSubtitle}>
-                  {t('home.premium_desc')}
+                  {t(
+                    'home.premium_desc',
+                    '무제한 매칭과 광고 없는 쾌적한 환경',
+                  )}
                 </AMText>
               </View>
               <Heart size={32} color="white" />
             </View>
             <TouchableOpacity style={styles.premiumButton}>
               <AMText style={styles.premiumButtonText} fontWeight={700}>
-                {t('home.premium_subscribe')}
+                {t('home.premium_subscribe', '프리미엄 구독하기')}
               </AMText>
             </TouchableOpacity>
           </LinearGradient>
