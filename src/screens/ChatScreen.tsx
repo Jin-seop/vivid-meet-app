@@ -16,8 +16,6 @@ import {
   Send,
   Image as ImageIcon,
   Smile,
-  Lock,
-  Unlock,
 } from 'lucide-react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { useTranslation } from 'react-i18next';
@@ -42,6 +40,7 @@ interface Message {
   id: string;
   senderId: string;
   content: string;
+  isRead?: boolean; // 👉 추가
   createdAt: string;
   type?: 'text' | 'image' | 'system';
 }
@@ -56,9 +55,10 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
 
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
-  const [photosUnlocked, setPhotosUnlocked] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
 
   const flatListRef = useRef<FlatList>(null);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const initChat = useCallback(async () => {
     try {
@@ -79,45 +79,77 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
       socketService.socket?.on('userLeft', (data: { message: string }) => {
         Alert.alert(t('common.notice', '알림'), data.message);
       });
+
+      // 5. 입력 중 상태 감지
+      socketService.socket?.on('userTyping', (data: { userId: string }) => {
+        if (data.userId !== user?.id) {
+          setIsTyping(true);
+        }
+      });
+
+      socketService.socket?.on('userStopTyping', (data: { userId: string }) => {
+        if (data.userId !== user?.id) {
+          setIsTyping(false);
+        }
+      });
+
+      // 6. 읽음 처리 감지 (내 메시지를 상대방이 읽었을 때)
+      socketService.socket?.on('messagesRead', (data: { userId: string }) => {
+        if (data.userId !== user?.id) {
+          setMessages(prev =>
+            prev.map(msg =>
+              msg.senderId === user?.id ? { ...msg, isRead: true } : msg,
+            ),
+          );
+        }
+      });
     } catch (error) {
       console.error('Chat Init Error:', error);
     }
-  }, [matchId, t]);
+  }, [matchId, t, user?.id]);
 
   useEffect(() => {
     initChat();
 
     // 화면(채팅방)을 벗어날 때 리스너 해제 (중복 수신 방지)
     return () => {
+      socketService.leaveRoom(matchId);
       socketService.socket?.off('newMessage');
       socketService.socket?.off('userLeft');
+      socketService.socket?.off('userTyping');
+      socketService.socket?.off('userStopTyping');
+      socketService.socket?.off('messagesRead');
     };
-  }, [initChat]);
+  }, [initChat, matchId]);
+
+  const handleTextChange = (text: string) => {
+    setMessage(text);
+
+    // Typing indicator 발송
+    if (text.length > 0) {
+      socketService.typing(matchId);
+
+      // 2초 후 입력 중단 처리 (debounce)
+      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+      typingTimeoutRef.current = setTimeout(() => {
+        socketService.stopTyping(matchId);
+      }, 2000);
+    } else {
+      socketService.stopTyping(matchId);
+    }
+  };
 
   const handleSend = () => {
     if (!message.trim()) return;
+
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+    socketService.stopTyping(matchId);
 
     // 전역 소켓 서비스를 통해 서버로 메시지 발송
     socketService.sendMessage(matchId, message);
 
     // 보낸 후 입력창 초기화
     setMessage('');
-  };
-
-  const handleUnlockPhoto = async () => {
-    try {
-      await matchApi.unlockPhoto(matchId);
-      setPhotosUnlocked(true);
-      Alert.alert(
-        t('common.confirm'),
-        t('chat_detail.system_unlocked', '사진 잠금이 해제되었습니다!'),
-      );
-    } catch {
-      Alert.alert(
-        t('common.error_title'),
-        t('profile.withdraw_failed', '처리 중 오류가 발생했습니다.'),
-      );
-    }
   };
 
   const renderMessage = ({ item }: { item: Message }) => {
@@ -139,12 +171,19 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
             {item.content}
           </AMText>
         </View>
-        <AMText style={styles.timestampText}>
-          {new Date(item.createdAt).toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit',
-          })}
-        </AMText>
+        <View style={isMe ? styles.myInfo : styles.theirInfo}>
+          {isMe && item.isRead && (
+            <AMText style={styles.readIndicator}>
+              {t('chat_detail.read', '읽음')}
+            </AMText>
+          )}
+          <AMText style={styles.timestampText}>
+            {new Date(item.createdAt).toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+            })}
+          </AMText>
+        </View>
       </View>
     );
   };
@@ -163,43 +202,17 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
             {/* 상대방 이름 표시 (없으면 기본값) */}
             {otherUser?.nickname || t('chat_list.title', '채팅방')}
           </AMText>
+          {isTyping && (
+            <AMText style={styles.typingIndicatorSmall}>
+              {t('chat_detail.typing', '입력 중...')}
+            </AMText>
+          )}
         </View>
         {/* 우측 상단 더보기 (채팅방 나가기 등에 사용 가능) */}
         <TouchableOpacity>
           <MoreVertical size={24} color="#1F2937" />
         </TouchableOpacity>
       </View>
-
-      {/* Photo Unlock Banner */}
-      {!photosUnlocked && (
-        <LinearGradient
-          colors={['#4A90E2', '#50E3C2']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={styles.banner}
-        >
-          <View style={styles.bannerContent}>
-            <View style={styles.row}>
-              <Lock size={14} color="white" />
-              <AMText style={styles.bannerText} fontWeight={600}>
-                {t(
-                  'chat_detail.photo_locked',
-                  '상대방의 진짜 얼굴이 블러 처리되어 있습니다.',
-                )}
-              </AMText>
-            </View>
-            <TouchableOpacity
-              style={styles.bannerButton}
-              onPress={handleUnlockPhoto}
-            >
-              <Unlock size={14} color="#4A90E2" style={{ marginRight: 4 }} />
-              <AMText style={styles.bannerButtonText} fontWeight={700}>
-                {t('chat_detail.instant_unlock', '잠금 해제')}
-              </AMText>
-            </TouchableOpacity>
-          </View>
-        </LinearGradient>
-      )}
 
       {/* Message List */}
       <FlatList
@@ -226,7 +239,7 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
             <TextInput
               style={styles.input}
               value={message}
-              onChangeText={setMessage}
+              onChangeText={handleTextChange}
               placeholder={t(
                 'chat_detail.input_placeholder',
                 '메시지를 입력하세요...',
@@ -267,22 +280,7 @@ const styles = StyleSheet.create({
   },
   headerCenter: { flex: 1, alignItems: 'center' },
   userName: { fontSize: 18, color: '#111827' },
-  banner: { paddingVertical: 12, paddingHorizontal: 16 },
-  bannerContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  bannerText: { color: 'white', fontSize: 13, marginLeft: 8 },
-  bannerButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'white',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
-  },
-  bannerButtonText: { color: '#4A90E2', fontSize: 12 },
+  typingIndicatorSmall: { fontSize: 10, color: '#4A90E2', marginTop: 2 },
   messageList: { padding: 16 },
   messageRow: {
     flexDirection: 'row',
@@ -292,6 +290,9 @@ const styles = StyleSheet.create({
   },
   myMsgRow: { justifyContent: 'flex-end', flexDirection: 'row-reverse' },
   theirMsgRow: { justifyContent: 'flex-start' },
+  myInfo: { alignItems: 'flex-end' },
+  theirInfo: { alignItems: 'flex-start' },
+  readIndicator: { fontSize: 10, color: '#4A90E2', marginBottom: 2 },
   bubble: {
     paddingHorizontal: 16,
     paddingVertical: 10,

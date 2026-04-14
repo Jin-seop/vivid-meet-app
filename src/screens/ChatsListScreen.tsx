@@ -10,7 +10,7 @@ import {
   RefreshControl,
 } from 'react-native';
 import { MotiView } from 'moti';
-import { Search, MoreVertical, Lock } from 'lucide-react-native';
+import { Search, MoreVertical } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { useFocusEffect } from '@react-navigation/native';
@@ -21,6 +21,7 @@ import { chatApi } from '../api/chat'; // 👉 API 임포트
 
 const ChatsListScreen = ({ navigation }: any) => {
   const { t } = useTranslation();
+  const { user } = useAuth(); // 👉 내 ID 확인용
 
   // 👉 실제 데이터를 담을 상태 관리
   const [rooms, setRooms] = useState<any[]>([]);
@@ -42,11 +43,53 @@ const ChatsListScreen = ({ navigation }: any) => {
     }
   };
 
-  // 👉 화면에 포커스 될 때마다 목록 새로고침 (채팅방 나갔다 들어왔을 때 최신 메시지 반영)
+  // 👉 소켓 리스너 설정
+  const setupSocketListeners = useCallback(() => {
+    if (!socketService.socket) return;
+
+    // 1. 새 메시지 수신 시 목록 업데이트
+    socketService.socket.on('newMessage', (payload: any) => {
+      setRooms(prevRooms => {
+        return prevRooms.map(room => {
+          if (room.matchId === payload.matchId) {
+            return {
+              ...room,
+              lastMessage: payload.content,
+              lastMessageTime: payload.createdAt,
+              unreadCount: payload.senderId !== user?.id ? (room.unreadCount || 0) + 1 : room.unreadCount,
+            };
+          }
+          return room;
+        });
+      });
+    });
+
+    // 2. 읽음 처리 시 목록 업데이트
+    socketService.socket.on('messagesRead', (data: { matchId: string; userId: string }) => {
+      if (data.userId === user?.id) {
+        // 내가 읽은 경우에만 해당 방의 unreadCount 초기화
+        setRooms(prevRooms =>
+          prevRooms.map(room =>
+            room.matchId === data.matchId ? { ...room, unreadCount: 0 } : room,
+          ),
+        );
+      }
+    });
+  }, [user?.id]);
+
+  // 👉 화면에 포커스 될 때마다 목록 새로고침 및 소켓 연결
   useFocusEffect(
     useCallback(() => {
       fetchChatRooms();
-    }, []),
+      socketService.connect().then(() => {
+        setupSocketListeners();
+      });
+
+      return () => {
+        socketService.socket?.off('newMessage');
+        socketService.socket?.off('messagesRead');
+      };
+    }, [setupSocketListeners]),
   );
 
   // 👉 당겨서 새로고침 액션
@@ -112,9 +155,6 @@ const ChatsListScreen = ({ navigation }: any) => {
           // 백엔드 데이터 매핑 (API 응답 구조에 맞게 매핑)
           const otherUser = room.otherUser || {};
           const unreadCount = room.unreadCount || 0;
-          // TODO: 백엔드에 사진 잠금해제 정보가 연동되면 실제 데이터로 교체
-          const photosUnlocked = 0;
-          const totalPhotos = 5;
           const isOnline = false; // 소켓 연동 시 상태 업데이트
 
           return (
@@ -148,13 +188,6 @@ const ChatsListScreen = ({ navigation }: any) => {
                     </View>
                   )}
                   {isOnline && <View style={styles.onlineDot} />}
-
-                  {/* Photo Unlock Progress Badge */}
-                  {photosUnlocked < totalPhotos && (
-                    <View style={styles.lockBadge}>
-                      <Lock size={10} color="white" />
-                    </View>
-                  )}
                 </View>
 
                 {/* Chat Info Section */}
@@ -164,21 +197,6 @@ const ChatsListScreen = ({ navigation }: any) => {
                       <AMText style={styles.chatName} fontWeight={600}>
                         {otherUser.nickname || '알 수 없음'}
                       </AMText>
-                      {/* Progress Indicator dots */}
-                      <View style={styles.dotRow}>
-                        {Array.from({ length: totalPhotos }).map((_, i) => (
-                          <View
-                            key={i}
-                            style={[
-                              styles.progressDot,
-                              {
-                                backgroundColor:
-                                  i < photosUnlocked ? '#50E3C2' : '#E5E7EB',
-                              },
-                            ]}
-                          />
-                        ))}
-                      </View>
                     </View>
                     <AMText style={styles.timestamp}>
                       {formatTime(room.lastMessageTime)}

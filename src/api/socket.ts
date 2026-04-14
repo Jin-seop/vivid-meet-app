@@ -42,8 +42,20 @@ class SocketService {
     this.socket?.emit('joinRoom', { matchId });
   }
 
+  leaveRoom(matchId: string) {
+    this.socket?.emit('leaveRoom', { matchId });
+  }
+
   sendMessage(matchId: string, content: string) {
     this.socket?.emit('sendMessage', { matchId, content });
+  }
+
+  typing(matchId: string) {
+    this.socket?.emit('typing', { matchId });
+  }
+
+  stopTyping(matchId: string) {
+    this.socket?.emit('stopTyping', { matchId });
   }
 
   disconnect() {
