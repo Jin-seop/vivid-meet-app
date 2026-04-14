@@ -1,6 +1,9 @@
 import React, { createContext, useState, useContext, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next'; // 다국어 처리를 위해 추가
 
+import { userApi } from '../api/user';
+import EncryptedStorage from 'react-native-encrypted-storage';
+
 interface UserProfile {
   id?: string;
   email: string;
@@ -20,14 +23,14 @@ interface AuthContextType {
   user: UserProfile | null;
   login: (userData: UserProfile) => void;
   logout: () => void;
-  withdraw: () => Promise<void>; // 회원 탈퇴 함수 추가
+  withdraw: () => Promise<void>;
   updateUser: (updates: Partial<UserProfile>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const { i18n } = useTranslation(); // i18n 훅 사용
+  const { i18n } = useTranslation();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<UserProfile | null>(null);
 
@@ -50,7 +53,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   /**
    * 로그아웃 처리
    */
-  const logout = () => {
+  const logout = async () => {
+    await EncryptedStorage.removeItem('user_token');
     setUser(null);
     setIsLoggedIn(false);
   };
@@ -61,12 +65,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
    */
   const withdraw = async () => {
     try {
-      // TODO: 실제 서버 탈퇴 API 호출 로직 추가 (예: axios.delete('/users/me/withdraw'))
       console.log('회원 탈퇴 처리 중...');
-
+      await userApi.withdraw();
+      
       // 탈퇴 성공 시 로컬 데이터 초기화
+      await EncryptedStorage.removeItem('user_token');
       setUser(null);
       setIsLoggedIn(false);
+      console.log('회원 탈퇴 완료');
     } catch (error) {
       console.error('회원 탈퇴 중 오류 발생:', error);
       throw error;

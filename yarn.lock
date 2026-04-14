@@ -1708,6 +1708,11 @@
   resolved "https://registry.yarnpkg.com/@img/sharp-win32-x64/-/sharp-win32-x64-0.34.5.tgz#a81ffb00e69267cd0a1d626eaedb8a8430b2b2f8"
   integrity sha512-+29YMsqY2/9eFEiW93eqWnuLcWcufowXewwSNIT6UwZdUUCrM3oFjMWH/Z6/TMmb4hlFenmfAVbpWeup2jryCw==
 
+"@invertase/react-native-apple-authentication@^2.5.1":
+  version "2.5.1"
+  resolved "https://registry.yarnpkg.com/@invertase/react-native-apple-authentication/-/react-native-apple-authentication-2.5.1.tgz#50f6892e7ddbe5fab374ef6b4daa52216b6fdca2"
+  integrity sha512-KPKKc0wtRYpH4J0RkDfHzoKSZ+dYPEHmCXhpPdgHsT2MbK5AIkW1cYurjhAgev/kL7nOHFmWITjY1At5WhFEMQ==
+
 "@isaacs/ttlcache@^1.4.1":
   version "1.4.1"
   resolved "https://registry.npmjs.org/@isaacs/ttlcache/-/ttlcache-1.4.1.tgz"
@@ -2788,6 +2793,11 @@
   version "9.3.2"
   resolved "https://registry.npmjs.org/@vscode/sudo-prompt/-/sudo-prompt-9.3.2.tgz"
   integrity sha512-gcXoCN00METUNFeQOFJ+C9xUI0DKB+0EGMVg7wbVYRHBw2Eq3fKisDZOkRdOz3kqXRKOENMfShPOmypw1/8nOw==
+
+"@xmartlabs/react-native-line@^6.0.0":
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/@xmartlabs/react-native-line/-/react-native-line-6.0.0.tgz#e1b9a2ffbc1dd5c15ec11541550de1887819976f"
+  integrity sha512-dQ7u0hNVZov5vnqmBTm4TO2YKdiKzCzVhA9ZDv7z6Vv/LjMxwbbZ3ogyxFNV2DvqbymrCZpzYlSJlIl+XIybuQ==
 
 "@xmldom/xmldom@^0.8.8":
   version "0.8.12"

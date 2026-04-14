@@ -14,6 +14,8 @@ import AMTouchableOpacity from '../components/common/AMTouchableOpacity';
 import { useTranslation } from 'react-i18next';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { useGoogleAuth } from '../hooks/useGoogleAuth';
+import { useAppleAuth } from '../hooks/useAppleAuth';
+import { useLineAuth } from '../hooks/useLineAuth';
 import { GOOGLE_WEB_CLIENT_ID } from '@env';
 
 type LoginScreenProps = {
@@ -26,17 +28,24 @@ type LoginScreenProps = {
 const LoginScreen = ({ navigation }: LoginScreenProps) => {
   const { t } = useTranslation();
 
-  const googleAuth = useGoogleAuth(data => {
+  const handleSocialSuccess = (
+    data: any,
+    provider: 'GooGle' | 'Apple' | 'Line',
+  ) => {
     if (data.isNewUser) {
       navigation.navigate(RootStackScreenName.SignUp, {
         email: data.profile?.email || '',
-        provider: 'GooGle',
+        provider: provider,
         providerId: data.profile?.providerId || '',
       });
     } else {
       navigation.replace(RootStackScreenName.HomeMain);
     }
-  });
+  };
+
+  const googleAuth = useGoogleAuth(data => handleSocialSuccess(data, 'GooGle'));
+  const appleAuth = useAppleAuth(data => handleSocialSuccess(data, 'Apple'));
+  const lineAuth = useLineAuth(data => handleSocialSuccess(data, 'Line'));
 
   const onSocialLoginPress = (provider: 'GooGle' | 'Apple' | 'Line') => {
     console.log(`Login with ${provider}`);
@@ -45,25 +54,13 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
       case 'GooGle':
         googleAuth.mutate();
         break;
-
-      default:
-        // TODO: 실제 소셜 로그인 로직 구현 후 이메일 전달
-        // setTimeout(() => navigation.replace('HomeMain'), 500);
-        setTimeout(
-          () =>
-            navigation.navigate(RootStackScreenName.SignUp, {
-              email: 'test@example.com',
-              provider: 'GooGle',
-              providerId: '123',
-            }),
-          500,
-        );
+      case 'Apple':
+        appleAuth.mutate();
+        break;
+      case 'Line':
+        lineAuth.mutate();
         break;
     }
-  };
-
-  const autoLogin = () => {
-    navigation.replace(RootStackScreenName.HomeMain);
   };
 
   useEffect(() => {
@@ -141,8 +138,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
 
               <AMTouchableOpacity
                 style={[styles.loginButton, styles.LineButton]}
-                // onPress={() => onSocialLoginPress('Line')}
-                onPress={autoLogin}
+                onPress={() => onSocialLoginPress('Line')}
               >
                 <AMText style={styles.LineButtonText}>{t('login.line')}</AMText>
               </AMTouchableOpacity>

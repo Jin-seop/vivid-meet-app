@@ -22,8 +22,6 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import { useTranslation } from 'react-i18next';
 import { StackScreenProps } from '@react-navigation/stack';
-import { io, Socket } from 'socket.io-client';
-import EncryptedStorage from 'react-native-encrypted-storage';
 import AMText from '../components/common/AMText';
 import {
   RootStackParamList,
@@ -32,7 +30,7 @@ import {
 import { chatApi } from '../api/chat';
 import { matchApi } from '../api/match';
 import { useAuth } from '../context/AuthContext';
-import { API_URL } from '@env';
+import { socketService } from '../api/socket'; // 👉 전역 소켓 서비스 임포트
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 type ChatScreenProps = StackScreenProps<
@@ -49,7 +47,10 @@ interface Message {
 }
 
 const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
-  const { id: matchId } = route.params;
+  // 이전 화면(목록이나 매칭)에서 전달받은 파라미터 추출
+  // (임시로 any 단언을 사용하여 타입 에러 방지. 추후 RootStackParamList에 otherUser 추가 권장)
+  const { matchId, otherUser } = route.params as any;
+
   const { t } = useTranslation();
   const { user } = useAuth();
 
@@ -57,7 +58,6 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [photosUnlocked, setPhotosUnlocked] = useState(false);
 
-  const socketRef = useRef<Socket | null>(null);
   const flatListRef = useRef<FlatList>(null);
 
   const initChat = useCallback(async () => {
@@ -66,56 +66,62 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
       const response = await chatApi.getMessages(matchId);
       setMessages(response.data);
 
-      // 2. 소켓 연결 및 룸 입장
-      const token = await EncryptedStorage.getItem('user_token');
+      // 2. 소켓 연결 확인 및 룸 입장
+      await socketService.connect();
+      socketService.joinRoom(matchId);
 
-      socketRef.current = io(`${API_URL}/chat`, {
-        auth: { token: `Bearer ${token}` },
-        transports: ['websocket'],
-      });
-
-      socketRef.current.on('connect', () => {
-        socketRef.current?.emit('joinRoom', { matchId });
-      });
-
-      // 3. 실시간 메시지 수신
-      socketRef.current.on('newMessage', (payload: Message) => {
+      // 3. 실시간 메시지 수신 리스너 등록
+      socketService.socket?.on('newMessage', (payload: Message) => {
         setMessages(prev => [...prev, payload]);
       });
 
-      // 4. 상대방 나감 감지
-      socketRef.current.on('userLeft', (data: { message: string }) => {
-        Alert.alert(t('common.error_title'), data.message);
+      // 4. 상대방이 채팅방을 나갔을 때 감지
+      socketService.socket?.on('userLeft', (data: { message: string }) => {
+        Alert.alert(t('common.notice', '알림'), data.message);
       });
     } catch (error) {
       console.error('Chat Init Error:', error);
     }
   }, [matchId, t]);
 
+  useEffect(() => {
+    initChat();
+
+    // 화면(채팅방)을 벗어날 때 리스너 해제 (중복 수신 방지)
+    return () => {
+      socketService.socket?.off('newMessage');
+      socketService.socket?.off('userLeft');
+    };
+  }, [initChat]);
+
   const handleSend = () => {
-    if (!message.trim() || !socketRef.current) return;
+    if (!message.trim()) return;
 
-    // 서버로 메시지 전송
-    socketRef.current.emit('sendMessage', {
-      matchId,
-      content: message,
-    });
+    // 전역 소켓 서비스를 통해 서버로 메시지 발송
+    socketService.sendMessage(matchId, message);
 
+    // 보낸 후 입력창 초기화
     setMessage('');
   };
 
   const handleUnlockPhoto = async () => {
     try {
-      await matchApi.unlockPhoto(matchId); //
+      await matchApi.unlockPhoto(matchId);
       setPhotosUnlocked(true);
-      Alert.alert(t('common.confirm'), t('chat_detail.system_unlocked'));
+      Alert.alert(
+        t('common.confirm'),
+        t('chat_detail.system_unlocked', '사진 잠금이 해제되었습니다!'),
+      );
     } catch {
-      Alert.alert(t('common.error_title'), t('profile.withdraw_failed'));
+      Alert.alert(
+        t('common.error_title'),
+        t('profile.withdraw_failed', '처리 중 오류가 발생했습니다.'),
+      );
     }
   };
 
   const renderMessage = ({ item }: { item: Message }) => {
-    const isMe = item.senderId === user?.id; // 실제 연동 시 발신자 ID 비교 로직
+    const isMe = item.senderId === user?.id;
 
     return (
       <View
@@ -143,13 +149,6 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
     );
   };
 
-  useEffect(() => {
-    initChat();
-    return () => {
-      socketRef.current?.disconnect();
-    };
-  }, [initChat, matchId]);
-
   return (
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       <StatusBar barStyle="dark-content" backgroundColor="white" />
@@ -160,10 +159,12 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
           <ArrowLeft size={24} color="#1F2937" />
         </TouchableOpacity>
         <View style={styles.headerCenter}>
-          <AMText style={styles.userName} fontWeight={600}>
-            {t('chat_list.title')}
+          <AMText style={styles.userName} fontWeight={700}>
+            {/* 상대방 이름 표시 (없으면 기본값) */}
+            {otherUser?.nickname || t('chat_list.title', '채팅방')}
           </AMText>
         </View>
+        {/* 우측 상단 더보기 (채팅방 나가기 등에 사용 가능) */}
         <TouchableOpacity>
           <MoreVertical size={24} color="#1F2937" />
         </TouchableOpacity>
@@ -180,8 +181,11 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
           <View style={styles.bannerContent}>
             <View style={styles.row}>
               <Lock size={14} color="white" />
-              <AMText style={styles.bannerText}>
-                {t('chat_detail.photo_locked', { count: 5 })}
+              <AMText style={styles.bannerText} fontWeight={600}>
+                {t(
+                  'chat_detail.photo_locked',
+                  '상대방의 진짜 얼굴이 블러 처리되어 있습니다.',
+                )}
               </AMText>
             </View>
             <TouchableOpacity
@@ -189,19 +193,20 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
               onPress={handleUnlockPhoto}
             >
               <Unlock size={14} color="#4A90E2" style={{ marginRight: 4 }} />
-              <AMText style={styles.bannerButtonText} fontWeight={600}>
-                {t('chat_detail.instant_unlock')}
+              <AMText style={styles.bannerButtonText} fontWeight={700}>
+                {t('chat_detail.instant_unlock', '잠금 해제')}
               </AMText>
             </TouchableOpacity>
           </View>
         </LinearGradient>
       )}
 
+      {/* Message List */}
       <FlatList
         ref={flatListRef}
         data={messages}
         renderItem={renderMessage}
-        keyExtractor={item => item.id}
+        keyExtractor={(item, index) => (item.id ? item.id : index.toString())}
         contentContainerStyle={styles.messageList}
         onContentSizeChange={() =>
           flatListRef.current?.scrollToEnd({ animated: true })
@@ -222,7 +227,10 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
               style={styles.input}
               value={message}
               onChangeText={setMessage}
-              placeholder={t('chat_detail.input_placeholder')}
+              placeholder={t(
+                'chat_detail.input_placeholder',
+                '메시지를 입력하세요...',
+              )}
               placeholderTextColor="#9CA3AF"
               multiline
             />
@@ -238,7 +246,7 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
             onPress={handleSend}
             disabled={!message.trim()}
           >
-            <Send size={20} color="white" />
+            <Send size={20} color="white" style={{ marginLeft: 2 }} />
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
@@ -249,7 +257,7 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F9FAFB' },
   header: {
-    height: 64,
+    height: 60,
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
@@ -258,14 +266,14 @@ const styles = StyleSheet.create({
     borderBottomColor: '#F3F4F6',
   },
   headerCenter: { flex: 1, alignItems: 'center' },
-  userName: { fontSize: 16, color: '#111827' },
-  banner: { paddingVertical: 10, paddingHorizontal: 16 },
+  userName: { fontSize: 18, color: '#111827' },
+  banner: { paddingVertical: 12, paddingHorizontal: 16 },
   bannerContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  bannerText: { color: 'white', fontSize: 13, marginLeft: 6 },
+  bannerText: { color: 'white', fontSize: 13, marginLeft: 8 },
   bannerButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -297,46 +305,49 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E5E7EB',
   },
-  bubbleText: { fontSize: 15, lineHeight: 20 },
+  bubbleText: { fontSize: 15, lineHeight: 22 },
   myBubbleText: { color: 'white' },
   theirBubbleText: { color: '#1F2937' },
   timestampText: { fontSize: 10, color: '#9CA3AF' },
   inputArea: {
     flexDirection: 'row',
-    alignItems: 'center',
-    padding: 12,
+    alignItems: 'flex-end',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
     backgroundColor: 'white',
     borderTopWidth: 1,
     borderTopColor: '#F3F4F6',
   },
-  inputIconButton: { padding: 8 },
+  inputIconButton: { padding: 10, paddingBottom: 12 },
   inputWrapper: {
     flex: 1,
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-end',
     backgroundColor: '#F3F4F6',
     borderRadius: 20,
     paddingHorizontal: 12,
+    marginHorizontal: 8,
   },
   input: {
     flex: 1,
     minHeight: 40,
-    maxHeight: 100,
-    fontSize: 15,
+    maxHeight: 120,
+    fontSize: 16,
     color: '#1F2937',
-    paddingVertical: 8,
+    paddingTop: Platform.OS === 'ios' ? 12 : 8,
+    paddingBottom: Platform.OS === 'ios' ? 12 : 8,
   },
-  smileButton: { padding: 4 },
+  smileButton: { padding: 10, paddingBottom: 12 },
   sendButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     backgroundColor: '#4A90E2',
     justifyContent: 'center',
     alignItems: 'center',
-    marginLeft: 8,
+    marginBottom: 2,
   },
-  sendButtonDisabled: { backgroundColor: '#D1D5DB' },
+  sendButtonDisabled: { backgroundColor: '#E5E7EB' },
   row: { flexDirection: 'row', alignItems: 'center' },
 });
 

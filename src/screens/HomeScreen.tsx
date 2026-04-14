@@ -10,14 +10,7 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { MotiView } from 'moti';
-import {
-  Sparkles,
-  Zap,
-  Heart,
-  MessageCircle,
-  Filter,
-  Star,
-} from 'lucide-react-native';
+import { Sparkles, Zap, Heart, MessageCircle, User } from 'lucide-react-native';
 import AMText from '../components/common/AMText';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { RootStackScreenName } from './navigation/RootStack';
@@ -26,7 +19,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { userApi } from '../api/user';
 import { matchApi } from '../api/match';
-import { socketService } from '../api/socket'; // 👉 소켓 이벤트 수신을 위해 임포트
+import { socketService } from '../api/socket';
 
 const HomeScreen = ({ navigation }: any) => {
   const { t } = useTranslation();
@@ -34,102 +27,71 @@ const HomeScreen = ({ navigation }: any) => {
 
   const [isMatching, setIsMatching] = useState(false);
 
-  // 포인트 및 무료 횟수 조회 쿼리
-  const { data } = useQuery({
+  // 1. 포인트 및 무료 횟수 조회
+  const { data: pointData } = useQuery({
     queryKey: ['myPoints'],
     queryFn: () => userApi.getMyPoints().then(res => res.data),
   });
 
-  // API에서 무료 횟수를 받아오면 사용하고, 없으면 기본값 10
-  const freeMatches = data?.freeMatchCount ?? 10;
+  // 2. 최근 매칭 목록 조회 (👉 하드코딩 대체)
+  const { data: recentMatches } = useQuery({
+    queryKey: ['recentMatches'],
+    queryFn: () => matchApi.getMatchHistory().then(res => res.data),
+  });
 
-  // 👉 소켓 연결 및 'matchFound' 이벤트 리스너 등록
+  const freeMatches = pointData?.freeMatchCount ?? 0;
+
   useEffect(() => {
-    // 앱 접속 시 소켓 연결
     socketService.connect();
-
-    // 누군가 나와 매칭되었을 때 (내가 WAITING 상태일 때)
     const handleMatchFound = (matchData: {
       matchId: string;
       partnerId: string;
     }) => {
-      console.log('✅ Match Found Event Received:', matchData);
       setIsMatching(false);
-      queryClient.invalidateQueries({ queryKey: ['myPoints'] }); // 무료 횟수 갱신
+      queryClient.invalidateQueries({ queryKey: ['myPoints'] });
+      queryClient.invalidateQueries({ queryKey: ['recentMatches'] }); // 목록 갱신
 
-      Alert.alert('매칭 성공!', '새로운 인연과 대화방이 열렸습니다.', [
-        {
-          text: '채팅방 가기',
-          onPress: () =>
-            navigation.navigate(RootStackScreenName.Chat, {
-              matchId: matchData.matchId,
-            }),
-        },
-      ]);
+      navigation.navigate(RootStackScreenName.Chat, {
+        matchId: matchData.matchId,
+      });
     };
 
-    if (socketService.socket) {
-      socketService.socket.on('matchFound', handleMatchFound);
-    }
-
-    // 컴포넌트 언마운트 시 리스너 해제 및 큐에서 제거
+    socketService.socket?.on('matchFound', handleMatchFound);
     return () => {
-      if (socketService.socket) {
-        socketService.socket.off('matchFound', handleMatchFound);
-      }
-      matchApi.leaveRandomChat().catch(() => {});
+      socketService.socket?.off('matchFound', handleMatchFound);
     };
   }, [navigation, queryClient]);
 
-  // 👉 실제 매칭 API 호출 로직
   const handleInstantMatch = async () => {
-    // 1. 이미 매칭 대기 중이라면 취소 처리
     if (isMatching) {
-      try {
-        await matchApi.leaveRandomChat();
-        setIsMatching(false);
-      } catch (error) {
-        console.error('Failed to leave queue:', error);
-      }
+      await matchApi.leaveRandomChat().catch(() => {});
+      setIsMatching(false);
       return;
     }
 
-    // 2. 무료 횟수가 없는 경우 방어 로직 (버튼 disabled 로도 막혀있음)
     if (freeMatches <= 0) {
-      Alert.alert(
-        '알림',
-        t('home.reset_notice', '오늘의 무료 매칭을 모두 사용했습니다.'),
-      );
+      Alert.alert('알림', t('home.reset_notice'));
       return;
     }
 
-    // 3. 매칭 시작
     try {
       setIsMatching(true);
-
-      // (추후 필터 상태값을 연동할 수 있도록 ALL로 임시 고정)
       const response = await matchApi.joinRandomChat({
         targetGender: 'ALL',
         targetCountry: 'ALL',
       });
 
       if (response.data.status === 'MATCHED') {
-        // 상대방이 이미 큐에 있어서 즉시 매칭 성공
         setIsMatching(false);
         queryClient.invalidateQueries({ queryKey: ['myPoints'] });
+        queryClient.invalidateQueries({ queryKey: ['recentMatches'] });
         navigation.navigate(RootStackScreenName.Chat, {
           matchId: response.data.matchId,
         });
-      } else if (response.data.status === 'WAITING') {
-        // 큐에 등록됨. 소켓의 'matchFound' 이벤트를 기다림
-        console.log('⏳ 대기열 진입 완료, 상대방을 찾고 있습니다...');
       }
-    } catch (error: any) {
+    } catch {
       setIsMatching(false);
-      console.error('Match error:', error);
-      const msg =
-        error.response?.data?.message || '매칭 요청 중 오류가 발생했습니다.';
-      Alert.alert('알림', msg);
+      Alert.alert('오류', '매칭 중 문제가 발생했습니다.');
     }
   };
 
@@ -172,13 +134,10 @@ const HomeScreen = ({ navigation }: any) => {
             <View style={styles.matchCardHeader}>
               <View>
                 <AMText style={styles.matchTitle} fontWeight={700}>
-                  {t('home.instant_match', '랜덤 매칭 시작')}
+                  {t('home.instant_match')}
                 </AMText>
                 <AMText style={styles.matchSubtitle}>
-                  {t(
-                    'home.instant_match_desc',
-                    '지금 당장 대화할 친구를 찾아보세요!',
-                  )}
+                  {t('home.instant_match_desc')}
                 </AMText>
               </View>
               <Zap size={40} color="white" opacity={0.8} />
@@ -187,104 +146,29 @@ const HomeScreen = ({ navigation }: any) => {
             <TouchableOpacity
               style={[
                 styles.matchButton,
-                // 매칭 중이 아니면서 횟수가 0일 때만 버튼 완전 비활성화
                 !isMatching && freeMatches <= 0 && styles.disabledButton,
               ]}
               onPress={handleInstantMatch}
-              disabled={!isMatching && freeMatches <= 0}
             >
-              {isMatching ? (
-                <View style={styles.row}>
-                  <MotiView
-                    from={{ rotate: '0deg' }}
-                    animate={{ rotate: '360deg' }}
-                    transition={{
-                      type: 'timing',
-                      duration: 1000,
-                      loop: true,
-                      repeatReverse: false,
-                    }}
-                  >
-                    <Sparkles size={20} color="#4A90E2" />
-                  </MotiView>
+              <View style={styles.row}>
+                {isMatching ? (
                   <AMText style={styles.matchButtonText} fontWeight={700}>
-                    {t('home.matching_status', '상대방 찾는 중... (취소)')}
+                    {t('home.matching_status')}
                   </AMText>
-                </View>
-              ) : (
-                <View style={styles.row}>
-                  <MessageCircle size={20} color="#4A90E2" />
-                  <AMText style={styles.matchButtonText} fontWeight={700}>
-                    {t('home.start_chat', '채팅 시작하기')}
-                  </AMText>
-                </View>
-              )}
-            </TouchableOpacity>
-
-            {freeMatches <= 0 && (
-              <AMText style={styles.resetText}>
-                {t(
-                  'home.reset_notice',
-                  '매일 밤 자정에 무료 횟수가 초기화됩니다.',
+                ) : (
+                  <>
+                    <MessageCircle size={20} color="#4A90E2" />
+                    <AMText style={styles.matchButtonText} fontWeight={700}>
+                      {t('home.start_chat')}
+                    </AMText>
+                  </>
                 )}
-              </AMText>
-            )}
-          </LinearGradient>
-          <View style={styles.matchCardFooter}>
-            <Star size={16} color="#4A90E2" />
-            <AMText style={styles.matchCardFooterText}>
-              {t(
-                'home.footer_info',
-                '매칭 후 24시간 동안 무료로 대화가 가능합니다.',
-              )}
-            </AMText>
-          </View>
-        </MotiView>
-
-        {/* Filter Settings */}
-        <MotiView
-          from={{ opacity: 0, translateY: 20 }}
-          animate={{ opacity: 1, translateY: 0 }}
-          transition={{ delay: 100 }}
-          style={styles.sectionCard}
-        >
-          <View style={styles.sectionHeader}>
-            <View style={styles.row}>
-              <Filter size={18} color="#717182" />
-              <AMText style={styles.sectionTitle} fontWeight={600}>
-                {t('home.filter_title', '매칭 필터 설정')}
-              </AMText>
-            </View>
-            <TouchableOpacity>
-              <AMText style={styles.actionText} fontWeight={600}>
-                {t('home.filter_change', '변경')}
-              </AMText>
+              </View>
             </TouchableOpacity>
-          </View>
-
-          <View style={styles.filterItem}>
-            <AMText style={styles.filterLabel}>
-              {t('signup.gender', '성별')}
-            </AMText>
-            <View style={styles.filterBadge}>
-              <AMText style={styles.filterBadgeText}>
-                {t('signup.male', '남성')}/{t('signup.female', '여성')}
-              </AMText>
-            </View>
-          </View>
-          <View style={styles.filterItem}>
-            <AMText style={styles.filterLabel}>
-              {t('signup.region', '국가')}
-            </AMText>
-            <View style={styles.filterBadge}>
-              <AMText style={styles.filterBadgeText}>
-                {t('signup.korea', '한국')}/{t('signup.japan', '일본')}
-              </AMText>
-            </View>
-          </View>
+          </LinearGradient>
         </MotiView>
 
-        {/* Recent Matches */}
+        {/* Recent Matches Section (👉 실제 데이터 연동) */}
         <MotiView
           from={{ opacity: 0, translateY: 20 }}
           animate={{ opacity: 1, translateY: 0 }}
@@ -297,46 +181,50 @@ const HomeScreen = ({ navigation }: any) => {
           </View>
 
           <View style={styles.recentGrid}>
-            {[
-              {
-                name: '지수',
-                mbti: 'ENFP',
-                image:
-                  'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400',
-              },
-              {
-                name: '민준',
-                mbti: 'INTJ',
-                image:
-                  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
-              },
-              {
-                name: '서연',
-                mbti: 'ISFJ',
-                image:
-                  'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400',
-              },
-            ].map((person, index) => (
-              <TouchableOpacity key={index} style={styles.recentCard}>
-                <View style={styles.imageWrapper}>
-                  <Image
-                    source={{ uri: person.image }}
-                    style={styles.recentImage}
-                  />
-                  <View style={styles.onlineStatus} />
-                </View>
-                <View style={styles.recentInfo}>
-                  <AMText
-                    style={styles.recentName}
-                    fontWeight={600}
-                    numberOfLines={1}
-                  >
-                    {person.name}
-                  </AMText>
-                  <AMText style={styles.recentMbti}>{person.mbti}</AMText>
-                </View>
-              </TouchableOpacity>
-            ))}
+            {recentMatches && recentMatches.length > 0 ? (
+              recentMatches.slice(0, 3).map((match: any) => (
+                <TouchableOpacity
+                  key={match.id}
+                  style={styles.recentCard}
+                  onPress={() =>
+                    navigation.navigate(RootStackScreenName.Chat, {
+                      matchId: match.id,
+                    })
+                  }
+                >
+                  <View style={styles.imageWrapper}>
+                    {match.otherUser?.aiPhotoUrl ? (
+                      <Image
+                        source={{ uri: match.otherUser.aiPhotoUrl }}
+                        style={styles.recentImage}
+                      />
+                    ) : (
+                      <View style={styles.recentImagePlaceholder}>
+                        <User size={30} color="#D1D5DB" />
+                      </View>
+                    )}
+                  </View>
+                  <View style={styles.recentInfo}>
+                    <AMText
+                      style={styles.recentName}
+                      fontWeight={600}
+                      numberOfLines={1}
+                    >
+                      {match.otherUser?.nickname}
+                    </AMText>
+                    <AMText style={styles.recentMbti}>
+                      {match.otherUser?.mbti || 'AIMO'}
+                    </AMText>
+                  </View>
+                </TouchableOpacity>
+              ))
+            ) : (
+              <View style={styles.emptyRecent}>
+                <AMText style={styles.emptyRecentText}>
+                  {t('home.no_recent_matches', '최근 매칭 내역이 없습니다.')}
+                </AMText>
+              </View>
+            )}
           </View>
         </MotiView>
 
@@ -353,20 +241,17 @@ const HomeScreen = ({ navigation }: any) => {
             <View style={styles.premiumHeader}>
               <View>
                 <AMText style={styles.premiumTitle} fontWeight={700}>
-                  {t('home.premium_title', 'Aimo 프리미엄')}
+                  {t('home.premium_title')}
                 </AMText>
                 <AMText style={styles.premiumSubtitle}>
-                  {t(
-                    'home.premium_desc',
-                    '무제한 매칭과 광고 없는 쾌적한 환경',
-                  )}
+                  {t('home.premium_desc')}
                 </AMText>
               </View>
               <Heart size={32} color="white" />
             </View>
             <TouchableOpacity style={styles.premiumButton}>
               <AMText style={styles.premiumButtonText} fontWeight={700}>
-                {t('home.premium_subscribe', '프리미엄 구독하기')}
+                {t('home.premium_subscribe')}
               </AMText>
             </TouchableOpacity>
           </LinearGradient>
@@ -425,30 +310,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   matchButtonText: { fontSize: 18, color: '#4A90E2' },
-  disabledButton: { opacity: 0.8 },
+  disabledButton: { opacity: 0.5 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  resetText: {
-    color: 'white',
-    fontSize: 12,
-    textAlign: 'center',
-    marginTop: 12,
-    opacity: 0.8,
-  },
-  matchCardFooter: {
-    padding: 12,
-    backgroundColor: '#F0F7FF',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  matchCardFooterText: { fontSize: 12, color: '#4A90E2' },
-  sectionCard: {
-    backgroundColor: 'white',
-    borderRadius: 16,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: '#F3F4F6',
-  },
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -456,21 +319,6 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   sectionTitle: { fontSize: 16, color: '#1F2937' },
-  actionText: { fontSize: 14, color: '#4A90E2' },
-  filterItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 10,
-  },
-  filterLabel: { fontSize: 14, color: '#717182' },
-  filterBadge: {
-    backgroundColor: '#F3F4F6',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-  },
-  filterBadgeText: { fontSize: 12, color: '#374151' },
   recentGrid: { flexDirection: 'row', gap: 12 },
   recentCard: {
     flex: 1,
@@ -482,20 +330,18 @@ const styles = StyleSheet.create({
   },
   imageWrapper: { width: '100%', aspectRatio: 1 },
   recentImage: { width: '100%', height: '100%' },
-  onlineStatus: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    backgroundColor: '#50E3C2',
-    borderWidth: 2,
-    borderColor: 'white',
+  recentImagePlaceholder: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#F3F4F6',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   recentInfo: { padding: 8 },
   recentName: { fontSize: 14, color: '#1F2937' },
   recentMbti: { fontSize: 12, color: '#717182' },
+  emptyRecent: { flex: 1, padding: 20, alignItems: 'center' },
+  emptyRecentText: { color: '#9CA3AF', fontSize: 14 },
   premiumCard: { padding: 24, borderRadius: 20 },
   premiumHeader: {
     flexDirection: 'row',
