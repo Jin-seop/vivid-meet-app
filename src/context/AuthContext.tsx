@@ -1,7 +1,6 @@
 import React, { createContext, useState, useContext, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next'; // 다국어 처리를 위해 추가
 
-// AimoChat 프로젝트의 데이터 구조에 맞게 수정된 유저 프로필 타입
 interface UserProfile {
   id?: string;
   email: string;
@@ -10,6 +9,7 @@ interface UserProfile {
   providerId: string;
   region: 'KR' | 'JP' | null;
   gender: 'MALE' | 'FEMALE' | null;
+  mbti: string | null;
   aiPhotoUrl?: string;
   posePhotoUrl?: string;
   realPhotos: string[];

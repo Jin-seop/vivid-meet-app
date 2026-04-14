@@ -9,12 +9,14 @@ import {
 } from './navigation/RootStack';
 import { StackNavigationProp } from '@react-navigation/stack';
 import SignUpStep1 from '../components/sighUp/step_1';
+import SignUpStep2 from '../components/sighUp/step_2';
 import SignUpStep3 from '../components/sighUp/step_3';
 import SignUpStep4 from '../components/sighUp/step_4';
-import SignUpStep2 from '../components/sighUp/step_2';
 import { RouteProp, useRoute } from '@react-navigation/native';
 import { useAuth } from '../context/AuthContext';
 import { aiApi } from '../api/ai';
+import { userApi } from '../api/user';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 export type SignUpScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -30,8 +32,9 @@ export interface SignUpData {
   nickname: string;
   provider: 'GooGle' | 'Apple' | 'Line';
   providerId: string;
-  region: 'KR' | 'JP' | null;
-  gender: 'MALE' | 'FEMALE' | null;
+  region: 'KR' | 'JP';
+  gender: 'MALE' | 'FEMALE';
+  mbti?: string;
   aiPhotoUrl: string;
   posePhotoUrl: string;
   realPhotos: string[];
@@ -52,8 +55,8 @@ const SignUpScreen = ({ navigation }: SignUpScreenProps) => {
     nickname: '',
     provider: route.params.provider,
     providerId: route.params.providerId,
-    region: null,
-    gender: null,
+    region: 'KR',
+    gender: 'MALE',
     aiPhotoUrl: '',
     posePhotoUrl: '',
     realPhotos: [],
@@ -114,11 +117,11 @@ const SignUpScreen = ({ navigation }: SignUpScreenProps) => {
       // 3. API 호출
       const response = await aiApi.generatePersona(formData);
 
-      if (response.data && response.data.imageUrl) {
+      if (response.data) {
         // 4. 생성된 AI 이미지 URL 저장 및 다음 단계 이동
         setProfileData(prev => ({
           ...prev,
-          aiPhotoUrl: response.data.imageUrl,
+          aiPhotoUrl: response.data,
         }));
         setStep(4);
       }
@@ -128,14 +131,30 @@ const SignUpScreen = ({ navigation }: SignUpScreenProps) => {
     }
   };
 
-  const onSignUp = () => {
-    // login({
-    //   name: profileData.name,
-    //   birthYear: profileData.birthYear,
-    //   mbti: profileData.mbti,
-    //   interests: profileData.interests,
-    //   photos: uploadedPhotos,
-    // });
+  const onSignUp = async () => {
+    try {
+      const response = await userApi.signUp({
+        ...profileData,
+      });
+
+      if (response.status === 201 || response.status === 200) {
+        // 💡 [해결 1] 가입 완료 시 발급받은 토큰을 기기 보안 저장소에 영구 저장
+        if (response.data.accessToken) {
+          await EncryptedStorage.setItem(
+            'user_token',
+            response.data.accessToken,
+          );
+        }
+
+        // 💡 [해결 2] 전역 AuthContext에 유저 정보 세팅 (로그인 처리)
+        login(response.data.user);
+
+        // 3. 홈으로 이동
+        navigation.replace(RootStackScreenName.HomeMain);
+      }
+    } catch {
+      Alert.alert('오류', '회원가입 처리 중 문제가 발생했습니다.');
+    }
   };
 
   return (
@@ -181,7 +200,7 @@ const SignUpScreen = ({ navigation }: SignUpScreenProps) => {
 
         {/* Step 4: AI 캐릭터 프리뷰하고 계정 생성 */}
         {step === 4 && (
-          <SignUpStep4 profileData={profileData} navigation={navigation} />
+          <SignUpStep4 profileData={profileData} onSignUp={onSignUp} />
         )}
       </ScrollView>
     </SafeAreaView>

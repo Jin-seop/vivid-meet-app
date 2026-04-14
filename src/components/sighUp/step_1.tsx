@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
 import { MotiView } from 'moti';
 import { useTranslation } from 'react-i18next'; // 추가
 import AMText from '../common/AMText';
 import AMTouchableOpacity from '../common/AMTouchableOpacity';
 import { SignUpData } from '../../screens/SignUpScreen';
+import { userApi } from '../../api/user';
+import { useQuery } from '@tanstack/react-query';
 
 interface SignUpStep1Props {
   profileData: SignUpData;
@@ -18,6 +20,30 @@ const SignUpStep1 = ({
   setStep,
 }: SignUpStep1Props) => {
   const { t } = useTranslation(); // 추가
+
+  const [debouncedNickname, setDebouncedNickname] = useState(
+    profileData.nickname,
+  );
+
+  const { data } = useQuery({
+    queryKey: ['nicknameCheck', debouncedNickname],
+    queryFn: async () => {
+      const response = await userApi.checkNickname(debouncedNickname);
+      console.log('response ==>', response);
+
+      return response.data;
+    },
+    enabled: debouncedNickname.length >= 2,
+    placeholderData: { isAvailable: true },
+    staleTime: 1000 * 60,
+  });
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedNickname(profileData.nickname);
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [profileData.nickname]);
 
   return (
     <MotiView
@@ -34,7 +60,11 @@ const SignUpStep1 = ({
           {t('signup.nickname')}
         </AMText>
         <TextInput
-          style={styles.input}
+          style={[
+            styles.input,
+            profileData.nickname.length > 2 &&
+              !data?.isAvailable && { borderColor: '#EF4444' },
+          ]}
           value={profileData?.nickname}
           onChangeText={text =>
             setProfileData({ ...profileData, nickname: text })
@@ -89,11 +119,15 @@ const SignUpStep1 = ({
           styles.nextButton,
           (!profileData?.nickname ||
             !profileData.gender ||
-            !profileData.region) &&
+            !profileData.region ||
+            !data?.isAvailable) &&
             styles.disabledButton,
         ]}
         disabled={
-          !profileData?.nickname || !profileData.gender || !profileData.region
+          !profileData?.nickname ||
+          !profileData.gender ||
+          !profileData.region ||
+          !data?.isAvailable
         }
         onPress={() => setStep(2)}
       >

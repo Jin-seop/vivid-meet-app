@@ -5,7 +5,7 @@ import EncryptedStorage from 'react-native-encrypted-storage'; // 보안 저장�
 
 const api = axios.create({
   baseURL: API_URL,
-  timeout: 10000, // 사진 업로드를 고려하여 10초 설정
+  timeout: 600000, // 사진 업로드를 고려하여 10초 설정
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',

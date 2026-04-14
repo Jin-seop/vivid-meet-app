@@ -13,7 +13,7 @@ export interface CreateUserDto {
 
 export const userApi = {
   /** 회원가입 */
-  signUp: (data: CreateUserDto) => api.post('/users', data),
+  signUp: (data: CreateUserDto) => api.post('/auth/signup', data),
 
   /** 추천 유저 목록 조회 */
   getRecommendedUsers: () => api.get('/users/recommend'),
@@ -23,7 +23,9 @@ export const userApi = {
 
   /** 닉네임 중복 체크 */
   checkNickname: (nickname: string) =>
-    api.get(`/users/check-nickname?nickname=${nickname}`),
+    api.get<{ isAvailable: boolean }>(
+      `/users/check-nickname?nickname=${nickname}`,
+    ),
 
   /** AI 투명성 고지 동의 */
   acceptAiNotice: () => api.patch('/users/me/accept-ai-notice'),

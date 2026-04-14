@@ -28,14 +28,12 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
 
   const googleAuth = useGoogleAuth(data => {
     if (data.isNewUser) {
-      // 신규 유저: SignUpScreen으로 이동 (파라미터 전달)
       navigation.navigate(RootStackScreenName.SignUp, {
-        email: data.email,
+        email: data.profile?.email || '',
         provider: 'GooGle',
-        providerId: data.providerId,
+        providerId: data.profile?.providerId || '',
       });
     } else {
-      // 기존 유저: HomeMain으로 이동
       navigation.replace(RootStackScreenName.HomeMain);
     }
   });

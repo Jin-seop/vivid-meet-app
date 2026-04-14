@@ -10,7 +10,6 @@ import {
   StatusBar,
   Alert,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   ArrowLeft,
   MoreVertical,
@@ -34,6 +33,7 @@ import { chatApi } from '../api/chat';
 import { matchApi } from '../api/match';
 import { useAuth } from '../context/AuthContext';
 import { API_URL } from '@env';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 type ChatScreenProps = StackScreenProps<
   RootStackParamList,

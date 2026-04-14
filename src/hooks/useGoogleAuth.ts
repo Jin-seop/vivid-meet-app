@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import auth from '@react-native-firebase/auth';
+import auth, { GoogleAuthProvider } from '@react-native-firebase/auth';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/index'; //
@@ -24,7 +24,7 @@ export const useGoogleAuth = (onSuccessCallback?: (data: any) => void) => {
       }
 
       // 2. Firebase 인증 정보 생성
-      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+      const googleCredential = GoogleAuthProvider.credential(idToken);
       const userCredential = await auth().signInWithCredential(
         googleCredential,
       );
@@ -39,10 +39,9 @@ export const useGoogleAuth = (onSuccessCallback?: (data: any) => void) => {
       return backEndResponse.data;
     },
     onSuccess: async data => {
-      // 신규 유저가 아닐 경우 로그인 처리
-      if (data.token && !data.isNewUser) {
-        await EncryptedStorage.setItem('user_token', data.token); //
-        login(data.user); //
+      if (!data.isNewUser && data.accessToken) {
+        await EncryptedStorage.setItem('user_token', data.accessToken);
+        login(data.user);
       }
 
       if (onSuccessCallback) {

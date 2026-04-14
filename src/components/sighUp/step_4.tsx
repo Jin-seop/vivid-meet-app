@@ -6,23 +6,15 @@ import { CheckCircle2 } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import AMText from '../common/AMText';
 import AMTouchableOpacity from '../common/AMTouchableOpacity';
-import {
-  SignUpData,
-  SignUpScreenNavigationProp,
-} from '../../screens/SignUpScreen';
-import { RootStackScreenName } from '../../screens/navigation/RootStack';
+import { SignUpData } from '../../screens/SignUpScreen';
 
 interface SignUpStep4Props {
   profileData: SignUpData;
-  navigation: SignUpScreenNavigationProp;
+  onSignUp: () => Promise<void>;
 }
 
-const SignUpStep4 = ({ profileData, navigation }: SignUpStep4Props) => {
+const SignUpStep4 = ({ profileData, onSignUp }: SignUpStep4Props) => {
   const { t } = useTranslation();
-
-  const onCompletePress = () => {
-    navigation.replace(RootStackScreenName.HomeMain);
-  };
 
   return (
     <MotiView
@@ -42,7 +34,9 @@ const SignUpStep4 = ({ profileData, navigation }: SignUpStep4Props) => {
           {profileData.aiPhotoUrl ? (
             <Image
               style={styles.aiAvatarImage}
-              source={{ uri: profileData.aiPhotoUrl }}
+              source={{
+                uri: profileData.aiPhotoUrl,
+              }}
             />
           ) : null}
         </View>
@@ -63,10 +57,7 @@ const SignUpStep4 = ({ profileData, navigation }: SignUpStep4Props) => {
         </View>
       </View>
 
-      <AMTouchableOpacity
-        style={styles.completeButton}
-        onPress={onCompletePress}
-      >
+      <AMTouchableOpacity style={styles.completeButton} onPress={onSignUp}>
         <LinearGradient
           colors={['#4A90E2', '#50E3C2']}
           start={{ x: 0, y: 0 }}
@@ -115,7 +106,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
   },
-  aiAvatarImage: { width: '100%', height: '100%' },
+  aiAvatarImage: { width: '100%', height: '100%', borderRadius: 18 },
   aiName: {
     fontSize: 18,
     fontWeight: 'bold',
