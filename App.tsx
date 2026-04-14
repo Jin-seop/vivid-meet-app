@@ -31,20 +31,41 @@ export default function App() {
         console.log('NOTIFICATION:', notification);
         // 알림 탭 시 동작
         if (notification.data?.matchId) {
-          console.log('Navigating to chat room from notification:', notification.data.matchId);
-          navigationRef.current?.navigate(RootStackScreenName.Chat, { matchId: notification.data.matchId });
+          console.log(
+            'Navigating to chat room from notification:',
+            notification.data.matchId,
+          );
+          navigationRef.current?.navigate(RootStackScreenName.Chat, {
+            matchId: notification.data.matchId,
+          });
         }
       },
       requestPermissions: Platform.OS === 'ios', // iOS에서만 권한 요청
     });
+
+    // 안드로이드 알림 채널 생성
+    if (Platform.OS === 'android') {
+      PushNotification.createChannel(
+        {
+          channelId: 'fcm_channel_id', // App.tsx에서 onMessage에 사용된 ID와 동일하게 설정
+          channelName: 'FCM Notifications', // 채널 이름
+          channelDescription: 'Notifications from Firebase Cloud Messaging',
+          soundName: 'default',
+          importance: 4, // IMPORTANCE_HIGH
+          vibrate: true,
+        },
+        created =>
+          console.log(`createChannel '${'fcm_channel_id'}' status: ${created}`),
+      );
+    }
 
     const registerForPushNotifications = async () => {
       try {
         // 1. 알림 권한 요청
         const authStatus = await messaging().requestPermission();
         const enabled =
-          authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-          authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+          authStatus === messaging().AuthorizationStatus.AUTHORIZED ||
+          authStatus === messaging().AuthorizationStatus.PROVISIONAL;
 
         if (enabled) {
           console.log('Authorization granted');
@@ -65,7 +86,10 @@ export default function App() {
           );
         }
       } catch (error) {
-        console.error('Error getting FCM token or setting up listeners:', error);
+        console.error(
+          'Error getting FCM token or setting up listeners:',
+          error,
+        );
       }
     };
 
@@ -79,31 +103,44 @@ export default function App() {
 
       // Foreground 상태에서는 localNotification으로 알림 표시
       PushNotification.localNotification({
-        channelId: 'fcm_channel_id', // TODO: 실제 채널 ID 설정 필요 (안드로이드)
+        channelId: 'fcm_channel_id', // 안드로이드 채널 ID
         title: notification?.title,
-        message: notification?.body,
+        message: notification?.body || '',
         playSound: true,
         soundName: 'default',
-        data: data,
+        userInfo: data, // custom data
       });
     });
 
     // Background/Quit 메시지 수신 리스너
-    const unsubscribeBackground = messaging().setBackgroundMessageHandler(async remoteMessage => {
-      console.log('Background Message:', JSON.stringify(remoteMessage));
-      // 백그라운드 메시지는 시스템 트레이에 자동 표시됨. 탭 시 동작은 getInitialNotification에서 처리.
-    });
+    const unsubscribeBackground = messaging().setBackgroundMessageHandler(
+      async remoteMessage => {
+        console.log(
+          'Background Message handled:',
+          JSON.stringify(remoteMessage),
+        );
+        // 백그라운드 메시지는 시스템 트레이에 자동 표시됨. 탭 시 동작은 getInitialNotification에서 처리.
+      },
+    );
 
     // 앱이 종료된 상태에서 푸시를 통해 실행되었을 때 메시지 핸들링
     messaging()
       .getInitialNotification()
       .then(remoteMessage => {
         if (remoteMessage) {
-          console.log('Initial Notification:', JSON.stringify(remoteMessage));
+          console.log(
+            'Initial Notification handled:',
+            JSON.stringify(remoteMessage),
+          );
           // 알림 탭 시 채팅방으로 이동
           if (remoteMessage.data?.matchId) {
-            console.log('Navigating to chat room from initial notification:', remoteMessage.data.matchId);
-            navigationRef.current?.navigate(RootStackScreenName.Chat, { matchId: remoteMessage.data.matchId });
+            console.log(
+              'Navigating to chat room from initial notification:',
+              remoteMessage.data.matchId,
+            );
+            navigationRef.current?.navigate(RootStackScreenName.Chat, {
+              matchId: remoteMessage.data.matchId,
+            });
           }
         }
       });

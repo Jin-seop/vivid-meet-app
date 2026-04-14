@@ -1,11 +1,11 @@
 import api from './index';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 
 export const userApi = {
   /** 닉네임 중복 체크 */
-  checkNickname: (nickname: string) => api.get(`/users/check-nickname?nickname=${nickname}`),
+  checkNickname: (nickname: string) =>
+    api.get(`/users/check-nickname?nickname=${nickname}`),
 
   /** 회원가입 */
   signUp: (userData: CreateUserDto) => api.post('/users', userData),
@@ -14,7 +14,8 @@ export const userApi = {
   login: (userData: LoginDto) => api.post('/auth/login', userData),
 
   /** 토큰 갱신 */
-  refresh: (userId: string, refreshToken: string) => api.post('/auth/refresh', { userId, refreshToken }),
+  refresh: (userId: string, refreshToken: string) =>
+    api.post('/auth/refresh', { userId, refreshToken }),
 
   /**
    * 소셜 로그인 (Google, Apple, Line)
@@ -53,5 +54,6 @@ export const userApi = {
   withdraw: () => api.delete('/users/me/withdraw'),
 
   /** FCM 토큰 업데이트 */
-  saveFcmToken: (fcmToken: string) => api.put('/users/me/fcm-token', { fcmToken }),
+  saveFcmToken: (fcmToken: string) =>
+    api.put('/users/me/fcm-token', { fcmToken }),
 };

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   StyleSheet,
   View,
@@ -9,6 +9,7 @@ import {
   Platform,
   StatusBar,
   Alert,
+  Image,
 } from 'react-native';
 import {
   ArrowLeft,
@@ -17,7 +18,6 @@ import {
   Image as ImageIcon,
   Smile,
 } from 'lucide-react-native';
-import LinearGradient from 'react-native-linear-gradient';
 import { useTranslation } from 'react-i18next';
 import { StackScreenProps } from '@react-navigation/stack';
 import AMText from '../components/common/AMText';
@@ -26,10 +26,9 @@ import {
   RootStackScreenName,
 } from './navigation/RootStack';
 import { chatApi } from '../api/chat';
-import { matchApi } from '../api/match';
-import { useAuth } from '../context/AuthContext';
-import { socketService } from '../api/socket'; // 👉 전역 소켓 서비스 임포트
+import { socketService } from '../api/socket';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useAuth } from '../context/AuthContext';
 
 type ChatScreenProps = StackScreenProps<
   RootStackParamList,
@@ -39,15 +38,13 @@ type ChatScreenProps = StackScreenProps<
 interface Message {
   id: string;
   senderId: string;
-  content: string;
+  content: string; // 텍스트 또는 이미지 URL
   isRead?: boolean; // 👉 추가
   createdAt: string;
-  type?: 'text' | 'image' | 'system';
+  type?: 'text' | 'image' | 'system'; // 메시지 타입 구분
 }
 
 const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
-  // 이전 화면(목록이나 매칭)에서 전달받은 파라미터 추출
-  // (임시로 any 단언을 사용하여 타입 에러 방지. 추후 RootStackParamList에 otherUser 추가 권장)
   const { matchId, otherUser } = route.params as any;
 
   const { t } = useTranslation();
@@ -56,31 +53,60 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [isTyping, setIsTyping] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null); // 선택된 이미지 상태
 
   const flatListRef = useRef<FlatList>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  const pickImage = async () => {
+    const result = await launchImageLibrary({
+      mediaType: 'photo',
+      quality: 0.8,
+    });
+
+    if (result.assets && result.assets[0].uri) {
+      setSelectedImage(result.assets[0].uri);
+    }
+  };
+
+  const sendImage = async () => {
+    if (!selectedImage) return;
+
+    try {
+      const formData = new FormData();
+      formData.append('file', {
+        uri: selectedImage,
+        name: `chat-image-${Date.now()}.jpg`,
+        type: 'image/jpeg',
+      } as any);
+
+      const uploadResponse = await chatApi.uploadImage(formData);
+      const imageUrl = uploadResponse.data.url;
+
+      socketService.sendMessage(matchId, imageUrl, 'IMAGE');
+      setSelectedImage(null);
+    } catch (error) {
+      console.error('Image upload failed:', error);
+      Alert.alert('오류', '이미지 전송에 실패했습니다.');
+    }
+  };
+
   const initChat = useCallback(async () => {
     try {
-      // 1. 기존 메시지 내역 불러오기
       const response = await chatApi.getMessages(matchId);
       setMessages(response.data);
 
-      // 2. 소켓 연결 확인 및 룸 입장
       await socketService.connect();
       socketService.joinRoom(matchId);
 
-      // 3. 실시간 메시지 수신 리스너 등록
       socketService.socket?.on('newMessage', (payload: Message) => {
         setMessages(prev => [...prev, payload]);
       });
 
-      // 4. 상대방이 채팅방을 나갔을 때 감지
       socketService.socket?.on('userLeft', (data: { message: string }) => {
         Alert.alert(t('common.notice', '알림'), data.message);
       });
 
-      // 5. 입력 중 상태 감지
       socketService.socket?.on('userTyping', (data: { userId: string }) => {
         if (data.userId !== user?.id) {
           setIsTyping(true);
@@ -93,7 +119,6 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
         }
       });
 
-      // 6. 읽음 처리 감지 (내 메시지를 상대방이 읽었을 때)
       socketService.socket?.on('messagesRead', (data: { userId: string }) => {
         if (data.userId !== user?.id) {
           setMessages(prev =>
@@ -111,7 +136,6 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
   useEffect(() => {
     initChat();
 
-    // 화면(채팅방)을 벗어날 때 리스너 해제 (중복 수신 방지)
     return () => {
       socketService.leaveRoom(matchId);
       socketService.socket?.off('newMessage');
@@ -125,11 +149,8 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
   const handleTextChange = (text: string) => {
     setMessage(text);
 
-    // Typing indicator 발송
     if (text.length > 0) {
       socketService.typing(matchId);
-
-      // 2초 후 입력 중단 처리 (debounce)
       if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
       typingTimeoutRef.current = setTimeout(() => {
         socketService.stopTyping(matchId);
@@ -145,10 +166,7 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
     if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
     socketService.stopTyping(matchId);
 
-    // 전역 소켓 서비스를 통해 서버로 메시지 발송
     socketService.sendMessage(matchId, message);
-
-    // 보낸 후 입력창 초기화
     setMessage('');
   };
 
@@ -159,18 +177,29 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
       <View
         style={[styles.messageRow, isMe ? styles.myMsgRow : styles.theirMsgRow]}
       >
-        <View
-          style={[styles.bubble, isMe ? styles.myBubble : styles.theirBubble]}
-        >
-          <AMText
+        {item.type === 'image' ? (
+          <Image
+            source={{ uri: item.content }}
             style={[
-              styles.bubbleText,
-              isMe ? styles.myBubbleText : styles.theirBubbleText,
+              styles.imageBubble,
+              isMe ? styles.myImageBubble : styles.theirImageBubble,
             ]}
+            resizeMode="cover"
+          />
+        ) : (
+          <View
+            style={[styles.bubble, isMe ? styles.myBubble : styles.theirBubble]}
           >
-            {item.content}
-          </AMText>
-        </View>
+            <AMText
+              style={[
+                styles.bubbleText,
+                isMe ? styles.myBubbleText : styles.theirBubbleText,
+              ]}
+            >
+              {item.content}
+            </AMText>
+          </View>
+        )}
         <View style={isMe ? styles.myInfo : styles.theirInfo}>
           {isMe && item.isRead && (
             <AMText style={styles.readIndicator}>
@@ -199,7 +228,6 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
         </TouchableOpacity>
         <View style={styles.headerCenter}>
           <AMText style={styles.userName} fontWeight={700}>
-            {/* 상대방 이름 표시 (없으면 기본값) */}
             {otherUser?.nickname || t('chat_list.title', '채팅방')}
           </AMText>
           {isTyping && (
@@ -208,7 +236,6 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
             </AMText>
           )}
         </View>
-        {/* 우측 상단 더보기 (채팅방 나가기 등에 사용 가능) */}
         <TouchableOpacity>
           <MoreVertical size={24} color="#1F2937" />
         </TouchableOpacity>
@@ -232,7 +259,7 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
         keyboardVerticalOffset={90}
       >
         <View style={styles.inputArea}>
-          <TouchableOpacity style={styles.inputIconButton}>
+          <TouchableOpacity style={styles.inputIconButton} onPress={pickImage}>
             <ImageIcon size={22} color="#9CA3AF" />
           </TouchableOpacity>
           <View style={styles.inputWrapper}>
@@ -251,16 +278,25 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
               <Smile size={20} color="#9CA3AF" />
             </TouchableOpacity>
           </View>
-          <TouchableOpacity
-            style={[
-              styles.sendButton,
-              !message.trim() && styles.sendButtonDisabled,
-            ]}
-            onPress={handleSend}
-            disabled={!message.trim()}
-          >
-            <Send size={20} color="white" style={{ marginLeft: 2 }} />
-          </TouchableOpacity>
+          {selectedImage ? (
+            <TouchableOpacity
+              style={[styles.sendButton]}
+              onPress={sendImage} // 이미지 전송
+            >
+              <Send size={20} color="white" style={{ marginLeft: 2 }} />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={[
+                styles.sendButton,
+                !message.trim() && styles.sendButtonDisabled,
+              ]}
+              onPress={handleSend}
+              disabled={!message.trim()}
+            >
+              <Send size={20} color="white" style={{ marginLeft: 2 }} />
+            </TouchableOpacity>
+          )}
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -273,6 +309,7 @@ const styles = StyleSheet.create({
     height: 60,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 16,
     backgroundColor: 'white',
     borderBottomWidth: 1,
@@ -334,7 +371,7 @@ const styles = StyleSheet.create({
     minHeight: 40,
     maxHeight: 120,
     fontSize: 16,
-    color: '#1F2937',
+    color: '#111827',
     paddingTop: Platform.OS === 'ios' ? 12 : 8,
     paddingBottom: Platform.OS === 'ios' ? 12 : 8,
   },
@@ -350,6 +387,23 @@ const styles = StyleSheet.create({
   },
   sendButtonDisabled: { backgroundColor: '#E5E7EB' },
   row: { flexDirection: 'row', alignItems: 'center' },
+  // 이미지 메시지 스타일 추가
+  imageBubble: {
+    padding: 0, // 이미지 자체에 패딩 제거
+    borderRadius: 20,
+    maxWidth: '75%',
+    aspectRatio: 1, // 기본적으로 정사각형 비율 유지
+  },
+  myImageBubble: {
+    backgroundColor: '#4A90E2',
+    borderBottomRightRadius: 4,
+  },
+  theirImageBubble: {
+    backgroundColor: 'white',
+    borderBottomLeftRadius: 4,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
 });
 
 export default ChatScreen;
