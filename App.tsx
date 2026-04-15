@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import RootStack from './src/screens/navigation/RootStack';
 import { AuthProvider } from './src/context/AuthContext';
@@ -7,7 +7,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import messaging from '@react-native-firebase/messaging';
 import PushNotification from 'react-native-push-notification';
 import { Platform, Alert, Linking } from 'react-native';
-import api from './src/api';
 import { userApi } from './src/api/user';
 import { RootStackScreenName } from './src/screens/navigation/RootStack';
 
@@ -36,7 +35,7 @@ export default function App() {
             notification.data.matchId,
           );
           navigationRef.current?.navigate(RootStackScreenName.Chat, {
-            matchId: notification.data.matchId,
+            matchId: notification.data.matchId as string,
           });
         }
       },
@@ -64,8 +63,8 @@ export default function App() {
         // 1. 알림 권한 요청
         const authStatus = await messaging().requestPermission();
         const enabled =
-          authStatus === messaging().AuthorizationStatus.AUTHORIZED ||
-          authStatus === messaging().AuthorizationStatus.PROVISIONAL;
+          authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+          authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
         if (enabled) {
           console.log('Authorization granted');
@@ -113,7 +112,7 @@ export default function App() {
     });
 
     // Background/Quit 메시지 수신 리스너
-    const unsubscribeBackground = messaging().setBackgroundMessageHandler(
+    messaging().setBackgroundMessageHandler(
       async remoteMessage => {
         console.log(
           'Background Message handled:',
@@ -139,7 +138,7 @@ export default function App() {
               remoteMessage.data.matchId,
             );
             navigationRef.current?.navigate(RootStackScreenName.Chat, {
-              matchId: remoteMessage.data.matchId,
+              matchId: remoteMessage.data.matchId as string,
             });
           }
         }
@@ -147,7 +146,6 @@ export default function App() {
 
     return () => {
       unsubscribeForeground();
-      unsubscribeBackground();
     };
   }, []);
 

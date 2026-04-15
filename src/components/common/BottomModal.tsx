@@ -90,7 +90,7 @@ const BottomModal = ({
             animate={{ opacity: 1 }}
             style={[
               StyleSheet.absoluteFill,
-              { backgroundColor: 'rgba(0,0,0,0.5)' },
+              styles.overlayBackground,
             ]}
           />
         </TouchableOpacity>
@@ -159,14 +159,14 @@ export function BottomModalOption({
     <TouchableOpacity
       onPress={onClick}
       disabled={disabled}
-      style={[styles.optionButton, disabled && { opacity: 0.5 }]}
+      style={[styles.optionButton, disabled && styles.disabledOption]}
     >
       <View style={styles.optionLeft}>
         {icon && <View style={styles.optionIcon}>{icon}</View>}
         <AMText
           style={[
             styles.optionLabel,
-            variant === 'danger' && { color: '#EF4444' },
+            variant === 'danger' && styles.dangerOptionLabel,
           ]}
           fontWeight={500}
         >
@@ -192,6 +192,7 @@ export function BottomModalDivider({
 
 const styles = StyleSheet.create({
   overlay: { flex: 1, justifyContent: 'flex-end' },
+  overlayBackground: { backgroundColor: 'rgba(0,0,0,0.5)' },
   modalContent: {
     backgroundColor: 'white',
     borderTopLeftRadius: 24,
@@ -228,9 +229,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingVertical: 16,
   },
+  disabledOption: { opacity: 0.5 },
   optionLeft: { flexDirection: 'row', alignItems: 'center', flex: 1 },
   optionIcon: { marginRight: 12 },
   optionLabel: { fontSize: 16, color: '#1F2937' },
+  dangerOptionLabel: { color: '#EF4444' },
   divider: { height: 1, backgroundColor: '#F3F4F6' },
 });
 

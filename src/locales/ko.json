@@ -90,7 +90,45 @@
     "photo_locked": "실물 사진 {{count}}장 잠금됨",
     "instant_unlock": "즉시 해제",
     "input_placeholder": "메시지를 입력하세요...",
-    "system_unlocked": "대화가 활발해졌어요! 사진 1장이 해제되었습니다 🎉"
+    "system_unlocked": "대화가 활발해졌어요! 사진 1장이 해제되었습니다 🎉",
+    "report": "신고하기",
+    "block": "차단하기",
+    "typing": "입력 중...",
+    "read": "읽음"
+  },
+  "report": {
+    "title": "유저 신고",
+    "desc": "신고 사유를 선택해주세요. 허위 신고 시 이용 제한을 받을 수 있습니다.",
+    "submit": "신고하기",
+    "reason_insult": "욕설 및 비하 발언",
+    "reason_sexual": "성적인 대화 유도",
+    "reason_scam": "사기 및 광고",
+    "reason_inappropriate": "부적절한 프로필 사진",
+    "reason_other": "기타",
+    "select_reason": "신고 사유를 선택해주세요.",
+    "success_msg": "신고가 접수되었습니다. 운영팀에서 검토 후 조치하겠습니다.",
+    "fail_msg": "신고 접수 중 오류가 발생했습니다."
+  },
+  "block": {
+    "title": "유저 차단",
+    "desc": "상대방을 차단하시겠습니까? 차단 시 서로 메시지를 주고받을 수 없으며, 매칭 목록에서도 삭제됩니다.",
+    "confirm": "차단하기",
+    "success_msg": "상대방을 차단했습니다.",
+    "fail_msg": "차단 처리 중 오류가 발생했습니다."
+  },
+  "settings": {
+    "notifications": "알림",
+    "push_notif": "푸시 알림",
+    "push_notif_desc": "메시지 및 매칭 알림을 받습니다.",
+    "marketing": "마케팅 정보 수신",
+    "marketing_desc": "이벤트 및 혜택 정보를 받습니다.",
+    "language_privacy": "언어 및 보안",
+    "language": "언어 설정",
+    "privacy_policy": "개인정보 처리방침",
+    "terms": "서비스 이용약관"
+  },
+  "notice": {
+    "empty": "등록된 공지사항이 없습니다."
   },
   "profile": {
     "title": "내 프로필",

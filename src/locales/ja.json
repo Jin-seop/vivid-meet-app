@@ -90,7 +90,45 @@
     "photo_locked": "実物写真 {{count}}枚ロック中",
     "instant_unlock": "今すぐ解除",
     "input_placeholder": "メッセージを入力してください...",
-    "system_unlocked": "トークが盛り上がりました！写真が1枚解除されました 🎉"
+    "system_unlocked": "トークが盛り上がりました！写真が1枚解除されました 🎉",
+    "report": "報告する",
+    "block": "ブロックする",
+    "typing": "入力中...",
+    "read": "既読"
+  },
+  "report": {
+    "title": "ユーザー報告",
+    "desc": "報告理由を選択してください。虚偽の報告をすると利用制限を受けることがあります。",
+    "submit": "報告する",
+    "reason_insult": "悪口および誹謗中傷",
+    "reason_sexual": "性的なトークの誘導",
+    "reason_scam": "詐欺および広告",
+    "reason_inappropriate": "不適切なプロフィール写真",
+    "reason_other": "その他",
+    "select_reason": "報告理由を選択してください。",
+    "success_msg": "報告が受理されました。運営チームで確認後、処置を行います。",
+    "fail_msg": "報告の受理中にエラーが発生しました。"
+  },
+  "block": {
+    "title": "ユーザーブロック",
+    "desc": "相手をブロックしますか？ブロックするとお互いにメッセージを送ることができず、マッチングリストからも削除されます。",
+    "confirm": "ブロックする",
+    "success_msg": "相手をブロックしました。",
+    "fail_msg": "ブロック処理中にエラーが発生しました。"
+  },
+  "settings": {
+    "notifications": "通知",
+    "push_notif": "プッシュ通知",
+    "push_notif_desc": "メッセージおよびマッチング通知を受け取ります。",
+    "marketing": "マーケティング情報の受信",
+    "marketing_desc": "イベントおよび特典情報を受け取ります。",
+    "language_privacy": "言語およびセキュリティ",
+    "language": "言語設定",
+    "privacy_policy": "プライバシーポリシー",
+    "terms": "利用規約"
+  },
+  "notice": {
+    "empty": "登録されたお知らせがありません。"
   },
   "profile": {
     "title": "マイプロフィール",

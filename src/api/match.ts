@@ -24,4 +24,5 @@ export const matchApi = {
 
   /** 랜덤 채팅 대기 취소 (이탈) */
   leaveRandomChat: () => api.delete('/match/random/leave'),
+  blockUser: (targetId: string) => api.post('/match/block', { targetId }),
 };

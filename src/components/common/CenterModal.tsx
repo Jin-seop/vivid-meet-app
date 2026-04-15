@@ -64,7 +64,7 @@ const CenterModal = ({
           transition={{ type: 'timing', duration: 200 }}
           style={[
             StyleSheet.absoluteFill,
-            { backgroundColor: 'rgba(0,0,0,0.5)' },
+            styles.overlayBackground,
           ]}
         />
 
@@ -142,7 +142,7 @@ export function ModalButton({
       style={[
         styles.button,
         { backgroundColor: bg },
-        disabled && { opacity: 0.5 },
+        disabled && styles.disabledButton,
       ]}
     >
       <AMText style={[styles.buttonText, { color: text }]} fontWeight={600}>
@@ -158,6 +158,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  overlayBackground: { backgroundColor: 'rgba(0,0,0,0.5)' },
   modalContent: {
     backgroundColor: 'white',
     borderRadius: 24,
@@ -202,6 +203,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  disabledButton: { opacity: 0.5 },
   buttonText: {
     fontSize: 16,
   },

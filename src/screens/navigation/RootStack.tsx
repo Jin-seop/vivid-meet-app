@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
 import LoginScreen from '../LoginScreen';
 import { SplashScreen } from '../SplashScreen';
 import SignUpScreen from '../SignUpScreen';
 import HomeTabNavigator from './HomeNavigator';
 import ChatScreen from '../ChatScreen';
 import EditProfileScreen from '../EditProfileScreen';
+import SettingsScreen from '../SettingsScreen';
+import NoticeListScreen from '../NoticeListScreen';
 
 export enum RootStackScreenName {
   Splash = 'Splash',
@@ -15,6 +17,8 @@ export enum RootStackScreenName {
   SignUp = 'SignUp',
   Chat = 'Chat',
   EditProfile = 'EditProfile',
+  Settings = 'Settings',
+  NoticeList = 'NoticeList',
 }
 
 export type RootStackParamList = {
@@ -26,15 +30,17 @@ export type RootStackParamList = {
     providerId: string;
   };
   [RootStackScreenName.HomeMain]: undefined;
-  [RootStackScreenName.Chat]: { id: string };
+  [RootStackScreenName.Chat]: { matchId: string; otherUser?: any };
   [RootStackScreenName.EditProfile]: undefined;
+  [RootStackScreenName.Settings]: undefined;
+  [RootStackScreenName.NoticeList]: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
 
-const RootStack = () => {
+const RootStack = forwardRef<NavigationContainerRef<RootStackParamList>>((props, ref) => {
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={ref}>
       <Stack.Navigator
         initialRouteName={RootStackScreenName.Splash}
         screenOptions={{ headerShown: false }}
@@ -60,9 +66,17 @@ const RootStack = () => {
           name={RootStackScreenName.EditProfile}
           component={EditProfileScreen}
         />
+        <Stack.Screen
+          name={RootStackScreenName.Settings}
+          component={SettingsScreen}
+        />
+        <Stack.Screen
+          name={RootStackScreenName.NoticeList}
+          component={NoticeListScreen}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
-};
+});
 
 export default RootStack;

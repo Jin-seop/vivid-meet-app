@@ -10,9 +10,9 @@ export const useLineAuth = (onSuccessCallback?: (data: any) => void) => {
   return useMutation({
     mutationFn: async () => {
       // 1. Line 로그인 요청 (@xmartlabs/react-native-line 사용)
-      const result = await Line.login();
+      const result = await Line.login({});
       
-      const accessToken = result.accessToken?.access_token;
+      const accessToken = result.accessToken?.accessToken;
 
       if (!accessToken) {
         throw new Error('Line Access Token을 찾을 수 없습니다.');

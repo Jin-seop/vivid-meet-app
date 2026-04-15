@@ -18,6 +18,8 @@ import { useFocusEffect } from '@react-navigation/native';
 import AMText from '../components/common/AMText';
 import { RootStackScreenName } from './navigation/RootStack';
 import { chatApi } from '../api/chat'; // 👉 API 임포트
+import { socketService } from '../api/socket';
+import { useAuth } from '../context/AuthContext';
 
 const ChatsListScreen = ({ navigation }: any) => {
   const { t } = useTranslation();

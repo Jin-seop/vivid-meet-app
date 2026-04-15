@@ -56,4 +56,7 @@ export const userApi = {
   /** FCM 토큰 업데이트 */
   saveFcmToken: (fcmToken: string) =>
     api.put('/users/me/fcm-token', { fcmToken }),
+
+  /** 유저 통계 정보 조회 */
+  getStats: () => api.get('/users/me/stats'),
 };

@@ -63,7 +63,8 @@ const SignUpStep1 = ({
           style={[
             styles.input,
             profileData.nickname.length > 2 &&
-              !data?.isAvailable && { borderColor: '#EF4444' },
+              !data?.isAvailable &&
+              styles.invalidInput,
           ]}
           value={profileData?.nickname}
           onChangeText={text =>
@@ -153,6 +154,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#111827',
   },
+  invalidInput: {
+    borderColor: '#EF4444',
+  },
   btnContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -185,7 +189,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 32,
   },
-  nextButtonText: { color: 'white', fontSize: 18 },
+  nextButtonText: { color: 'white', fontSize: 18, fontWeight: 'bold' },
   disabledButton: { backgroundColor: '#E5E7EB' },
 });
 

@@ -30,7 +30,7 @@ const HomeScreen = ({ navigation }: any) => {
   // 1. 포인트 및 무료 횟수 조회
   const { data: pointData } = useQuery({
     queryKey: ['myPoints'],
-    queryFn: () => userApi.getMyPoints().then(res => res.data),
+    queryFn: () => userApi.getPoints().then(res => res.data),
   });
 
   // 2. 최근 매칭 목록 조회 (👉 하드코딩 대체)

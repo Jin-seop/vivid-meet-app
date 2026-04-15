@@ -47,9 +47,7 @@ const EditProfileScreen = ({ navigation }: EditProfileScreenProps) => {
 
   // 폼 상태
   const [nickname, setNickname] = useState(user?.nickname || '');
-  const [email, setEmail] = useState(user?.email || '');
-  const [phone, setPhone] = useState('010-1234-5678'); // 예시 데이터
-  const [birthdate, setBirthdate] = useState('1995-05-15');
+  const [email] = useState(user?.email || '');
   const [gender, setGender] = useState(user?.gender?.toLowerCase() || 'male');
   const [language, setLanguage] = useState(user?.region === 'JP' ? 'ja' : 'ko');
   const [interests, setInterests] = useState<string[]>(['music', 'game']);
@@ -151,7 +149,7 @@ const EditProfileScreen = ({ navigation }: EditProfileScreenProps) => {
             end={{ x: 1, y: 0 }}
             style={styles.saveGradient}
           >
-            <Save size={16} color="white" style={{ marginRight: 4 }} />
+            <Save size={16} color="white" style={styles.saveIcon} />
             <AMText style={styles.saveText} fontWeight={600}>
               {t('edit_profile.save')}
             </AMText>
@@ -359,6 +357,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
   },
+  saveIcon: { marginRight: 4 },
   saveText: { color: 'white', fontSize: 14 },
   scrollContent: { padding: 16, paddingBottom: 40 },
   card: {

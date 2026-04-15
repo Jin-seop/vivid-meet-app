@@ -161,7 +161,7 @@ const MultiSelectDropdown = ({
               },
             ]}
           >
-            <ScrollView bounces={false} style={{ maxHeight: 250 }}>
+            <ScrollView bounces={false} style={styles.optionsScrollView}>
               {options.map(option => {
                 const isSelected = values.includes(option.value);
                 return (
@@ -282,5 +282,6 @@ const styles = StyleSheet.create({
   iconPrefix: { marginRight: 10 },
   disabledText: { color: '#D1D5DB' },
   errorText: { fontSize: 12, color: '#EF4444', marginTop: 6 },
+  optionsScrollView: { maxHeight: 250 },
 });
 export default MultiSelectDropdown;

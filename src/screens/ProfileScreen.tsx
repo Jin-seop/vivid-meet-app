@@ -22,7 +22,9 @@ import AMText from '../components/common/AMText';
 import CenterModal, { ModalButton } from '../components/common/CenterModal';
 import { userApi } from '../api/user'; // 👉 API 연동을 위해 임포트 추가
 
-export function ProfileScreen() {
+import { RootStackScreenName } from './navigation/RootStack';
+
+export function ProfileScreen({ navigation }: any) {
   const { t } = useTranslation();
   const { user, logout, withdraw } = useAuth();
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
@@ -94,7 +96,7 @@ export function ProfileScreen() {
           <AMText style={styles.headerTitle} fontWeight={700}>
             {t('profile.title')}
           </AMText>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate(RootStackScreenName.Settings)}>
             <Settings size={24} color="#374151" />
           </TouchableOpacity>
         </View>
@@ -152,17 +154,17 @@ export function ProfileScreen() {
           {renderMenuItem(
             <Bell size={22} color="#4B5563" />,
             t('profile.menu.notification', '알림 설정'),
-            () => {},
+            () => navigation.navigate(RootStackScreenName.Settings),
           )}
           {renderMenuItem(
             <ShieldCheck size={22} color="#4B5563" />,
             t('profile.menu.privacy', '개인정보 보호'),
-            () => {},
+            () => navigation.navigate(RootStackScreenName.Settings),
           )}
           {renderMenuItem(
             <Headphones size={22} color="#4B5563" />,
             t('profile.menu.support', '고객 센터'),
-            () => {},
+            () => navigation.navigate(RootStackScreenName.NoticeList),
           )}
           {renderMenuItem(
             <LogOut size={22} color="#4B5563" />,

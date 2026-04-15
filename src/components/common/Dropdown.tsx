@@ -3,8 +3,8 @@ import {
   StyleSheet,
   View,
   TouchableOpacity,
-  Modal,
   ScrollView,
+  Modal,
 } from 'react-native';
 import { ChevronDown, Check } from 'lucide-react-native';
 import { MotiView } from 'moti';
@@ -133,7 +133,7 @@ const Dropdown = ({
               },
             ]}
           >
-            <ScrollView bounces={false} style={{ maxHeight: 250 }}>
+            <ScrollView bounces={false} style={styles.optionsScrollView}>
               {options.map(option => (
                 <TouchableOpacity
                   key={option.value}
@@ -192,6 +192,7 @@ const styles = StyleSheet.create({
   iconPrefix: { marginRight: 10 },
   selectedLabel: { fontSize: 16, color: '#111827' },
   placeholderText: { color: '#9CA3AF' },
+  descriptionText: { fontSize: 12, color: '#6B7280', marginTop: 2 },
   modalOverlay: { flex: 1, backgroundColor: 'transparent' },
   dropdownMenu: {
     position: 'absolute',
@@ -210,13 +211,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F9FAFB',
+    paddingVertical: 12,
   },
   selectedOptionItem: { backgroundColor: 'rgba(74, 144, 226, 0.05)' },
   optionLabel: { flex: 1, fontSize: 15, color: '#1F2937' },
   disabledText: { color: '#D1D5DB' },
   errorText: { fontSize: 12, color: '#EF4444', marginTop: 6 },
+  optionsScrollView: { maxHeight: 250 },
 });
 export default Dropdown;

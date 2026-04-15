@@ -7,6 +7,10 @@ import { ProfileScreen } from '../ProfileScreen';
 
 const Tab = createBottomTabNavigator();
 
+const HomeIcon = ({ color }: { color: string }) => <Home color={color} size={24} />;
+const ChatIcon = ({ color }: { color: string }) => <MessageCircle color={color} size={24} />;
+const UserIcon = ({ color }: { color: string }) => <User color={color} size={24} />;
+
 const HomeTabNavigator = () => {
   return (
     <Tab.Navigator
@@ -20,7 +24,7 @@ const HomeTabNavigator = () => {
         name="Home"
         component={HomeScreen}
         options={{
-          tabBarIcon: ({ color }) => <Home color={color} size={24} />,
+          tabBarIcon: HomeIcon,
           tabBarLabel: '홈',
         }}
       />
@@ -28,7 +32,7 @@ const HomeTabNavigator = () => {
         name="ChatList"
         component={ChatsListScreen} // 추후 채팅 목록 컴포넌트로 교체
         options={{
-          tabBarIcon: ({ color }) => <MessageCircle color={color} size={24} />,
+          tabBarIcon: ChatIcon,
           tabBarLabel: '채팅',
         }}
       />
@@ -36,7 +40,7 @@ const HomeTabNavigator = () => {
         name="Profile"
         component={ProfileScreen} // 추후 마이페이지 컴포넌트로 교체
         options={{
-          tabBarIcon: ({ color }) => <User color={color} size={24} />,
+          tabBarIcon: UserIcon,
           tabBarLabel: '마이',
         }}
       />
