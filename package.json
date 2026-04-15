@@ -2,6 +2,7 @@
   "name": "AimoChat",
   "version": "0.0.1",
   "private": true,
+  "description": "AimoChat mobile application",
   "scripts": {
     "start": "react-native start",
     "arch": "RCT_NEW_ARCH_ENABLED=1",
