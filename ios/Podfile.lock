@@ -2164,6 +2164,11 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
+  - RNNotifee (9.1.8):
+    - React-Core
+    - RNNotifee/NotifeeCore (= 9.1.8)
+  - RNNotifee/NotifeeCore (9.1.8):
+    - React-Core
   - RNReanimated (4.3.0):
     - hermes-engine
     - RCTRequired
@@ -2490,6 +2495,7 @@ DEPENDENCIES:
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - "RNGoogleSignin (from `../node_modules/@react-native-google-signin/google-signin`)"
   - RNLocalize (from `../node_modules/react-native-localize`)
+  - "RNNotifee (from `../node_modules/@notifee/react-native`)"
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
@@ -2691,6 +2697,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-google-signin/google-signin"
   RNLocalize:
     :path: "../node_modules/react-native-localize"
+  RNNotifee:
+    :path: "../node_modules/@notifee/react-native"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
@@ -2808,12 +2816,13 @@ SPEC CHECKSUMS:
   RNGestureHandler: 88b46a372c2823029c528ff163a12eccbcc7e000
   RNGoogleSignin: 4590097b5c265e55e01bf2e824e0f5f5f66d2dfd
   RNLocalize: 0da45ec541d1460051b1f23c3a1820a8caa0fe6b
+  RNNotifee: 5e3b271e8ea7456a36eec994085543c9adca9168
   RNReanimated: 46aa0432d0a44ce978333713d1db0cbe706d5c41
   RNScreens: ca829379d20b0d1ff41a0b87bc37bdc50276cef5
   RNSVG: 68baaafbd26ef58405193d56290537362fa8e6e4
   RNWorklets: bc32c788b41ef5f9ee519d6bf3f495b73fb7741b
   Yoga: 846fbe6f595136be802ad81d05688ff748839764
 
-PODFILE CHECKSUM: 25153f1698ea35a8c8e24d94d2f809332ada8672
+PODFILE CHECKSUM: 8f2700ef5b27b72f134cf853ae1cbb0b74be7136
 
 COCOAPODS: 1.16.2
