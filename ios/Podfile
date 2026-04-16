@@ -14,6 +14,9 @@ node_require('react-native-permissions/scripts/setup.rb')
 
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
+use_frameworks! :linkage => :static
+
+$RNFirebaseAsStaticFramework = true
 
 setup_permissions([
   'Notifications',
@@ -28,16 +31,31 @@ if linkage != nil
   Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
   use_frameworks! :linkage => linkage.to_sym
 end
-use_modular_headers!
+
 target 'AimoChat' do
   config = use_native_modules!
 
-  use_frameworks! :linkage => :static
+  # Firebase/Google build issue fix
+  pod 'Firebase/Core'
+  pod 'Firebase/Messaging'
+  pod 'GoogleUtilities', :modular_headers => true
+
   use_react_native!(
     :path => config[:reactNativePath],
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
+
+  pre_install do |installer|
+    installer.pod_targets.each do |pod|
+      if pod.name.start_with?('RNFB')
+        def pod.build_type
+          Pod::BuildType.static_library
+        end
+      end
+    end
+  end
+
   post_install do |installer|
     react_native_post_install(
       installer,
@@ -45,5 +63,9 @@ target 'AimoChat' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
+
+    installer.pods_project.build_configurations.each do |config|
+      config.build_settings["CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES"] = true
+    end
   end
 end
