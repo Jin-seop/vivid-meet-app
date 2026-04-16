@@ -31,6 +31,7 @@ import { chatApi } from '../api/chat';
 import { reportApi } from '../api/report';
 import { matchApi } from '../api/match';
 import { socketService } from '../api/socket';
+import { logEvent } from '../utils/analytics';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
 import CenterModal, { ModalButton } from '../components/common/CenterModal';
@@ -89,6 +90,10 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
         targetId: otherUser?.id,
         reason: reportReason,
       });
+      logEvent('user_report', {
+        target_id: otherUser?.id,
+        reason: reportReason,
+      });
       Alert.alert(t('common.success', '성공'), t('report.success_msg', '신고가 접수되었습니다. 운영팀에서 검토 후 조치하겠습니다.'));
       setShowReportModal(false);
       setReportReason('');
@@ -100,6 +105,9 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
   const handleBlock = async () => {
     try {
       await matchApi.blockUser(otherUser?.id);
+      logEvent('user_block', {
+        target_id: otherUser?.id,
+      });
       Alert.alert(t('common.success', '성공'), t('block.success_msg', '상대방을 차단했습니다.'));
       setShowBlockModal(false);
       navigation.goBack(); // 차단 후 채팅방 퇴장
@@ -134,6 +142,10 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
       const imageUrl = uploadResponse.data.url;
 
       socketService.sendMessage(matchId, imageUrl);
+      logEvent('send_message', {
+        match_id: matchId,
+        type: 'image',
+      });
       setSelectedImage(null);
     } catch (error) {
       console.error('Image upload failed:', error);
@@ -217,6 +229,10 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
     socketService.stopTyping(matchId);
 
     socketService.sendMessage(matchId, message);
+    logEvent('send_message', {
+      match_id: matchId,
+      type: 'text',
+    });
     setMessage('');
   };
 

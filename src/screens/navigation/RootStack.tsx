@@ -1,6 +1,7 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useRef } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
+import analytics from '@react-native-firebase/analytics';
 import LoginScreen from '../LoginScreen';
 import { SplashScreen } from '../SplashScreen';
 import SignUpScreen from '../SignUpScreen';
@@ -39,8 +40,27 @@ export type RootStackParamList = {
 const Stack = createStackNavigator<RootStackParamList>();
 
 const RootStack = forwardRef<NavigationContainerRef<RootStackParamList>>((props, ref) => {
+  const routeNameRef = useRef<string>();
+
   return (
-    <NavigationContainer ref={ref}>
+    <NavigationContainer
+      ref={ref}
+      onReady={() => {
+        routeNameRef.current = (ref as any).current?.getCurrentRoute()?.name;
+      }}
+      onStateChange={async () => {
+        const previousRouteName = routeNameRef.current;
+        const currentRouteName = (ref as any).current?.getCurrentRoute()?.name;
+
+        if (previousRouteName !== currentRouteName) {
+          await analytics().logScreenView({
+            screen_name: currentRouteName,
+            screen_class: currentRouteName,
+          });
+        }
+        routeNameRef.current = currentRouteName;
+      }}
+    >
       <Stack.Navigator
         initialRouteName={RootStackScreenName.Splash}
         screenOptions={{ headerShown: false }}

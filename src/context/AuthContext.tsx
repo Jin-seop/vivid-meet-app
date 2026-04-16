@@ -3,6 +3,12 @@ import { useTranslation } from 'react-i18next'; // 다국어 처리를 위해 �
 
 import { userApi } from '../api/user';
 import EncryptedStorage from 'react-native-encrypted-storage';
+import {
+  setUserId,
+  setUserProperties,
+  logLogin,
+  logEvent,
+} from '../utils/analytics';
 
 interface UserProfile {
   id?: string;
@@ -42,6 +48,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(userData);
     setIsLoggedIn(true);
 
+    // Analytics 설정
+    if (userData.id) {
+      setUserId(userData.id);
+      setUserProperties({
+        gender: userData.gender || 'unknown',
+        mbti: userData.mbti || 'unknown',
+        region: userData.region || 'unknown',
+      });
+      logLogin(userData.provider);
+    }
+
     // 지역 기반 자동 언어 설정
     if (userData.region === 'JP') {
       i18n.changeLanguage('ja');
@@ -57,6 +74,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     await EncryptedStorage.removeItem('user_token');
     setUser(null);
     setIsLoggedIn(false);
+    
+    // Analytics: 유저 식별자 초기화
+    await setUserId(null);
+    await logEvent('logout');
   };
 
   /**
@@ -73,6 +94,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(null);
       setIsLoggedIn(false);
       console.log('회원 탈퇴 완료');
+
+      // Analytics
+      await logEvent('withdrawal');
+      await setUserId(null);
     } catch (error) {
       console.error('회원 탈퇴 중 오류 발생:', error);
       throw error;

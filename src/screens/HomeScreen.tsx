@@ -20,6 +20,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { userApi } from '../api/user';
 import { matchApi } from '../api/match';
 import { socketService } from '../api/socket';
+import { logEvent } from '../utils/analytics';
 
 const HomeScreen = ({ navigation }: any) => {
   const { t } = useTranslation();
@@ -51,6 +52,12 @@ const HomeScreen = ({ navigation }: any) => {
       queryClient.invalidateQueries({ queryKey: ['myPoints'] });
       queryClient.invalidateQueries({ queryKey: ['recentMatches'] }); // 목록 갱신
 
+      // Analytics
+      logEvent('match_found', {
+        match_id: matchData.matchId,
+        method: 'socket',
+      });
+
       navigation.navigate(RootStackScreenName.Chat, {
         matchId: matchData.matchId,
       });
@@ -66,16 +73,21 @@ const HomeScreen = ({ navigation }: any) => {
     if (isMatching) {
       await matchApi.leaveRandomChat().catch(() => {});
       setIsMatching(false);
+      logEvent('match_cancel');
       return;
     }
 
     if (freeMatches <= 0) {
       Alert.alert('알림', t('home.reset_notice'));
+      logEvent('match_limit_reached');
       return;
     }
 
     try {
       setIsMatching(true);
+      logEvent('match_start', {
+        free_matches_left: freeMatches,
+      });
       const response = await matchApi.joinRandomChat({
         targetGender: 'ALL',
         targetCountry: 'ALL',
@@ -85,12 +97,19 @@ const HomeScreen = ({ navigation }: any) => {
         setIsMatching(false);
         queryClient.invalidateQueries({ queryKey: ['myPoints'] });
         queryClient.invalidateQueries({ queryKey: ['recentMatches'] });
+        
+        logEvent('match_found', {
+          match_id: response.data.matchId,
+          method: 'api',
+        });
+
         navigation.navigate(RootStackScreenName.Chat, {
           matchId: response.data.matchId,
         });
       }
     } catch {
       setIsMatching(false);
+      logEvent('match_error');
       Alert.alert('오류', '매칭 중 문제가 발생했습니다.');
     }
   };
