@@ -5,9 +5,8 @@ import { AuthProvider } from './src/context/AuthContext';
 import './src/locales/i18n';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import messaging from '@react-native-firebase/messaging';
-import notifee, { AndroidImportance, EventType } from '@notifee/react-native';
-import { Platform, Alert, Linking } from 'react-native';
-import { userApi } from './src/api/user';
+import notifee, { EventType } from '@notifee/react-native';
+import { Alert, Linking } from 'react-native';
 import { RootStackScreenName } from './src/screens/navigation/RootStack';
 import { navigationRef } from './src/screens/navigation/NavigationService';
 import { requestInitialPermissions } from './src/utils/permissions';
@@ -46,22 +45,6 @@ export default function App() {
             { text: '설정 이동', onPress: () => Linking.openSettings() },
           ]);
           return;
-        }
-
-        // 3. FCM 토큰 저장
-        const token = await messaging().getToken();
-        if (token) {
-          console.log('FCM Token:', token);
-          await userApi.saveFcmToken(token);
-        }
-
-        // 4. 안드로이드 채널 생성 (Notifee 방식)
-        if (Platform.OS === 'android') {
-          await notifee.createChannel({
-            id: 'fcm_channel_id',
-            name: 'FCM Notifications',
-            importance: AndroidImportance.HIGH,
-          });
         }
       } catch (error) {
         console.error('Notification Setup Error:', error);

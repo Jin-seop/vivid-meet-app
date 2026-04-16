@@ -17,6 +17,10 @@ import { useGoogleAuth } from '../hooks/useGoogleAuth';
 import { useAppleAuth } from '../hooks/useAppleAuth';
 import { useLineAuth } from '../hooks/useLineAuth';
 import { GOOGLE_WEB_CLIENT_ID } from '@env';
+import notifee, { AndroidImportance } from '@notifee/react-native';
+import { Platform } from 'react-native';
+import messaging from '@react-native-firebase/messaging';
+import { userApi } from '../api/user';
 
 type LoginScreenProps = {
   navigation: StackNavigationProp<
@@ -28,7 +32,7 @@ type LoginScreenProps = {
 const LoginScreen = ({ navigation }: LoginScreenProps) => {
   const { t } = useTranslation();
 
-  const handleSocialSuccess = (
+  const handleSocialSuccess = async (
     data: any,
     provider: 'GooGle' | 'Apple' | 'Line',
   ) => {
@@ -39,6 +43,19 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
         providerId: data.profile?.providerId || '',
       });
     } else {
+      const token = await messaging().getToken();
+      if (token) {
+        console.log('FCM Token:', token);
+        await userApi.saveFcmToken(token);
+      }
+
+      if (Platform.OS === 'android') {
+        await notifee.createChannel({
+          id: 'fcm_channel_id',
+          name: 'FCM Notifications',
+          importance: AndroidImportance.HIGH,
+        });
+      }
       navigation.replace(RootStackScreenName.HomeMain);
     }
   };
