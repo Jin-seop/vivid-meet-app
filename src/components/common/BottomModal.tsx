@@ -3,7 +3,6 @@ import {
   StyleSheet,
   View,
   Modal,
-  TouchableOpacity,
   Dimensions,
   Animated,
   PanResponder,
@@ -11,6 +10,7 @@ import {
 import { X } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import AMText from './AMText';
+import AMTouchableOpacity from './AMTouchableOpacity';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -80,7 +80,7 @@ const BottomModal = ({
     >
       <View style={styles.overlay}>
         {/* 배경 오버레이 */}
-        <TouchableOpacity
+        <AMTouchableOpacity
           style={StyleSheet.absoluteFill}
           activeOpacity={1}
           onPress={onClose}
@@ -88,12 +88,9 @@ const BottomModal = ({
           <MotiView
             from={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            style={[
-              StyleSheet.absoluteFill,
-              styles.overlayBackground,
-            ]}
+            style={[StyleSheet.absoluteFill, styles.overlayBackground]}
           />
-        </TouchableOpacity>
+        </AMTouchableOpacity>
 
         {/* 모달 컨텐츠 */}
         <Animated.View
@@ -123,12 +120,12 @@ const BottomModal = ({
                   </AMText>
                 )}
                 {showCloseButton && (
-                  <TouchableOpacity
+                  <AMTouchableOpacity
                     onPress={onClose}
                     style={styles.closeButton}
                   >
                     <X size={20} color="#6B7280" />
-                  </TouchableOpacity>
+                  </AMTouchableOpacity>
                 )}
               </View>
             )}
@@ -156,7 +153,7 @@ export function BottomModalOption({
   disabled?: boolean;
 }) {
   return (
-    <TouchableOpacity
+    <AMTouchableOpacity
       onPress={onClick}
       disabled={disabled}
       style={[styles.optionButton, disabled && styles.disabledOption]}
@@ -173,7 +170,7 @@ export function BottomModalOption({
           {label}
         </AMText>
       </View>
-    </TouchableOpacity>
+    </AMTouchableOpacity>
   );
 }
 

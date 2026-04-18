@@ -1,14 +1,9 @@
 import React, { useState, useRef } from 'react';
-import {
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  ScrollView,
-  Modal,
-} from 'react-native';
+import { StyleSheet, View, ScrollView, Modal } from 'react-native';
 import { ChevronDown, Check, X } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import AMText from './AMText';
+import AMTouchableOpacity from './AMTouchableOpacity';
 
 export interface MultiSelectOption {
   value: string;
@@ -91,12 +86,12 @@ const MultiSelectDropdown = ({
             <AMText style={styles.badgeText} fontWeight={500}>
               {opt.label}
             </AMText>
-            <TouchableOpacity
+            <AMTouchableOpacity
               onPress={() => handleRemove(opt.value)}
               style={styles.removeIcon}
             >
               <X size={12} color="#4A90E2" />
-            </TouchableOpacity>
+            </AMTouchableOpacity>
           </MotiView>
         ))}
         {remaining > 0 && (
@@ -119,7 +114,7 @@ const MultiSelectDropdown = ({
       )}
 
       <View ref={anchorRef} collapsable={false}>
-        <TouchableOpacity
+        <AMTouchableOpacity
           activeOpacity={0.7}
           onPress={handleOpen}
           disabled={disabled}
@@ -135,7 +130,7 @@ const MultiSelectDropdown = ({
             color={disabled ? '#D1D5DB' : '#9CA3AF'}
             style={{ transform: [{ rotate: isOpen ? '180deg' : '0deg' }] }}
           />
-        </TouchableOpacity>
+        </AMTouchableOpacity>
       </View>
 
       <Modal
@@ -144,7 +139,7 @@ const MultiSelectDropdown = ({
         animationType="none"
         onRequestClose={() => setIsOpen(false)}
       >
-        <TouchableOpacity
+        <AMTouchableOpacity
           style={styles.modalOverlay}
           activeOpacity={1}
           onPress={() => setIsOpen(false)}
@@ -165,7 +160,7 @@ const MultiSelectDropdown = ({
               {options.map(option => {
                 const isSelected = values.includes(option.value);
                 return (
-                  <TouchableOpacity
+                  <AMTouchableOpacity
                     key={option.value}
                     style={[
                       styles.optionItem,
@@ -193,12 +188,12 @@ const MultiSelectDropdown = ({
                     >
                       {isSelected && <Check size={12} color="white" />}
                     </View>
-                  </TouchableOpacity>
+                  </AMTouchableOpacity>
                 );
               })}
             </ScrollView>
           </MotiView>
-        </TouchableOpacity>
+        </AMTouchableOpacity>
       </Modal>
 
       {error && <AMText style={styles.errorText}>{error}</AMText>}

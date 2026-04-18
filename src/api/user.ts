@@ -39,7 +39,7 @@ export const userApi = {
   /**
    * 실물 사진 업로드
    */
-  uploadRealPhotos: (formData: FormData) =>
+  uploadRealPhoto: (formData: FormData) =>
     api.post('/users/upload/photos', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     }),

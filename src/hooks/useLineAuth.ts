@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import { Alert } from 'react-native';
 import Line from '@xmartlabs/react-native-line';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import { useAuth } from '../context/AuthContext';
@@ -34,8 +35,12 @@ export const useLineAuth = (onSuccessCallback?: (data: any) => void) => {
         onSuccessCallback(data);
       }
     },
-    onError: error => {
+    onError: (error: any) => {
       console.error('Line Auth Error:', error);
+      const message =
+        error.response?.data?.message ||
+        '로그인 처리 중 오류가 발생했습니다. 다시 시도해주세요.';
+      Alert.alert('로그인 실패', message);
     },
   });
 };

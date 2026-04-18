@@ -10,6 +10,7 @@ import ChatScreen from '../ChatScreen';
 import EditProfileScreen from '../EditProfileScreen';
 import SettingsScreen from '../SettingsScreen';
 import NoticeListScreen from '../NoticeListScreen';
+import { useAuth } from '../../context/AuthContext';
 
 export enum RootStackScreenName {
   Splash = 'Splash',
@@ -40,6 +41,7 @@ export type RootStackParamList = {
 const Stack = createStackNavigator<RootStackParamList>();
 
 const RootStack = forwardRef<NavigationContainerRef<RootStackParamList>>((props, ref) => {
+  const { isLoggedIn } = useAuth();
   const routeNameRef = useRef<string>();
 
   return (
@@ -53,7 +55,7 @@ const RootStack = forwardRef<NavigationContainerRef<RootStackParamList>>((props,
         const currentRouteName = (ref as any).current?.getCurrentRoute()?.name;
 
         if (previousRouteName !== currentRouteName) {
-          await analytics().logScreenView({
+          await analytics().logEvent('screen_view', {
             screen_name: currentRouteName,
             screen_class: currentRouteName,
           });
@@ -62,38 +64,44 @@ const RootStack = forwardRef<NavigationContainerRef<RootStackParamList>>((props,
       }}
     >
       <Stack.Navigator
-        initialRouteName={RootStackScreenName.Splash}
         screenOptions={{ headerShown: false }}
       >
-        <Stack.Screen
-          name={RootStackScreenName.Splash}
-          component={SplashScreen}
-        />
-        <Stack.Screen
-          name={RootStackScreenName.Login}
-          component={LoginScreen}
-        />
-        <Stack.Screen
-          name={RootStackScreenName.SignUp}
-          component={SignUpScreen}
-        />
-        <Stack.Screen
-          name={RootStackScreenName.HomeMain}
-          component={HomeTabNavigator}
-        />
-        <Stack.Screen name={RootStackScreenName.Chat} component={ChatScreen} />
-        <Stack.Screen
-          name={RootStackScreenName.EditProfile}
-          component={EditProfileScreen}
-        />
-        <Stack.Screen
-          name={RootStackScreenName.Settings}
-          component={SettingsScreen}
-        />
-        <Stack.Screen
-          name={RootStackScreenName.NoticeList}
-          component={NoticeListScreen}
-        />
+        {!isLoggedIn ? (
+          <>
+            <Stack.Screen
+              name={RootStackScreenName.Splash}
+              component={SplashScreen}
+            />
+            <Stack.Screen
+              name={RootStackScreenName.Login}
+              component={LoginScreen}
+            />
+            <Stack.Screen
+              name={RootStackScreenName.SignUp}
+              component={SignUpScreen}
+            />
+          </>
+        ) : (
+          <>
+            <Stack.Screen
+              name={RootStackScreenName.HomeMain}
+              component={HomeTabNavigator}
+            />
+            <Stack.Screen name={RootStackScreenName.Chat} component={ChatScreen} />
+            <Stack.Screen
+              name={RootStackScreenName.EditProfile}
+              component={EditProfileScreen}
+            />
+            <Stack.Screen
+              name={RootStackScreenName.Settings}
+              component={SettingsScreen}
+            />
+            <Stack.Screen
+              name={RootStackScreenName.NoticeList}
+              component={NoticeListScreen}
+            />
+          </>
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   );

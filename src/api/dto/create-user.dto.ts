@@ -8,5 +8,5 @@ export interface CreateUserDto {
   mbti?: string;
   aiPhotoUrl: string;
   posePhotoUrl: string;
-  realPhotos: string[];
+  realPhotoUrl: string;
 }

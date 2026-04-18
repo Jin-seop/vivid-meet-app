@@ -1,15 +1,10 @@
 import React, { useState, useRef } from 'react';
-import {
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  ScrollView,
-  Modal,
-} from 'react-native';
+import { StyleSheet, View, ScrollView, Modal } from 'react-native';
 import { ChevronDown, Check } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import AMText from './AMText';
 import { useTranslation } from 'react-i18next';
+import AMTouchableOpacity from './AMTouchableOpacity';
 
 export interface DropdownOption {
   value: string;
@@ -76,7 +71,7 @@ const Dropdown = ({
 
       {/* 선택 버튼 (Anchor) */}
       <View ref={anchorRef} collapsable={false}>
-        <TouchableOpacity
+        <AMTouchableOpacity
           activeOpacity={0.7}
           onPress={handleOpen}
           disabled={disabled}
@@ -106,7 +101,7 @@ const Dropdown = ({
           >
             <ChevronDown size={20} color={disabled ? '#D1D5DB' : '#9CA3AF'} />
           </MotiView>
-        </TouchableOpacity>
+        </AMTouchableOpacity>
       </View>
 
       {/* 드롭다운 목록 (Modal) */}
@@ -116,7 +111,7 @@ const Dropdown = ({
         animationType="none"
         onRequestClose={() => setIsOpen(false)}
       >
-        <TouchableOpacity
+        <AMTouchableOpacity
           style={styles.modalOverlay}
           activeOpacity={1}
           onPress={() => setIsOpen(false)}
@@ -135,7 +130,7 @@ const Dropdown = ({
           >
             <ScrollView bounces={false} style={styles.optionsScrollView}>
               {options.map(option => (
-                <TouchableOpacity
+                <AMTouchableOpacity
                   key={option.value}
                   style={[
                     styles.optionItem,
@@ -158,11 +153,11 @@ const Dropdown = ({
                   {option.value === value && (
                     <Check size={18} color="#4A90E2" />
                   )}
-                </TouchableOpacity>
+                </AMTouchableOpacity>
               ))}
             </ScrollView>
           </MotiView>
-        </TouchableOpacity>
+        </AMTouchableOpacity>
       </Modal>
 
       {error && <AMText style={styles.errorText}>{error}</AMText>}

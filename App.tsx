@@ -4,7 +4,7 @@ import RootStack from './src/screens/navigation/RootStack';
 import { AuthProvider } from './src/context/AuthContext';
 import './src/locales/i18n';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import messaging from '@react-native-firebase/messaging';
+import { firebase } from '@react-native-firebase/messaging';
 import notifee, { EventType } from '@notifee/react-native';
 import { Alert, Linking } from 'react-native';
 import { RootStackScreenName } from './src/screens/navigation/RootStack';
@@ -34,10 +34,10 @@ export default function App() {
     const setupNotifications = async () => {
       try {
         // 2. 권한 요청
-        const authStatus = await messaging().requestPermission();
+        const authStatus = await firebase.messaging().requestPermission();
         const enabled =
-          authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-          authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+          authStatus === firebase.messaging.AuthorizationStatus.AUTHORIZED ||
+          authStatus === firebase.messaging.AuthorizationStatus.PROVISIONAL;
 
         if (!enabled) {
           Alert.alert('알림 권한 필요', '설정에서 알림을 허용해주세요.', [
@@ -54,7 +54,7 @@ export default function App() {
     setupNotifications();
 
     // 5. 포그라운드 메시지 수신
-    const unsubscribeForeground = messaging().onMessage(async remoteMessage => {
+    const unsubscribeForeground = firebase.messaging().onMessage(async remoteMessage => {
       console.log('Foreground Message:', remoteMessage);
 
       // Notifee를 사용하여 로컬 알림 표시
@@ -70,7 +70,8 @@ export default function App() {
     });
 
     // 6. 종료된 상태에서 알림 클릭으로 앱 오픈 시
-    messaging()
+    firebase
+      .messaging()
       .getInitialNotification()
       .then(remoteMessage => {
         if (remoteMessage?.data?.matchId) {

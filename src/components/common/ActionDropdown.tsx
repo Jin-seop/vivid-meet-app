@@ -1,14 +1,9 @@
 import React, { useState, useRef, ReactNode } from 'react';
-import {
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  Modal,
-  Dimensions,
-} from 'react-native';
+import { StyleSheet, View, Modal, Dimensions } from 'react-native';
 import { MoreVertical } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import AMText from './AMText';
+import AMTouchableOpacity from './AMTouchableOpacity';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -65,13 +60,13 @@ const ActionDropdown = ({
     <View style={styles.container}>
       {/* 트리거 버튼 영역 */}
       <View ref={anchorRef} collapsable={false}>
-        <TouchableOpacity
+        <AMTouchableOpacity
           onPress={handleOpen}
           style={styles.trigger}
           activeOpacity={0.6}
         >
           {trigger || <MoreVertical size={20} color="#4B5563" />}
-        </TouchableOpacity>
+        </AMTouchableOpacity>
       </View>
 
       {/* 모달 기반 드롭다운 메뉴 */}
@@ -81,7 +76,7 @@ const ActionDropdown = ({
         animationType="none"
         onRequestClose={() => setIsOpen(false)}
       >
-        <TouchableOpacity
+        <AMTouchableOpacity
           style={styles.modalOverlay}
           activeOpacity={1}
           onPress={() => setIsOpen(false)}
@@ -110,7 +105,7 @@ const ActionDropdown = ({
                   index > 0 && options[index - 1].variant !== option.variant;
 
                 return (
-                  <TouchableOpacity
+                  <AMTouchableOpacity
                     key={option.value}
                     onPress={() =>
                       !option.disabled && handleSelect(option.value)
@@ -131,12 +126,12 @@ const ActionDropdown = ({
                     >
                       {option.label}
                     </AMText>
-                  </TouchableOpacity>
+                  </AMTouchableOpacity>
                 );
               })}
             </View>
           </MotiView>
-        </TouchableOpacity>
+        </AMTouchableOpacity>
       </Modal>
     </View>
   );

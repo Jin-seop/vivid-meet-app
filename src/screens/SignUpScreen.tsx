@@ -37,7 +37,7 @@ export interface SignUpData {
   mbti?: string;
   aiPhotoUrl: string;
   posePhotoUrl: string;
-  realPhotos: string[];
+  realPhotoUrl: string;
 }
 export interface AIData {
   mbti: string | null;
@@ -59,7 +59,7 @@ const SignUpScreen = ({ navigation }: SignUpScreenProps) => {
     gender: 'MALE',
     aiPhotoUrl: '',
     posePhotoUrl: '',
-    realPhotos: [],
+    realPhotoUrl: '',
   });
   const [aiData, setAIData] = useState<AIData>({
     mbti: null,
@@ -82,13 +82,13 @@ const SignUpScreen = ({ navigation }: SignUpScreenProps) => {
     } else if (result.assets && result.assets[0].uri && !isPose) {
       setProfileData({
         ...profileData,
-        realPhotos: [result.assets[0].uri],
+        realPhotoUrl: result.assets[0].uri,
       });
     }
   };
 
   const makeAiPhoto = async () => {
-    if (!profileData.posePhotoUrl || profileData.realPhotos.length === 0) {
+    if (!profileData.posePhotoUrl || !profileData.realPhotoUrl) {
       Alert.alert('알림', '포즈 사진과 실물 사진을 모두 등록해주세요.');
       return;
     }
@@ -104,7 +104,7 @@ const SignUpScreen = ({ navigation }: SignUpScreenProps) => {
       } as any);
 
       formData.append('personImage', {
-        uri: profileData.realPhotos[0],
+        uri: profileData.realPhotoUrl,
         name: 'real.jpg',
         type: 'image/jpeg',
       } as any);
@@ -133,8 +133,11 @@ const SignUpScreen = ({ navigation }: SignUpScreenProps) => {
 
   const onSignUp = async () => {
     try {
+      console.log('profileData ==>', profileData);
+
       const response = await userApi.signUp({
         ...profileData,
+        mbti: aiData.mbti || undefined,
       });
 
       if (response.status === 201 || response.status === 200) {

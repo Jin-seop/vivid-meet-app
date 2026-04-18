@@ -22,22 +22,26 @@ interface Props {
 }
 
 export function SplashScreen({ navigation }: Props) {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, isLoading } = useAuth();
 
   useEffect(() => {
     BootSplash.hide({ fade: true });
 
-    // 웹 코드와 동일하게 2.5초 후 로그인 화면으로 이동
+    // 자동 로그인 확인이 끝날 때까지 대기
+    if (isLoading) return;
+
+    // 최소 노출 시간(2.5초)을 보장하기 위해 timer 설정 가능하지만,
+    // 여기서는 로딩이 끝나면 바로 이동하도록 처리 (혹은 필요시 타이머 유지)
     const timer = setTimeout(() => {
       if (isLoggedIn) {
         navigation.replace(RootStackScreenName.HomeMain);
       } else {
         navigation.replace(RootStackScreenName.Login);
       }
-    }, 2500);
+    }, 1500); // 로딩 시간을 고려하여 약간 단축
 
     return () => clearTimeout(timer);
-  }, [isLoggedIn, navigation]);
+  }, [isLoggedIn, isLoading, navigation]);
 
   return (
     <View style={styles.container}>

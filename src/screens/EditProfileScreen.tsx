@@ -3,7 +3,6 @@ import {
   StyleSheet,
   View,
   ScrollView,
-  TouchableOpacity,
   TextInput,
   Image,
   Platform,
@@ -130,12 +129,12 @@ const EditProfileScreen = ({ navigation }: EditProfileScreenProps) => {
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       {/* 헤더 */}
       <View style={styles.header}>
-        <TouchableOpacity
+        <AMTouchableOpacity
           onPress={() => setShowCancelConfirm(true)}
           style={styles.iconButton}
         >
           <ArrowLeft size={24} color="#1F2937" />
-        </TouchableOpacity>
+        </AMTouchableOpacity>
         <AMText style={styles.headerTitle} fontWeight={700}>
           {t('edit_profile.title')}
         </AMText>
@@ -183,12 +182,12 @@ const EditProfileScreen = ({ navigation }: EditProfileScreenProps) => {
                   </AMText>
                 </LinearGradient>
               )}
-              <TouchableOpacity
+              <AMTouchableOpacity
                 style={styles.cameraBadge}
                 onPress={handleImagePicker}
               >
                 <Camera size={20} color="#4A90E2" />
-              </TouchableOpacity>
+              </AMTouchableOpacity>
             </View>
             <AMText style={styles.photoHelp}>
               {t('edit_profile.photo_help')}

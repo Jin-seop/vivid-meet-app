@@ -2,13 +2,13 @@ import React, { useState, useCallback } from 'react';
 import {
   StyleSheet,
   View,
-  TouchableOpacity,
   ScrollView,
   Image,
   TextInput,
   StatusBar,
   RefreshControl,
 } from 'react-native';
+import AMTouchableOpacity from '../components/common/AMTouchableOpacity';
 import { MotiView } from 'moti';
 import { Search, MoreVertical } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -127,9 +127,9 @@ const ChatsListScreen = ({ navigation }: any) => {
           <AMText style={styles.headerTitle} fontWeight={700}>
             {t('chat_list.title', '채팅')}
           </AMText>
-          <TouchableOpacity style={styles.iconButton}>
+          <AMTouchableOpacity style={styles.iconButton}>
             <MoreVertical size={24} color="#1F2937" />
-          </TouchableOpacity>
+          </AMTouchableOpacity>
         </View>
 
         {/* Search Bar */}
@@ -166,7 +166,7 @@ const ChatsListScreen = ({ navigation }: any) => {
               animate={{ opacity: 1, translateY: 0 }}
               transition={{ type: 'timing', duration: 300, delay: index * 50 }}
             >
-              <TouchableOpacity
+              <AMTouchableOpacity
                 style={styles.chatItem}
                 onPress={() =>
                   navigation.navigate(RootStackScreenName.Chat, {
@@ -219,7 +219,7 @@ const ChatsListScreen = ({ navigation }: any) => {
                     )}
                   </View>
                 </View>
-              </TouchableOpacity>
+              </AMTouchableOpacity>
             </MotiView>
           );
         })}
@@ -299,19 +299,6 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: 'white',
   },
-  lockBadge: {
-    position: 'absolute',
-    top: -2,
-    right: -2,
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: '#4A90E2',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1.5,
-    borderColor: 'white',
-  },
   chatInfo: { flex: 1, marginLeft: 16, justifyContent: 'center' },
   chatInfoTop: {
     flexDirection: 'row',
@@ -321,8 +308,6 @@ const styles = StyleSheet.create({
   },
   nameRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   chatName: { fontSize: 16, color: '#111827' },
-  dotRow: { flexDirection: 'row', gap: 2 },
-  progressDot: { width: 4, height: 4, borderRadius: 2 },
   timestamp: { fontSize: 12, color: '#9CA3AF' },
   chatInfoBottom: {
     flexDirection: 'row',

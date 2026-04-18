@@ -1,16 +1,10 @@
 import React, { useState, useRef } from 'react';
-import {
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  TextInput,
-  ScrollView,
-  Modal,
-} from 'react-native';
+import { StyleSheet, View, TextInput, ScrollView, Modal } from 'react-native';
 import { Search, X, Check, ChevronDown } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import { useTranslation } from 'react-i18next'; // 추가
 import AMText from './AMText';
+import AMTouchableOpacity from './AMTouchableOpacity';
 
 export interface SearchableOption {
   value: string;
@@ -94,7 +88,7 @@ const SearchableDropdown = ({
 
       {/* 선택 버튼 (앵커) */}
       <View ref={anchorRef} collapsable={false}>
-        <TouchableOpacity
+        <AMTouchableOpacity
           activeOpacity={0.7}
           onPress={handleOpen}
           disabled={disabled}
@@ -126,7 +120,7 @@ const SearchableDropdown = ({
             </View>
           </View>
           <ChevronDown size={20} color={disabled ? '#D1D5DB' : '#9CA3AF'} />
-        </TouchableOpacity>
+        </AMTouchableOpacity>
       </View>
 
       {/* 모달 기반 드롭다운 목록 */}
@@ -136,7 +130,7 @@ const SearchableDropdown = ({
         animationType="none"
         onRequestClose={() => setIsOpen(false)}
       >
-        <TouchableOpacity
+        <AMTouchableOpacity
           style={styles.modalOverlay}
           activeOpacity={1}
           onPress={() => setIsOpen(false)}
@@ -165,9 +159,9 @@ const SearchableDropdown = ({
                 placeholderTextColor="#9CA3AF"
               />
               {searchQuery !== '' && (
-                <TouchableOpacity onPress={() => setSearchQuery('')}>
+                <AMTouchableOpacity onPress={() => setSearchQuery('')}>
                   <X size={18} color="#9CA3AF" />
-                </TouchableOpacity>
+                </AMTouchableOpacity>
               )}
             </View>
 
@@ -179,7 +173,7 @@ const SearchableDropdown = ({
             >
               {filteredOptions.length > 0 ? (
                 filteredOptions.map(option => (
-                  <TouchableOpacity
+                  <AMTouchableOpacity
                     key={option.value}
                     style={[
                       styles.optionItem,
@@ -209,7 +203,7 @@ const SearchableDropdown = ({
                     {option.value === value && (
                       <Check size={18} color="#4A90E2" />
                     )}
-                  </TouchableOpacity>
+                  </AMTouchableOpacity>
                 ))
               ) : (
                 <View style={styles.noResults}>
@@ -220,7 +214,7 @@ const SearchableDropdown = ({
               )}
             </ScrollView>
           </MotiView>
-        </TouchableOpacity>
+        </AMTouchableOpacity>
       </Modal>
 
       {error && <AMText style={styles.errorText}>{error}</AMText>}

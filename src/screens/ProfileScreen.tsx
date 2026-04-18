@@ -3,9 +3,10 @@ import {
   StyleSheet,
   View,
   ScrollView,
-  TouchableOpacity,
   Alert,
+  Image,
 } from 'react-native';
+import AMTouchableOpacity from '../components/common/AMTouchableOpacity';
 import { useTranslation } from 'react-i18next';
 import {
   Bell,
@@ -14,7 +15,6 @@ import {
   LogOut,
   UserX,
   ChevronRight,
-  Settings,
 } from 'lucide-react-native';
 import { useAuth } from '../context/AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -71,7 +71,7 @@ export function ProfileScreen({ navigation }: any) {
     isLast = false,
     isDanger = false,
   ) => (
-    <TouchableOpacity
+    <AMTouchableOpacity
       style={[styles.menuItem, isLast && styles.lastMenuItem]}
       onPress={onPress}
       activeOpacity={0.7}
@@ -85,8 +85,9 @@ export function ProfileScreen({ navigation }: any) {
         </AMText>
       </View>
       <ChevronRight size={20} color="#9CA3AF" />
-    </TouchableOpacity>
+    </AMTouchableOpacity>
   );
+  console.log(user);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -96,17 +97,12 @@ export function ProfileScreen({ navigation }: any) {
           <AMText style={styles.headerTitle} fontWeight={700}>
             {t('profile.title')}
           </AMText>
-          <TouchableOpacity onPress={() => navigation.navigate(RootStackScreenName.Settings)}>
-            <Settings size={24} color="#374151" />
-          </TouchableOpacity>
         </View>
 
         {/* 유저 정보 카드 */}
         <View style={styles.profileCard}>
           <View style={styles.avatarPlaceholder}>
-            <AMText style={styles.avatarText}>
-              {user?.nickname?.[0] || 'A'}
-            </AMText>
+            <Image source={{ uri: user?.aiPhotoUrl }} style={{width:60, height:60, borderRadius:30}}/>
           </View>
           <View style={styles.userInfo}>
             <AMText style={styles.userName} fontWeight={700}>

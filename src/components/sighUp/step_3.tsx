@@ -53,10 +53,10 @@ const SignUpStep3 = ({
             style={styles.uploadBox}
             onPress={() => onPhotoSelect(false)}
           >
-            {profileData.realPhotos[0] ? (
+            {profileData.realPhotoUrl ? (
               <Image
                 style={styles.photoImage}
-                source={{ uri: profileData.realPhotos[0] }}
+                source={{ uri: profileData.realPhotoUrl }}
               />
             ) : null}
           </AMTouchableOpacity>
@@ -69,11 +69,11 @@ const SignUpStep3 = ({
       <AMTouchableOpacity
         style={[
           styles.nextButton,
-          (!profileData.posePhotoUrl || profileData.realPhotos.length === 0) &&
+          (!profileData.posePhotoUrl || !profileData.realPhotoUrl) &&
             styles.disabledButton,
         ]}
         disabled={
-          !profileData.posePhotoUrl || profileData.realPhotos.length === 0
+          !profileData.posePhotoUrl || !profileData.realPhotoUrl
         }
         onPress={makeAiPhoto}
       >

@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   StyleSheet,
   View,
-  TouchableOpacity,
   TextInput,
   FlatList,
   KeyboardAvoidingView,
@@ -11,6 +10,7 @@ import {
   Alert,
   Image,
 } from 'react-native';
+import AMTouchableOpacity from '../components/common/AMTouchableOpacity';
 import {
   ArrowLeft,
   MoreVertical,
@@ -289,9 +289,9 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
 
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <AMTouchableOpacity onPress={() => navigation.goBack()}>
           <ArrowLeft size={24} color="#1F2937" />
-        </TouchableOpacity>
+        </AMTouchableOpacity>
         <View style={styles.headerCenter}>
           <AMText style={styles.userName} fontWeight={700}>
             {otherUser?.nickname || t('chat_list.title', '채팅방')}
@@ -303,13 +303,13 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
           )}
         </View>
         <View>
-          <TouchableOpacity onPress={() => setShowMenu(!showMenu)}>
+          <AMTouchableOpacity onPress={() => setShowMenu(!showMenu)}>
             <MoreVertical size={24} color="#1F2937" />
-          </TouchableOpacity>
+          </AMTouchableOpacity>
 
           {showMenu && (
             <View style={styles.menuDropdown}>
-              <TouchableOpacity
+              <AMTouchableOpacity
                 style={styles.menuItem}
                 onPress={() => {
                   setShowMenu(false);
@@ -320,9 +320,9 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
                 <AMText style={styles.reportText} fontWeight={600}>
                   {t('chat_detail.report', '신고하기')}
                 </AMText>
-              </TouchableOpacity>
+              </AMTouchableOpacity>
               <View style={styles.menuDivider} />
-              <TouchableOpacity
+              <AMTouchableOpacity
                 style={styles.menuItem}
                 onPress={() => {
                   setShowMenu(false);
@@ -333,7 +333,7 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
                 <AMText style={styles.menuText} fontWeight={600}>
                   {t('chat_detail.block', '차단하기')}
                 </AMText>
-              </TouchableOpacity>
+              </AMTouchableOpacity>
             </View>
           )}
         </View>
@@ -373,7 +373,7 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
         </AMText>
         <View style={styles.reasonList}>
           {reportReasons.map((reason, index) => (
-            <TouchableOpacity
+            <AMTouchableOpacity
               key={index}
               style={[
                 styles.reasonItem,
@@ -389,7 +389,7 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
               >
                 {reason}
               </AMText>
-            </TouchableOpacity>
+            </AMTouchableOpacity>
           ))}
         </View>
       </CenterModal>
@@ -421,9 +421,9 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
         keyboardVerticalOffset={90}
       >
         <View style={styles.inputArea}>
-          <TouchableOpacity style={styles.inputIconButton} onPress={pickImage}>
+          <AMTouchableOpacity style={styles.inputIconButton} onPress={pickImage}>
             <ImageIcon size={22} color="#9CA3AF" />
-          </TouchableOpacity>
+          </AMTouchableOpacity>
           <View style={styles.inputWrapper}>
             <TextInput
               style={styles.input}
@@ -436,19 +436,19 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
               placeholderTextColor="#9CA3AF"
               multiline
             />
-            <TouchableOpacity style={styles.smileButton}>
+            <AMTouchableOpacity style={styles.smileButton}>
               <Smile size={20} color="#9CA3AF" />
-            </TouchableOpacity>
+            </AMTouchableOpacity>
           </View>
           {selectedImage ? (
-            <TouchableOpacity
+            <AMTouchableOpacity
               style={[styles.sendButton]}
               onPress={sendImage} // 이미지 전송
             >
               <Send size={20} color="white" style={styles.sendIcon} />
-            </TouchableOpacity>
+            </AMTouchableOpacity>
           ) : (
-            <TouchableOpacity
+            <AMTouchableOpacity
               style={[
                 styles.sendButton,
                 !message.trim() && styles.sendButtonDisabled,
@@ -457,7 +457,7 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
               disabled={!message.trim()}
             >
               <Send size={20} color="white" style={styles.sendIcon} />
-            </TouchableOpacity>
+            </AMTouchableOpacity>
           )}
         </View>
       </KeyboardAvoidingView>

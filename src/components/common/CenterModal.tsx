@@ -3,13 +3,13 @@ import {
   StyleSheet,
   View,
   Modal,
-  TouchableOpacity,
   TouchableWithoutFeedback,
   Dimensions,
 } from 'react-native';
 import { X } from 'lucide-react-native';
 import { MotiView } from 'moti';
 import AMText from './AMText';
+import AMTouchableOpacity from './AMTouchableOpacity';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -53,7 +53,7 @@ const CenterModal = ({
       onRequestClose={onClose} // 안드로이드 백 버튼 대응
     >
       {/* 배경 오버레이 */}
-      <TouchableOpacity
+      <AMTouchableOpacity
         style={styles.overlay}
         activeOpacity={1}
         onPress={onClose}
@@ -62,10 +62,7 @@ const CenterModal = ({
           from={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ type: 'timing', duration: 200 }}
-          style={[
-            StyleSheet.absoluteFill,
-            styles.overlayBackground,
-          ]}
+          style={[StyleSheet.absoluteFill, styles.overlayBackground]}
         />
 
         {/* 모달 컨텐츠 */}
@@ -85,13 +82,13 @@ const CenterModal = ({
                   </AMText>
                 )}
                 {showCloseButton && (
-                  <TouchableOpacity
+                  <AMTouchableOpacity
                     onPress={onClose}
                     style={styles.closeButton}
                     hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                   >
                     <X size={20} color="#6B7280" />
-                  </TouchableOpacity>
+                  </AMTouchableOpacity>
                 )}
               </View>
             )}
@@ -103,7 +100,7 @@ const CenterModal = ({
             {footer && <View style={styles.footer}>{footer}</View>}
           </MotiView>
         </TouchableWithoutFeedback>
-      </TouchableOpacity>
+      </AMTouchableOpacity>
     </Modal>
   );
 };
@@ -136,7 +133,7 @@ export function ModalButton({
   const { bg, text } = getVariantStyles();
 
   return (
-    <TouchableOpacity
+    <AMTouchableOpacity
       onPress={onClick}
       disabled={disabled}
       style={[
@@ -148,7 +145,7 @@ export function ModalButton({
       <AMText style={[styles.buttonText, { color: text }]} fontWeight={600}>
         {children}
       </AMText>
-    </TouchableOpacity>
+    </AMTouchableOpacity>
   );
 }
 

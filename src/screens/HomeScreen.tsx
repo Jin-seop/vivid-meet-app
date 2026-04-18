@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   View,
-  TouchableOpacity,
   ScrollView,
   Image,
   StatusBar,
   Alert,
 } from 'react-native';
+import AMTouchableOpacity from '../components/common/AMTouchableOpacity';
 import LinearGradient from 'react-native-linear-gradient';
 import { MotiView } from 'moti';
 import { Sparkles, Zap, Heart, MessageCircle, User } from 'lucide-react-native';
@@ -97,7 +97,7 @@ const HomeScreen = ({ navigation }: any) => {
         setIsMatching(false);
         queryClient.invalidateQueries({ queryKey: ['myPoints'] });
         queryClient.invalidateQueries({ queryKey: ['recentMatches'] });
-        
+
         logEvent('match_found', {
           match_id: response.data.matchId,
           method: 'api',
@@ -162,7 +162,7 @@ const HomeScreen = ({ navigation }: any) => {
               <Zap size={40} color="white" opacity={0.8} />
             </View>
 
-            <TouchableOpacity
+            <AMTouchableOpacity
               style={[
                 styles.matchButton,
                 !isMatching && freeMatches <= 0 && styles.disabledButton,
@@ -183,7 +183,7 @@ const HomeScreen = ({ navigation }: any) => {
                   </>
                 )}
               </View>
-            </TouchableOpacity>
+            </AMTouchableOpacity>
           </LinearGradient>
         </MotiView>
 
@@ -202,7 +202,7 @@ const HomeScreen = ({ navigation }: any) => {
           <View style={styles.recentGrid}>
             {recentMatches && recentMatches.length > 0 ? (
               recentMatches.slice(0, 3).map((match: any) => (
-                <TouchableOpacity
+                <AMTouchableOpacity
                   key={match.id}
                   style={styles.recentCard}
                   onPress={() =>
@@ -235,7 +235,7 @@ const HomeScreen = ({ navigation }: any) => {
                       {match.otherUser?.mbti || 'AIMO'}
                     </AMText>
                   </View>
-                </TouchableOpacity>
+                </AMTouchableOpacity>
               ))
             ) : (
               <View style={styles.emptyRecent}>
@@ -268,11 +268,11 @@ const HomeScreen = ({ navigation }: any) => {
               </View>
               <Heart size={32} color="white" />
             </View>
-            <TouchableOpacity style={styles.premiumButton}>
+            <AMTouchableOpacity style={styles.premiumButton}>
               <AMText style={styles.premiumButtonText} fontWeight={700}>
                 {t('home.premium_subscribe')}
               </AMText>
-            </TouchableOpacity>
+            </AMTouchableOpacity>
           </LinearGradient>
         </MotiView>
       </ScrollView>

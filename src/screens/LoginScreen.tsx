@@ -10,7 +10,6 @@ import {
   RootStackParamList,
   RootStackScreenName,
 } from './navigation/RootStack';
-import AMTouchableOpacity from '../components/common/AMTouchableOpacity';
 import { useTranslation } from 'react-i18next';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { useGoogleAuth } from '../hooks/useGoogleAuth';
@@ -19,8 +18,10 @@ import { useLineAuth } from '../hooks/useLineAuth';
 import { GOOGLE_WEB_CLIENT_ID } from '@env';
 import notifee, { AndroidImportance } from '@notifee/react-native';
 import { Platform } from 'react-native';
+import AMTouchableOpacity from '../components/common/AMTouchableOpacity';
 import messaging from '@react-native-firebase/messaging';
 import { userApi } from '../api/user';
+import { useAuth } from '../context/AuthContext';
 
 type LoginScreenProps = {
   navigation: StackNavigationProp<
@@ -31,11 +32,14 @@ type LoginScreenProps = {
 
 const LoginScreen = ({ navigation }: LoginScreenProps) => {
   const { t } = useTranslation();
+  const { login } = useAuth(); // 💡 useAuth에서 login 가져오기
 
   const handleSocialSuccess = async (
     data: any,
     provider: 'GooGle' | 'Apple' | 'Line',
   ) => {
+    console.log('handleSocialSuccess data ==>', data);
+
     if (data.isNewUser) {
       navigation.navigate(RootStackScreenName.SignUp, {
         email: data.profile?.email || '',
@@ -43,6 +47,11 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
         providerId: data.profile?.providerId || '',
       });
     } else {
+      // 💡 로그인 성공 시 AuthContext에 유저 정보 저장
+      if (data.user) {
+        login(data.user);
+      }
+
       const token = await messaging().getToken();
       if (token) {
         console.log('FCM Token:', token);
@@ -59,7 +68,6 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
       navigation.replace(RootStackScreenName.HomeMain);
     }
   };
-
   const googleAuth = useGoogleAuth(data => handleSocialSuccess(data, 'GooGle'));
   const appleAuth = useAppleAuth(data => handleSocialSuccess(data, 'Apple'));
   const lineAuth = useLineAuth(data => handleSocialSuccess(data, 'Line'));
