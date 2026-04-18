@@ -11,7 +11,13 @@ export const useGoogleAuth = (onSuccessCallback?: (data: any) => void) => {
 
   return useMutation({
     mutationFn: async () => {
-      // 1. 구글 로그인 시도
+      // 1. Play Services 확인
+      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+      
+      // 잠시 대기 (Activity 참조를 확실히 하기 위함)
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      // 2. 구글 로그인 시도
       const response = await GoogleSignin.signIn();
 
       // ✅ 최신 버전은 response.data.idToken 또는 response.idToken 구조입니다.

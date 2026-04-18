@@ -1,5 +1,6 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useTranslation } from 'react-i18next'; // 추가
 import HomeScreen from '../HomeScreen';
 import { MessageCircle, Home, User } from 'lucide-react-native';
 import ChatsListScreen from '../ChatsListScreen';
@@ -12,6 +13,8 @@ const ChatIcon = ({ color }: { color: string }) => <MessageCircle color={color} 
 const UserIcon = ({ color }: { color: string }) => <User color={color} size={24} />;
 
 const HomeTabNavigator = () => {
+  const { t } = useTranslation();
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -25,23 +28,23 @@ const HomeTabNavigator = () => {
         component={HomeScreen}
         options={{
           tabBarIcon: HomeIcon,
-          tabBarLabel: '홈',
+          tabBarLabel: t('tab.home', '홈'),
         }}
       />
       <Tab.Screen
         name="ChatList"
-        component={ChatsListScreen} // 추후 채팅 목록 컴포넌트로 교체
+        component={ChatsListScreen}
         options={{
           tabBarIcon: ChatIcon,
-          tabBarLabel: '채팅',
+          tabBarLabel: t('tab.chat', '채팅'),
         }}
       />
       <Tab.Screen
         name="Profile"
-        component={ProfileScreen} // 추후 마이페이지 컴포넌트로 교체
+        component={ProfileScreen}
         options={{
           tabBarIcon: UserIcon,
-          tabBarLabel: '마이',
+          tabBarLabel: t('tab.profile', '마이'),
         }}
       />
     </Tab.Navigator>
