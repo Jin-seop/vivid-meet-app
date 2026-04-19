@@ -12,6 +12,8 @@ PODS:
   - BVLinearGradient (2.8.3):
     - React-Core
   - FBLazyVector (0.84.1)
+  - Firebase (12.10.0):
+    - Firebase/Core (= 12.10.0)
   - Firebase/Auth (12.10.0):
     - Firebase/CoreOnly
     - FirebaseAuth (~> 12.10.0)
@@ -2540,8 +2542,11 @@ PODS:
 DEPENDENCIES:
   - BVLinearGradient (from `../node_modules/react-native-linear-gradient`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
-  - Firebase/Core
-  - Firebase/Messaging
+  - Firebase
+  - FirebaseAnalytics
+  - FirebaseAuth
+  - FirebaseCore
+  - FirebaseCoreInternal
   - GoogleUtilities
   - hermes-engine (from `../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
   - RCTDeprecation (from `../node_modules/react-native/ReactApple/Libraries/RCTFoundation/RCTDeprecation`)
@@ -2969,6 +2974,6 @@ SPEC CHECKSUMS:
   RNWorklets: bc32c788b41ef5f9ee519d6bf3f495b73fb7741b
   Yoga: 846fbe6f595136be802ad81d05688ff748839764
 
-PODFILE CHECKSUM: 5cb1d76e81cc127c834ba4bad2a3faa5c0cdd77e
+PODFILE CHECKSUM: 2c65221b59ec010b2a79e153ad5974f7dac2cc6c
 
 COCOAPODS: 1.16.2

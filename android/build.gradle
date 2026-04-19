@@ -21,7 +21,6 @@ buildscript {
 
 // 기존 plugins 블록의 구글 서비스 설정은 삭제하고 아래 플러그인만 유지합니다.
 apply plugin: "com.facebook.react.rootproject"
-apply plugin: 'com.google.gms.google-services'
 
 allprojects {
     repositories {

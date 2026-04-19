@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "734411754471",
+    "project_id": "aimo-chat-b420e",
+    "storage_bucket": "aimo-chat-b420e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:734411754471:android:b4dbf96888952b3aea4b42",
+        "android_client_info": {
+          "package_name": "com.AimoChat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-JyVPEi9ItclW6DL8jV7WDem-goWVdig"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

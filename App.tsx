@@ -54,20 +54,22 @@ export default function App() {
     setupNotifications();
 
     // 5. 포그라운드 메시지 수신
-    const unsubscribeForeground = firebase.messaging().onMessage(async remoteMessage => {
-      console.log('Foreground Message:', remoteMessage);
+    const unsubscribeForeground = firebase
+      .messaging()
+      .onMessage(async remoteMessage => {
+        console.log('Foreground Message:', remoteMessage);
 
-      // Notifee를 사용하여 로컬 알림 표시
-      await notifee.displayNotification({
-        title: remoteMessage.notification?.title,
-        body: remoteMessage.notification?.body,
-        android: {
-          channelId: 'fcm_channel_id',
-          pressAction: { id: 'default' },
-        },
-        data: remoteMessage.data, // matchId 등을 전달
+        // Notifee를 사용하여 로컬 알림 표시
+        await notifee.displayNotification({
+          title: remoteMessage.notification?.title,
+          body: remoteMessage.notification?.body,
+          android: {
+            channelId: 'fcm_channel_id',
+            pressAction: { id: 'default' },
+          },
+          data: remoteMessage.data, // matchId 등을 전달
+        });
       });
-    });
 
     // 6. 종료된 상태에서 알림 클릭으로 앱 오픈 시
     firebase

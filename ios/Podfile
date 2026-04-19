@@ -15,8 +15,6 @@ node_require('react-native-permissions/scripts/setup.rb')
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
 
-# react-native-firebase with use_frameworks!
-$RNFirebaseAsStaticFramework = true
 
 setup_permissions([
   'Notifications',
@@ -28,6 +26,9 @@ setup_permissions([
 
 target 'AimoChat' do
   use_frameworks! :linkage => :static
+  # react-native-firebase with use_frameworks!
+  $RNFirebaseAsStaticFramework = true
+
   
   config = use_native_modules!
 
@@ -36,7 +37,6 @@ target 'AimoChat' do
   pod 'FirebaseCore', :modular_headers => true
   pod 'FirebaseCoreInternal', :modular_headers => true
   pod 'FirebaseAuth', :modular_headers => true
-  pod 'FirebaseMessaging', :modular_headers => true
   pod 'FirebaseAnalytics', :modular_headers => true
   pod 'GoogleUtilities', :modular_headers => true
 
