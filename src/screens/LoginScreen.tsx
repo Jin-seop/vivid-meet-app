@@ -32,7 +32,7 @@ type LoginScreenProps = {
 
 const LoginScreen = ({ navigation }: LoginScreenProps) => {
   const { t } = useTranslation();
-  const { login } = useAuth(); // 💡 useAuth에서 login 가져오기
+  const { login } = useAuth();
 
   const handleSocialSuccess = async (
     data: any,
@@ -47,7 +47,6 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
         providerId: data.profile?.providerId || '',
       });
     } else {
-      // 💡 로그인 성공 시 AuthContext에 유저 정보 저장
       if (data.user) {
         login(data.user);
       }

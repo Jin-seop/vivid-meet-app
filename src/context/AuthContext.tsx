@@ -54,6 +54,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
    */
   const login = useCallback(
     (userData: UserProfile) => {
+      console.log('userData ==>', userData);
+
       setUser(userData);
       setIsLoggedIn(true);
 
@@ -69,7 +71,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           region: userData.region || 'unknown',
         });
         logLogin(userData.provider);
-        }
+      }
 
       // 지역 기반 자동 언어 설정
       if (userData.region === 'JP') {
