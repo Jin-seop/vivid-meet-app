@@ -13,6 +13,7 @@ node_require('react-native/scripts/react_native_pods.rb')
 node_require('react-native-permissions/scripts/setup.rb')
 
 platform :ios, min_ios_version_supported
+use_frameworks! :linkage => :static
 prepare_react_native_project!
 
 
@@ -29,21 +30,27 @@ target 'AimoChat' do
   # react-native-firebase with use_frameworks!
   $RNFirebaseAsStaticFramework = true
 
-  
   config = use_native_modules!
 
   # Firebase Pods with modular headers
-  pod 'Firebase', :modular_headers => true
-  pod 'FirebaseCore', :modular_headers => true
-  pod 'FirebaseCoreInternal', :modular_headers => true
-  pod 'FirebaseAuth', :modular_headers => true
-  pod 'FirebaseAnalytics', :modular_headers => true
+  pod 'FirebaseCore'
+  pod 'FirebaseAuth'
   pod 'GoogleUtilities', :modular_headers => true
 
   use_react_native!(
     :path => config[:reactNativePath],
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
+
+  pre_install do |installer|
+    installer.pod_targets.each do |pod|
+      if pod.name.start_with?('RNFB')
+        def pod.build_type
+          Pod::BuildType.static_library
+        end
+      end
+    end
+  end
 
   post_install do |installer|
     react_native_post_install(
@@ -52,9 +59,19 @@ target 'AimoChat' do
       :mac_catalyst_enabled => false,
     )
 
-    installer.pods_project.build_configurations.each do |config|
-      # Allow non-modular headers for React-Core
-      config.build_settings["CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES"] = "YES"
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'gnu++20'
+        config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'
+
+        if target.name.start_with?('RNFB')
+          defs = config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] || ['$(inherited)']
+          defs = [defs] unless defs.is_a?(Array)
+          defs << 'RCT_REMOVE_LEGACY_ARCH=0' unless defs.include?('RCT_REMOVE_LEGACY_ARCH=0')
+          config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] = defs
+          config.build_settings['OTHER_CFLAGS'] = '$(inherited) -DRCT_REMOVE_LEGACY_ARCH=0'
+        end
+      end
     end
   end
 end
