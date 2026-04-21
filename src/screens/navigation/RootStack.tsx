@@ -10,6 +10,7 @@ import ChatScreen from '../ChatScreen';
 import EditProfileScreen from '../EditProfileScreen';
 import SettingsScreen from '../SettingsScreen';
 import NoticeListScreen from '../NoticeListScreen';
+import PolicyScreen from '../PolicyScreen';
 import { useAuth } from '../../context/AuthContext';
 
 export enum RootStackScreenName {
@@ -21,6 +22,7 @@ export enum RootStackScreenName {
   EditProfile = 'EditProfile',
   Settings = 'Settings',
   NoticeList = 'NoticeList',
+  Policy = 'Policy',
 }
 
 export type RootStackParamList = {
@@ -36,6 +38,7 @@ export type RootStackParamList = {
   [RootStackScreenName.EditProfile]: undefined;
   [RootStackScreenName.Settings]: undefined;
   [RootStackScreenName.NoticeList]: undefined;
+  [RootStackScreenName.Policy]: { type: 'TERMS' | 'PRIVACY' };
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -99,6 +102,10 @@ const RootStack = forwardRef<NavigationContainerRef<RootStackParamList>>((props,
             <Stack.Screen
               name={RootStackScreenName.NoticeList}
               component={NoticeListScreen}
+            />
+            <Stack.Screen
+              name={RootStackScreenName.Policy}
+              component={PolicyScreen}
             />
           </>
         )}

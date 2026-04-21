@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
-import { StyleSheet, View, Image, StatusBar } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View, Image, StatusBar, TouchableOpacity } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import LinearGradient from 'react-native-linear-gradient';
 import { MotiView } from 'moti';
-import { Sparkles } from 'lucide-react-native';
+import { Sparkles, Check, ChevronRight } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AMText from '../components/common/AMText';
 import {
@@ -22,6 +22,7 @@ import AMTouchableOpacity from '../components/common/AMTouchableOpacity';
 import messaging from '@react-native-firebase/messaging';
 import { userApi } from '../api/user';
 import { useAuth } from '../context/AuthContext';
+import BottomModal from '../components/common/BottomModal';
 
 type LoginScreenProps = {
   navigation: StackNavigationProp<
@@ -33,13 +34,30 @@ type LoginScreenProps = {
 const LoginScreen = ({ navigation }: LoginScreenProps) => {
   const { t } = useTranslation();
   const { login } = useAuth();
+  const [isAgreementVisible, setIsAgreementVisible] = useState(false);
+  const [selectedProvider, setSelectedProvider] = useState<'GooGle' | 'Apple' | 'Line' | null>(null);
+  
+  const [agreements, setAgreements] = useState({
+    terms: false,
+    privacy: false,
+    ai: false,
+  });
+
+  const isAllAgreed = agreements.terms && agreements.privacy && agreements.ai;
+
+  const toggleAll = () => {
+    const nextValue = !isAllAgreed;
+    setAgreements({
+      terms: nextValue,
+      privacy: nextValue,
+      ai: nextValue,
+    });
+  };
 
   const handleSocialSuccess = async (
     data: any,
     provider: 'GooGle' | 'Apple' | 'Line',
   ) => {
-    console.log('handleSocialSuccess data ==>', data);
-
     if (data.isNewUser) {
       navigation.navigate(RootStackScreenName.SignUp, {
         email: data.profile?.email || '',
@@ -53,7 +71,6 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
 
       const token = await messaging().getToken();
       if (token) {
-        console.log('FCM Token:', token);
         await userApi.saveFcmToken(token);
       }
 
@@ -67,14 +84,22 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
       navigation.replace(RootStackScreenName.HomeMain);
     }
   };
+
   const googleAuth = useGoogleAuth(data => handleSocialSuccess(data, 'GooGle'));
   const appleAuth = useAppleAuth(data => handleSocialSuccess(data, 'Apple'));
   const lineAuth = useLineAuth(data => handleSocialSuccess(data, 'Line'));
 
   const onSocialLoginPress = (provider: 'GooGle' | 'Apple' | 'Line') => {
-    console.log(`Login with ${provider}`);
+    setSelectedProvider(provider);
+    setIsAgreementVisible(true);
+  };
 
-    switch (provider) {
+  const startLogin = () => {
+    if (!isAllAgreed || !selectedProvider) return;
+    
+    setIsAgreementVisible(false);
+    
+    switch (selectedProvider) {
       case 'GooGle':
         googleAuth.mutate();
         break;
@@ -93,6 +118,31 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
     });
   }, []);
 
+  const renderAgreementItem = (
+    label: string, 
+    value: boolean, 
+    onToggle: () => void, 
+    onPressDetail?: () => void
+  ) => (
+    <View style={styles.agreementItem}>
+      <TouchableOpacity 
+        style={styles.checkboxRow} 
+        onPress={onToggle}
+        activeOpacity={0.7}
+      >
+        <View style={[styles.checkbox, value && styles.checkboxActive]}>
+          {value && <Check size={14} color="white" strokeWidth={3} />}
+        </View>
+        <AMText style={styles.agreementLabel}>{label}</AMText>
+      </TouchableOpacity>
+      {onPressDetail && (
+        <TouchableOpacity onPress={onPressDetail}>
+          <ChevronRight size={20} color="#9CA3AF" />
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
@@ -102,64 +152,65 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
       >
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.content}>
-            {/* 로고 섹션 */}
             <MotiView
               from={{ opacity: 0, translateY: -20 }}
               animate={{ opacity: 1, translateY: 0 }}
+              transition={{ type: 'timing', duration: 1000 }}
               style={styles.header}
             >
               <View style={styles.logoRow}>
-                <Sparkles size={40} color="#4A90E2" />
-                <AMText style={styles.logoText} fontWeight={700}>
-                  AimoChat
-                </AMText>
+                <Sparkles size={32} color="#4A90E2" />
+                <AMText style={styles.logoText}>AimoChat</AMText>
               </View>
-              <AMText style={styles.description}>{t('login.slogan')}</AMText>
+              <AMText style={styles.description}>
+                {t('login.slogan')}
+              </AMText>
             </MotiView>
 
-            {/* 히어로 이미지 */}
             <MotiView
-              from={{ opacity: 0, scale: 0.95 }}
+              from={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 200 }}
+              transition={{ type: 'timing', duration: 1000, delay: 200 }}
               style={styles.imageContainer}
             >
               <Image
                 source={{
-                  uri: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800',
+                  uri: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop',
                 }}
                 style={styles.heroImage}
                 resizeMode="cover"
               />
             </MotiView>
 
-            {/* 로그인 버튼 섹션 */}
             <MotiView
               from={{ opacity: 0, translateY: 20 }}
               animate={{ opacity: 1, translateY: 0 }}
-              transition={{ delay: 400 }}
+              transition={{ type: 'timing', duration: 1000, delay: 400 }}
               style={styles.buttonSection}
             >
-              {/* Google 로그인 */}
+              {/* Google Login */}
               <AMTouchableOpacity
                 style={[styles.loginButton, styles.googleButton]}
                 onPress={() => onSocialLoginPress('GooGle')}
               >
-                <AMText style={styles.googleButtonText}>
-                  {t('login.google')}
-                </AMText>
+                <Image
+                  source={{
+                    uri: 'https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg',
+                  }}
+                  style={{ width: 20, height: 20, marginRight: 10 }}
+                />
+                <AMText style={styles.googleButtonText}>{t('login.google')}</AMText>
               </AMTouchableOpacity>
 
-              {/* Apple 로그인 */}
+              {/* Apple Login */}
               <AMTouchableOpacity
                 style={[styles.loginButton, styles.appleButton]}
                 onPress={() => onSocialLoginPress('Apple')}
               >
-                <AMText style={styles.appleButtonText}>
-                  {t('login.apple')}
-                </AMText>
+                <AMText style={styles.appleButtonText}>{t('login.apple')}</AMText>
               </AMTouchableOpacity>
 
+              {/* Line Login */}
               <AMTouchableOpacity
                 style={[styles.loginButton, styles.LineButton]}
                 onPress={() => onSocialLoginPress('Line')}
@@ -175,16 +226,79 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
               transition={{ delay: 600 }}
               style={styles.footer}
             >
-              <AMText style={styles.policyText}>
-                {t('login.policy', {
-                  terms: t('login.terms'),
-                  privacy: t('login.privacy'),
-                })}
-              </AMText>
+              <View style={styles.policyContainer}>
+                <AMText style={styles.policyFooterText}>
+                  {t('login.policy_prefix')}
+                  <AMText 
+                    style={[styles.policyFooterText, styles.link]} 
+                    onPress={() => navigation.navigate(RootStackScreenName.Policy, { type: 'TERMS' })}
+                  >
+                    {t('login.terms')}
+                  </AMText>
+                  {t('login.policy_mid')}
+                  <AMText 
+                    style={[styles.policyFooterText, styles.link]} 
+                    onPress={() => navigation.navigate(RootStackScreenName.Policy, { type: 'PRIVACY' })}
+                  >
+                    {t('login.privacy')}
+                  </AMText>
+                  {t('login.policy_suffix')}
+                </AMText>
+              </View>
             </MotiView>
           </View>
         </SafeAreaView>
       </LinearGradient>
+
+      {/* Agreement Modal */}
+      <BottomModal
+        visible={isAgreementVisible}
+        onClose={() => setIsAgreementVisible(false)}
+        title={t('login.agreement_title')}
+      >
+        <View style={styles.modalContent}>
+          <AMText style={styles.modalDesc}>{t('login.agreement_desc')}</AMText>
+          
+          <TouchableOpacity 
+            style={styles.allAgreeRow} 
+            onPress={toggleAll}
+            activeOpacity={0.7}
+          >
+            <View style={[styles.checkboxLarge, isAllAgreed && styles.checkboxActive]}>
+              {isAllAgreed && <Check size={18} color="white" strokeWidth={4} />}
+            </View>
+            <AMText style={styles.allAgreeLabel}>{t('login.agree_all')}</AMText>
+          </TouchableOpacity>
+
+          <View style={styles.divider} />
+
+          {renderAgreementItem(
+            t('login.agree_terms'), 
+            agreements.terms, 
+            () => setAgreements(prev => ({ ...prev, terms: !prev.terms })),
+            () => navigation.navigate(RootStackScreenName.Policy, { type: 'TERMS' })
+          )}
+          {renderAgreementItem(
+            t('login.agree_privacy'), 
+            agreements.privacy, 
+            () => setAgreements(prev => ({ ...prev, privacy: !prev.privacy })),
+            () => navigation.navigate(RootStackScreenName.Policy, { type: 'PRIVACY' })
+          )}
+          {renderAgreementItem(
+            t('login.agree_ai'), 
+            agreements.ai, 
+            () => setAgreements(prev => ({ ...prev, ai: !prev.ai }))
+          )}
+
+          <AMTouchableOpacity 
+            style={[styles.startButton, !isAllAgreed && styles.startButtonDisabled]}
+            onPress={startLogin}
+            disabled={!isAllAgreed}
+          >
+            <AMText style={styles.startButtonText}>{t('login.start_with_agreement')}</AMText>
+          </AMTouchableOpacity>
+        </View>
+      </BottomModal>
     </View>
   );
 };
@@ -231,12 +345,10 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     overflow: 'hidden',
     backgroundColor: '#eee',
-    // Shadow for iOS
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 12,
-    // Elevation for Android
     elevation: 5,
   },
   heroImage: {
@@ -282,24 +394,100 @@ const styles = StyleSheet.create({
   footer: {
     alignItems: 'center',
   },
-  signUpText: {
-    fontSize: 14,
-    color: '#717182',
-    marginBottom: 24,
+  policyContainer: {
+    paddingHorizontal: 40,
+    alignItems: 'center',
   },
   link: {
     color: '#4A90E2',
     fontWeight: 'bold',
+    textDecorationLine: 'underline',
   },
-  policyText: {
+  policyFooterText: {
     fontSize: 12,
     color: '#717182',
     textAlign: 'center',
-    paddingHorizontal: 20,
     lineHeight: 18,
   },
-  underline: {
-    textDecorationLine: 'underline',
+  modalContent: {
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+  },
+  modalDesc: {
+    fontSize: 15,
+    color: '#6B7280',
+    lineHeight: 22,
+    marginBottom: 24,
+  },
+  allAgreeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+  },
+  checkboxLarge: {
+    width: 28,
+    height: 28,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: '#E5E7EB',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  checkbox: {
+    width: 22,
+    height: 22,
+    borderRadius: 6,
+    borderWidth: 2,
+    borderColor: '#E5E7EB',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+  },
+  checkboxActive: {
+    backgroundColor: '#4A90E2',
+    borderColor: '#4A90E2',
+  },
+  allAgreeLabel: {
+    fontSize: 17,
+    fontWeight: 'bold',
+    color: '#1F2937',
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#F3F4F6',
+    marginVertical: 12,
+  },
+  agreementItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 10,
+  },
+  checkboxRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  agreementLabel: {
+    fontSize: 15,
+    color: '#4B5563',
+  },
+  startButton: {
+    height: 56,
+    backgroundColor: '#4A90E2',
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 32,
+  },
+  startButtonDisabled: {
+    backgroundColor: '#E5E7EB',
+  },
+  startButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 

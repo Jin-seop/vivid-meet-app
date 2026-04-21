@@ -8,7 +8,7 @@ import {
 import AMTouchableOpacity from '../components/common/AMTouchableOpacity';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, ChevronRight, Globe, Lock, Bell } from 'lucide-react-native';
+import { ArrowLeft, ChevronRight, Globe, Lock, Bell, Megaphone, FileText, ShieldCheck } from 'lucide-react-native';
 import AMText from '../components/common/AMText';
 import { StackScreenProps } from '@react-navigation/stack';
 import { RootStackParamList, RootStackScreenName } from './navigation/RootStack';
@@ -44,8 +44,19 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.section}>
           {renderSettingItem(<Bell size={22} color="#4B5563" />, t('settings.notifications', '알림 설정'), () => {})}
-          {renderSettingItem(<Lock size={22} color="#4B5563" />, t('settings.security', '보안 설정'), () => {})}
           {renderSettingItem(<Globe size={22} color="#4B5563" />, t('settings.language', '언어 설정'), () => {})}
+        </View>
+
+        <View style={[styles.section, { marginTop: 16 }]}>
+          {renderSettingItem(<Megaphone size={22} color="#4B5563" />, t('settings.notice', '공지사항'), () => {
+            navigation.navigate(RootStackScreenName.NoticeList);
+          })}
+          {renderSettingItem(<FileText size={22} color="#4B5563" />, t('login.terms', '이용약관'), () => {
+            navigation.navigate(RootStackScreenName.Policy, { type: 'TERMS' });
+          })}
+          {renderSettingItem(<ShieldCheck size={22} color="#4B5563" />, t('login.privacy', '개인정보 처리방침'), () => {
+            navigation.navigate(RootStackScreenName.Policy, { type: 'PRIVACY' });
+          })}
         </View>
       </ScrollView>
     </SafeAreaView>

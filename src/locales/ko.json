@@ -2,17 +2,13 @@
   "common": {
     "confirm": "확인",
     "cancel": "취소",
-    "withdraw": "회원 탈퇴",
-    "next": "다음",
-    "start": "시작하기",
-    "select": "선택하세요",
-    "no_result": "검색 결과가 없습니다",
-    "error_title": "알림",
-    "error": "오류",
-    "withdraw_success": "탈퇴 처리가 완료되었습니다.",
-    "upload_failed": "사진 업로드에 실패했습니다. 다시 시도해주세요.",
-    "network_error": "서버와의 연결이 원활하지 않습니다.",
-    "search_placeholder": "검색..."
+    "save": "저장",
+    "delete": "삭제",
+    "edit": "수정",
+    "close": "닫기",
+    "loading": "로딩 중...",
+    "error": "오류가 발생했습니다.",
+    "no_data": "데이터가 없습니다."
   },
   "login": {
     "title": "AimoChat",
@@ -20,155 +16,66 @@
     "google": "Google로 시작하기",
     "apple": "Apple로 시작하기",
     "line": "Line으로 시작하기",
-    "policy": "로그인 시 AimoChat의 \n{{terms}} 및 {{privacy}}에 동의하게 됩니다.",
+    "policy_prefix": "로그인 시 AimoChat의 ",
+    "policy_mid": " 및 ",
+    "policy_suffix": "에 동의하게 됩니다.",
     "terms": "이용약관",
-    "privacy": "개인정보 처리방침"
+    "privacy": "개인정보 처리방침",
+    "agreement_title": "서비스 이용 동의",
+    "agreement_desc": "안전하고 즐거운 AimoChat 이용을 위해\n약관 동의가 필요합니다.",
+    "agree_all": "약관 전체 동의",
+    "agree_terms": "(필수) 이용약관 동의",
+    "agree_privacy": "(필수) 개인정보 처리방침 동의",
+    "agree_ai": "(필수) AI 생성 이미지 활용 및 고지 동의",
+    "start_with_agreement": "동의하고 시작하기"
   },
   "signup": {
     "step1_title": "기본 정보를 입력해주세요",
     "step1_subtitle": "안전한 만남을 위해 필요한 정보입니다",
     "nickname": "닉네임",
+    "nickname_placeholder": "닉네임을 입력해주세요",
     "gender": "성별",
-    "male": "남",
-    "female": "여",
-    "region": "지역",
-    "korea": "한국",
-    "japan": "일본",
-    "step2_title": "나를 표현해주세요",
-    "step2_subtitle": "AI 캐릭터 생성에 활용됩니다",
-    "step2_tags": {
-      "style_label": "그림체",
-      "mood_label": "조명 및 감성",
-      "kwebtoon": "K-웹툰",
-      "anime": "애니메이션",
-      "photorealistic": "실사풍",
-      "digital_art": "디지털 아트",
-      "golden_hour": "따뜻한 햇살",
-      "neon_light": "네온 사인",
-      "studio": "스튜디오",
-      "dreamy": "몽환적인",
-      "calm": "차분한",
-      "fashion": "패션"
-    },
-    "step3_title": "사진을 업로드해주세요",
-    "step3_subtitle": "포즈 사진과 실물 사진이 필요합니다.",
-    "pose_photo": "포즈사진",
-    "real_photo": "실물사진",
-    "step4_title": "AI 캐릭터가 생성되었습니다",
-    "step4_subtitle": "이 캐릭터로 첫 대화가 시작됩니다",
-    "complete_btn": "AimoChat 시작하기",
-    "ai_persona_name": "{{name}}님의 AI 페르소나",
-    "ai_transparency_title": "AI 투명성 고지",
-    "ai_transparency_desc": "상대방에게는 AI 캐릭터가 노출됩니다."
+    "male": "남성",
+    "female": "여성",
+    "birthday": "생년월일",
+    "next": "다음으로",
+    "step2_title": "본인의 사진을 등록해주세요",
+    "step2_subtitle": "본인 확인 및 AI 프로필 생성을 위해 필요합니다",
+    "real_photo": "실제 사진",
+    "real_photo_desc": "본인의 얼굴이 잘 나온 사진을 선택해주세요",
+    "complete": "가입 완료"
   },
   "home": {
-    "title": "홈",
-    "instant_match": "즉시 매칭",
-    "instant_match_desc": "3초 안에 새로운 친구와 연결",
-    "matching_status": "매칭 중...",
-    "start_chat": "지금 바로 대화 시작",
-    "free_remains": "{{count}}회 남음",
-    "reset_notice": "내일 00시에 무료 기회가 초기화됩니다",
-    "footer_info": "매일 무료 10회 제공 • 성별/취향 필터 가능",
-    "filter_title": "대화 취향 설정",
-    "filter_change": "변경",
-    "recent_matches": "최근 매칭된 친구들",
-    "view_all": "전체보기",
-    "premium_title": "프리미엄 기능",
-    "premium_desc": "더 빠르게 친구를 만나보세요",
-    "premium_subscribe": "프리미엄 구독하기"
+    "finding_match": "새로운 대화 상대를 찾고 있습니다...",
+    "stop_finding": "중단하기",
+    "start_finding": "대화 시작하기",
+    "match_found": "새로운 대화 상대가 연결되었습니다!",
+    "match_desc": "상대방의 AI 프로필을 확인해보세요"
   },
-  "chat_list": {
-    "title": "채팅",
-    "search_placeholder": "대화 검색",
-    "timestamp_now": "방금",
-    "timestamp_minutes": "{{count}}분 전",
-    "empty_title": "아직 대화가 없습니다",
-    "empty_desc": "홈에서 즉시 매칭으로 새로운 친구를 만나보세요"
-  },
-  "chat_detail": {
-    "photo_locked": "실물 사진 {{count}}장 잠금됨",
-    "instant_unlock": "즉시 해제",
+  "chat": {
     "input_placeholder": "메시지를 입력하세요...",
-    "system_unlocked": "대화가 활발해졌어요! 사진 1장이 해제되었습니다 🎉",
-    "report": "신고하기",
-    "block": "차단하기",
-    "typing": "입력 중...",
-    "read": "읽음"
-  },
-  "report": {
-    "title": "유저 신고",
-    "desc": "신고 사유를 선택해주세요. 허위 신고 시 이용 제한을 받을 수 있습니다.",
-    "submit": "신고하기",
-    "reason_insult": "욕설 및 비하 발언",
-    "reason_sexual": "성적인 대화 유도",
-    "reason_scam": "사기 및 광고",
-    "reason_inappropriate": "부적절한 프로필 사진",
-    "reason_other": "기타",
-    "select_reason": "신고 사유를 선택해주세요.",
-    "success_msg": "신고가 접수되었습니다. 운영팀에서 검토 후 조치하겠습니다.",
-    "fail_msg": "신고 접수 중 오류가 발생했습니다."
-  },
-  "block": {
-    "title": "유저 차단",
-    "desc": "상대방을 차단하시겠습니까? 차단 시 서로 메시지를 주고받을 수 없으며, 매칭 목록에서도 삭제됩니다.",
-    "confirm": "차단하기",
-    "success_msg": "상대방을 차단했습니다.",
-    "fail_msg": "차단 처리 중 오류가 발생했습니다."
-  },
-  "settings": {
-    "notifications": "알림",
-    "push_notif": "푸시 알림",
-    "push_notif_desc": "메시지 및 매칭 알림을 받습니다.",
-    "marketing": "마케팅 정보 수신",
-    "marketing_desc": "이벤트 및 혜택 정보를 받습니다.",
-    "language_privacy": "언어 및 보안",
-    "language": "언어 설정",
-    "privacy_policy": "개인정보 처리방침",
-    "terms": "서비스 이용약관"
-  },
-  "notice": {
-    "empty": "등록된 공지사항이 없습니다."
+    "send": "전송",
+    "other_exited": "상대방이 채팅방을 나갔습니다.",
+    "image_view": "이미지 보기",
+    "image_locked": "대화가 더 진행되면 공개됩니다"
   },
   "profile": {
     "title": "내 프로필",
-    "stats": {
-      "matches": "매칭",
-      "chats": "대화",
-      "likes": "받은 좋아요"
-    },
-    "menu": {
-      "notification": "알림 설정",
-      "privacy": "개인정보 보호",
-      "support": "고객 지원",
-      "logout": "로그아웃"
-    },
-    "withdraw_confirm": "정말 탈퇴하시겠어요?\n대화 내용이 모두 삭제됩니다.",
-    "withdraw_failed": "탈퇴 처리에 실패했습니다. 다시 시도해주세요."
+    "edit": "프로필 수정",
+    "points": "보유 포인트",
+    "history": "이용 내역",
+    "logout": "로그아웃",
+    "withdrawal": "회원 탈퇴"
   },
-  "edit_profile": {
-    "title": "프로필 수정",
-    "save": "저장",
-    "photo_section": "프로필 사진",
-    "photo_help": "클릭하여 사진 변경",
-    "basic_info": "기본 정보",
-    "nickname": "닉네임",
-    "nickname_placeholder": "닉네임을 입력하세요",
-    "email": "이메일",
-    "phone": "전화번호",
-    "birthdate": "생년월일",
-    "gender": "성별",
-    "additional_info": "추가 정보",
-    "language": "사용 언어",
-    "interests": "관심사 (최대 5개)",
-    "status_msg": "상태 메시지",
-    "status_msg_placeholder": "상태 메시지를 입력하세요",
-    "guide_msg": "프로필 정보는 다른 사용자에게 공개됩니다. 개인정보 보호에 유의해주세요.",
-    "save_modal_title": "변경사항 저장",
-    "save_modal_desc": "프로필 변경사항을 저장하시겠습니까?",
-    "cancel_modal_title": "변경사항 취소",
-    "cancel_modal_desc": "변경사항이 저장되지 않았습니다. 정말 나가시겠습니까?",
-    "stay": "계속 수정",
-    "leave": "나가기"
+  "settings": {
+    "title": "설정",
+    "notice": "공지사항",
+    "policy": "약관 및 정책",
+    "version": "버전 정보",
+    "customer_service": "고객센터"
+  },
+  "policy": {
+    "no_content": "내용을 불러올 수 없습니다.",
+    "error": "약관을 불러오는 중 오류가 발생했습니다."
   }
 }

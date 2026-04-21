@@ -17,6 +17,7 @@ import { useAuth } from '../context/AuthContext';
 import { aiApi } from '../api/ai';
 import { userApi } from '../api/user';
 import EncryptedStorage from 'react-native-encrypted-storage';
+import messaging from '@react-native-firebase/messaging';
 
 export type SignUpScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -151,6 +152,16 @@ const SignUpScreen = ({ navigation }: SignUpScreenProps) => {
 
         // 💡 [해결 2] 전역 AuthContext에 유저 정보 세팅 (로그인 처리)
         login(response.data.user);
+
+        // 💡 [추가] 가입 완료 후 FCM 토큰 저장
+        try {
+          const fcmToken = await messaging().getToken();
+          if (fcmToken) {
+            await userApi.saveFcmToken(fcmToken);
+          }
+        } catch (fcmError) {
+          console.error('Failed to save FCM token during sign up:', fcmError);
+        }
 
         // 3. 홈으로 이동
         navigation.replace(RootStackScreenName.HomeMain);
