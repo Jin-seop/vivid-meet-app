@@ -197,9 +197,11 @@ const ChatsListScreen = ({ navigation }: any) => {
                   <View style={styles.chatInfoTop}>
                     <View style={styles.nameRow}>
                       <AMText style={styles.chatName} fontWeight={600}>
-                        {otherUser.isDeleted 
-                          ? `${otherUser.nickname || '알 수 없음'} (${t('chat_list.withdrawn', '탈퇴한 유저')})`
-                          : otherUser.nickname || '알 수 없음'}
+                        {otherUser.isSuspended
+                          ? `${otherUser.nickname || '알 수 없음'} (${t('chat_list.suspended', '정지된 유저')})`
+                          : otherUser.isDeleted 
+                            ? `${otherUser.nickname || '알 수 없음'} (${t('chat_list.withdrawn', '탈퇴한 유저')})`
+                            : otherUser.nickname || '알 수 없음'}
                       </AMText>
                     </View>
                     <AMText style={styles.timestamp}>

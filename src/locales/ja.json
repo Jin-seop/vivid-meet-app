@@ -8,8 +8,10 @@
     "close": "閉じる",
     "loading": "読み込み中...",
     "error": "エラーが発生しました。",
-    "no_data": "データがありません。",
-    "next": "次へ"
+    "no_data": "데이터가 없습니다.",
+    "next": "次へ",
+    "success": "成功",
+    "notice": "通知"
   },
   "login": {
     "title": "AimoChat",
@@ -17,17 +19,18 @@
     "google": "Googleで始める",
     "apple": "Appleで始める",
     "line": "Lineで始める",
-    "policy_prefix": "ログインするとAimoChatの ",
+    "policy_prefix": "ログインするとAimoChat의 ",
     "policy_mid": " および ",
     "policy_suffix": "に同意したことになります。",
     "terms": "利用規約",
     "privacy": "個人情報保護方針",
     "agreement_title": "サービス利用同意",
     "agreement_desc": "安全で楽しいAimoChat利用のために\n規約への同意が必要です。",
-    "agree_all": "規約に一括同意",
+    "agree_all": "規約に一괄同意",
     "agree_terms": "(必須) 利用規約に同意",
-    "agree_privacy": "(必須) 個人情報保護方針に同意",
+    "agree_privacy": "(必須) 個人情報保護方針에 동의",
     "agree_ai": "(必須) AI生成画像の活用および告知に同意",
+    "agree_ai_desc": "AimoChatはAI技術を活用して生成された仮想のキャラクターを使用します。\n\nユーザーはサービス内のキャラクターがAIによって生成されたことを認識し、使用することに同意します。",
     "start_with_agreement": "同意して始める"
   },
   "signup": {
@@ -55,7 +58,13 @@
     "stop_finding": "中断する",
     "start_finding": "対話を開始する",
     "match_found": "新しい対話相手が見つかりました！",
-    "match_desc": "相手のAIプロフィールを確認してみてください"
+    "match_desc": "相手のAIプロフィールを確認してみてください",
+    "instant_match": "インスタントマッチング",
+    "instant_match_desc": "今すぐ話せる友達を探しましょう",
+    "start_chat": "チャット開始",
+    "matching_status": "マッチング中...",
+    "recent_matches": "最近マッチングした友達",
+    "no_recent_matches": "最近のマッチング履歴がありません。"
   },
   "chat": {
     "input_placeholder": "メッセージを入力してください...",
@@ -64,11 +73,77 @@
     "image_view": "画像を表示",
     "image_locked": "対話が進むと公開されます"
   },
+  "chat_list": {
+    "title": "チャット",
+    "search_placeholder": "チャットルーム検索",
+    "no_messages": "メッセージがありません。",
+    "withdrawn": "退会したユーザー",
+    "suspended": "停止されたユーザー",
+    "empty_title": "チャットルームがありません",
+    "empty_desc": "新しい友達とマッチングを始めてみてください！"
+  },
+  "chat_detail": {
+    "input_placeholder": "メッセージを入力してください...",
+    "typing": "入力中...",
+    "read": "既読",
+    "report": "報告する",
+    "block": "ブロックする",
+    "withdrawn_user_input": "退会したユーザーとは対話できません。",
+    "suspended_user_input": "停止されたユーザーとは対話できません。"
+  },
+  "report": {
+    "title": "ユーザー通報",
+    "desc": "通報理由を選択してください。虚偽の通報は利用制限の対象となる場合があります。",
+    "reason_insult": "暴言および誹謗中傷",
+    "reason_sexual": "性的な会話の誘導",
+    "reason_scam": "詐欺および広告",
+    "reason_inappropriate": "不適切なプロフィール写真",
+    "reason_other": "その他",
+    "submit": "報告する",
+    "select_reason": "通報理由を選択してください。",
+    "success_msg": "通報が受理されました。運営チームで確認後、対処いたします。",
+    "fail_msg": "通報の処理中にエラーが発生しました。"
+  },
+  "block": {
+    "title": "ユーザーブロック",
+    "desc": "相手をブロックしますか？ブロックすると互いにメッセージの送受信ができなくなり、マッチングリストからも削除されます。",
+    "confirm": "ブロックする",
+    "success_msg": "相手をブロックしました。",
+    "fail_msg": "ブロック処理中にエラーが発生しました。"
+  },
   "profile": {
     "title": "プロフィール",
     "edit": "プロフィール編集",
     "logout": "ログアウト",
-    "withdrawal": "退会"
+    "withdrawal": "退会",
+    "stats": {
+      "matches": "マッチング",
+      "chats": "トーク",
+      "likes": "いいね"
+    }
+  },
+  "edit_profile": {
+    "title": "プロフィール編集",
+    "save": "保存",
+    "photo_section": "プロフィール写真",
+    "photo_help": "AIキャラクター生成に使用された元の写真です。",
+    "basic_info": "基本情報",
+    "nickname": "ニックネーム",
+    "nickname_placeholder": "ニックネームを入力してください",
+    "email": "メールアドレス",
+    "gender": "性別",
+    "additional_info": "追加情報",
+    "language": "言語設定",
+    "interests": "好み/タグ",
+    "status_msg": "ステータスメッセージ",
+    "status_msg_placeholder": "自分を表現する一言を入力してください",
+    "guide_msg": "虚偽の情報を入力した場合、サービスの利用が制限されることがあります。",
+    "save_modal_title": "保存の確認",
+    "save_modal_desc": "変更内容を保存しますか？",
+    "cancel_modal_title": "キャンセルの確認",
+    "cancel_modal_desc": "編集中の内容が失われます。キャンセルしますか？",
+    "stay": "編集を続ける",
+    "leave": "キャンセルして戻る"
   },
   "settings": {
     "title": "設定",

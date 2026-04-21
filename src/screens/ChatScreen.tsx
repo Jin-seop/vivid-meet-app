@@ -433,22 +433,24 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
               style={styles.input}
               value={message}
               onChangeText={handleTextChange}
-              placeholder={otherUser?.isDeleted 
-                ? t('chat_detail.withdrawn_user_input', '탈퇴한 유저와는 대화할 수 없습니다.')
-                : t('chat_detail.input_placeholder', '메시지를 입력하세요...')}
+              placeholder={otherUser?.isSuspended
+                ? t('chat_detail.suspended_user_input', '정지된 유저와는 대화할 수 없습니다.')
+                : otherUser?.isDeleted 
+                  ? t('chat_detail.withdrawn_user_input', '탈퇴한 유저와는 대화할 수 없습니다.')
+                  : t('chat_detail.input_placeholder', '메시지를 입력하세요...')}
               placeholderTextColor="#9CA3AF"
               multiline
-              editable={!otherUser?.isDeleted}
+              editable={!otherUser?.isDeleted && !otherUser?.isSuspended}
             />
-            <AMTouchableOpacity style={styles.smileButton} disabled={otherUser?.isDeleted}>
-              <Smile size={20} color={otherUser?.isDeleted ? "#E5E7EB" : "#9CA3AF"} />
+            <AMTouchableOpacity style={styles.smileButton} disabled={otherUser?.isDeleted || otherUser?.isSuspended}>
+              <Smile size={20} color={(otherUser?.isDeleted || otherUser?.isSuspended) ? "#E5E7EB" : "#9CA3AF"} />
             </AMTouchableOpacity>
           </View>
           {selectedImage ? (
             <AMTouchableOpacity
-              style={[styles.sendButton, otherUser?.isDeleted && styles.sendButtonDisabled]}
+              style={[styles.sendButton, (otherUser?.isDeleted || otherUser?.isSuspended) && styles.sendButtonDisabled]}
               onPress={sendImage}
-              disabled={otherUser?.isDeleted}
+              disabled={otherUser?.isDeleted || otherUser?.isSuspended}
             >
               <Send size={20} color="white" style={styles.sendIcon} />
             </AMTouchableOpacity>
@@ -456,10 +458,10 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
             <AMTouchableOpacity
               style={[
                 styles.sendButton,
-                (!message.trim() || otherUser?.isDeleted) && styles.sendButtonDisabled,
+                (!message.trim() || otherUser?.isDeleted || otherUser?.isSuspended) && styles.sendButtonDisabled,
               ]}
               onPress={handleSend}
-              disabled={!message.trim() || otherUser?.isDeleted}
+              disabled={!message.trim() || otherUser?.isDeleted || otherUser?.isSuspended}
             >
               <Send size={20} color="white" style={styles.sendIcon} />
             </AMTouchableOpacity>
