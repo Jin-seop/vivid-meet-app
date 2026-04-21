@@ -10,7 +10,7 @@ import {
 import AMTouchableOpacity from '../components/common/AMTouchableOpacity';
 import LinearGradient from 'react-native-linear-gradient';
 import { MotiView } from 'moti';
-import { Sparkles, Zap, Heart, MessageCircle, User } from 'lucide-react-native';
+import { Sparkles, Zap, Heart, MessageCircle, User, Info } from 'lucide-react-native';
 import AMText from '../components/common/AMText';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { RootStackScreenName } from './navigation/RootStack';
@@ -18,14 +18,19 @@ import { useTranslation } from 'react-i18next';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { matchApi } from '../api/match';
+import { userApi } from '../api/user';
 import { socketService } from '../api/socket';
 import { logEvent } from '../utils/analytics';
+import { useAuth } from '../context/AuthContext';
+import CenterModal, { ModalButton } from '../components/common/CenterModal';
 
 const HomeScreen = ({ navigation }: any) => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+  const { user, login } = useAuth();
 
   const [isMatching, setIsMatching] = useState(false);
+  const [showAiNotice, setShowAiNotice] = useState(false);
 
   // 1. 최근 매칭 목록 조회
   const { data: recentMatches } = useQuery({
@@ -34,15 +39,19 @@ const HomeScreen = ({ navigation }: any) => {
   });
 
   useEffect(() => {
+    // 기존 유저 중 AI 고지 미동의자 팝업 노출
+    if (user && !user.isAiNoticeAccepted) {
+      setShowAiNotice(true);
+    }
+
     socketService.connect();
     const handleMatchFound = (matchData: {
       matchId: string;
       partnerId: string;
     }) => {
       setIsMatching(false);
-      queryClient.invalidateQueries({ queryKey: ['recentMatches'] }); // 목록 갱신
+      queryClient.invalidateQueries({ queryKey: ['recentMatches'] });
 
-      // Analytics
       logEvent('match_found', {
         match_id: matchData.matchId,
         method: 'socket',
@@ -57,7 +66,20 @@ const HomeScreen = ({ navigation }: any) => {
     return () => {
       socketService.socket?.off('matchFound', handleMatchFound);
     };
-  }, [navigation, queryClient]);
+  }, [navigation, queryClient, user]);
+
+  const handleAcceptAiNotice = async () => {
+    try {
+      await userApi.acceptAiNotice();
+      setShowAiNotice(false);
+      // 로컬 유저 상태 업데이트
+      if (user) {
+        login({ ...user, isAiNoticeAccepted: true });
+      }
+    } catch (error) {
+      Alert.alert('오류', '동의 처리에 실패했습니다.');
+    }
+  };
 
   const handleInstantMatch = async () => {
     if (isMatching) {
@@ -219,6 +241,25 @@ const HomeScreen = ({ navigation }: any) => {
           </View>
         </MotiView>
       </ScrollView>
+
+      {/* AI 투명성 고지 모달 */}
+      <CenterModal
+        isOpen={showAiNotice}
+        onClose={() => {}} // 강제 동의 필요 시 비워둠
+        title={t('login.agreement_title')}
+      >
+        <View style={styles.modalContent}>
+          <View style={styles.infoIconWrapper}>
+            <Info size={40} color="#4A90E2" />
+          </View>
+          <AMText style={styles.modalDescription}>
+            {t('login.agree_ai_desc', 'AimoChat은 AI 기술을 활용하여 생성된 가상의 캐릭터를 사용합니다.\n\n사용자는 서비스 내의 캐릭터가 AI에 의해 생성되었음을 인지하고 사용함에 동의합니다.')}
+          </AMText>
+          <ModalButton variant="primary" onClick={handleAcceptAiNotice}>
+            {t('common.confirm', '동의하고 시작하기')}
+          </ModalButton>
+        </View>
+      </CenterModal>
     </SafeAreaView>
   );
 };
@@ -293,6 +334,21 @@ const styles = StyleSheet.create({
   recentMbti: { fontSize: 12, color: '#717182' },
   emptyRecent: { flex: 1, padding: 20, alignItems: 'center' },
   emptyRecentText: { color: '#9CA3AF', fontSize: 14 },
+  // 모달 관련 스타일
+  modalContent: {
+    paddingVertical: 10,
+    alignItems: 'center',
+  },
+  infoIconWrapper: {
+    marginBottom: 20,
+  },
+  modalDescription: {
+    fontSize: 15,
+    color: '#4B5563',
+    textAlign: 'center',
+    lineHeight: 22,
+    marginBottom: 24,
+  },
 });
 
 export default HomeScreen;

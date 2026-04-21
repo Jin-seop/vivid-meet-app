@@ -36,6 +36,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
 import CenterModal, { ModalButton } from '../components/common/CenterModal';
 import { launchImageLibrary } from 'react-native-image-picker';
+import ChatImageModal from '../components/common/ChatImageModal';
 
 type ChatScreenProps = StackScreenProps<
   RootStackParamList,
@@ -67,6 +68,7 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
   const [showReportModal, setShowReportModal] = useState(false);
   const [showBlockModal, setShowBlockModal] = useState(false);
   const [reportReason, setReportReason] = useState('');
+  const [fullImageUrl, setFullImageUrl] = useState<string | null>(null);
 
   const flatListRef = useRef<FlatList>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -141,7 +143,7 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
       const uploadResponse = await chatApi.uploadImage(formData);
       const imageUrl = uploadResponse.data.url;
 
-      socketService.sendMessage(matchId, imageUrl);
+      socketService.sendMessage(matchId, imageUrl, MessageType.IMAGE); // 👉 타입 명시
       logEvent('send_message', {
         match_id: matchId,
         type: 'image',
@@ -244,14 +246,16 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
         style={[styles.messageRow, isMe ? styles.myMsgRow : styles.theirMsgRow]}
       >
         {item.type === 'image' ? (
-          <Image
-            source={{ uri: item.content }}
-            style={[
-              styles.imageBubble,
-              isMe ? styles.myImageBubble : styles.theirImageBubble,
-            ]}
-            resizeMode="cover"
-          />
+          <AMTouchableOpacity onPress={() => setFullImageUrl(item.content)}>
+            <Image
+              source={{ uri: item.content }}
+              style={[
+                styles.imageBubble,
+                isMe ? styles.myImageBubble : styles.theirImageBubble,
+              ]}
+              resizeMode="cover"
+            />
+          </AMTouchableOpacity>
         ) : (
           <View
             style={[styles.bubble, isMe ? styles.myBubble : styles.theirBubble]}
@@ -462,6 +466,13 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
           )}
         </View>
       </KeyboardAvoidingView>
+
+      {/* 이미지 전체 화면 모달 */}
+      <ChatImageModal 
+        isVisible={!!fullImageUrl} 
+        imageUrl={fullImageUrl} 
+        onClose={() => setFullImageUrl(null)} 
+      />
     </SafeAreaView>
   );
 };

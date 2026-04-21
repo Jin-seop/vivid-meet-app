@@ -192,6 +192,11 @@ const EditProfileScreen = ({ navigation }: EditProfileScreenProps) => {
             <AMText style={styles.photoHelp}>
               {t('edit_profile.photo_help')}
             </AMText>
+            <View style={styles.warningBox}>
+              <AMText style={styles.warningText}>
+                ⚠️ {t('signup.photo_warning', '본인 사진이 아닐 경우 이용이 제한되거나 제재를 받을 수 있습니다.')}
+              </AMText>
+            </View>
           </View>
         </View>
 
@@ -397,6 +402,21 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   photoHelp: { fontSize: 12, color: '#6B7280', marginTop: 12 },
+  warningBox: {
+    marginTop: 12,
+    padding: 10,
+    backgroundColor: '#FFF5F5',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#FED7D7',
+    width: '100%',
+  },
+  warningText: {
+    fontSize: 11,
+    color: '#C53030',
+    textAlign: 'center',
+    lineHeight: 16,
+  },
   inputGroup: { marginBottom: 16 },
   label: { fontSize: 14, color: '#374151', marginBottom: 8 },
   input: {
