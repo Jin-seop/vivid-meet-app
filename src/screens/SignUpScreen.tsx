@@ -153,6 +153,13 @@ const SignUpScreen = ({ navigation }: SignUpScreenProps) => {
         // 💡 [해결 2] 전역 AuthContext에 유저 정보 세팅 (로그인 처리)
         login(response.data.user);
 
+        // 💡 [추가] AI 투명성 고지 동의 서버에 기록
+        try {
+          await userApi.acceptAiNotice();
+        } catch (error) {
+          console.error('Failed to accept AI notice:', error);
+        }
+
         // 💡 [추가] 가입 완료 후 FCM 토큰 저장
         try {
           const fcmToken = await messaging().getToken();

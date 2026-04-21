@@ -429,21 +429,22 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
               style={styles.input}
               value={message}
               onChangeText={handleTextChange}
-              placeholder={t(
-                'chat_detail.input_placeholder',
-                '메시지를 입력하세요...',
-              )}
+              placeholder={otherUser?.isDeleted 
+                ? t('chat_detail.withdrawn_user_input', '탈퇴한 유저와는 대화할 수 없습니다.')
+                : t('chat_detail.input_placeholder', '메시지를 입력하세요...')}
               placeholderTextColor="#9CA3AF"
               multiline
+              editable={!otherUser?.isDeleted}
             />
-            <AMTouchableOpacity style={styles.smileButton}>
-              <Smile size={20} color="#9CA3AF" />
+            <AMTouchableOpacity style={styles.smileButton} disabled={otherUser?.isDeleted}>
+              <Smile size={20} color={otherUser?.isDeleted ? "#E5E7EB" : "#9CA3AF"} />
             </AMTouchableOpacity>
           </View>
           {selectedImage ? (
             <AMTouchableOpacity
-              style={[styles.sendButton]}
-              onPress={sendImage} // 이미지 전송
+              style={[styles.sendButton, otherUser?.isDeleted && styles.sendButtonDisabled]}
+              onPress={sendImage}
+              disabled={otherUser?.isDeleted}
             >
               <Send size={20} color="white" style={styles.sendIcon} />
             </AMTouchableOpacity>
@@ -451,10 +452,10 @@ const ChatScreen = ({ navigation, route }: ChatScreenProps) => {
             <AMTouchableOpacity
               style={[
                 styles.sendButton,
-                !message.trim() && styles.sendButtonDisabled,
+                (!message.trim() || otherUser?.isDeleted) && styles.sendButtonDisabled,
               ]}
               onPress={handleSend}
-              disabled={!message.trim()}
+              disabled={!message.trim() || otherUser?.isDeleted}
             >
               <Send size={20} color="white" style={styles.sendIcon} />
             </AMTouchableOpacity>

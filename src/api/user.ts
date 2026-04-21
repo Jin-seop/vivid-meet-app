@@ -44,18 +44,15 @@ export const userApi = {
       headers: { 'Content-Type': 'multipart/form-data' },
     }),
 
-  /** 포인트 잔액 조회 */
-  getPoints: () => api.get('/users/me/points'),
-
-  /** 포인트 사용 내역 조회 */
-  getPointHistories: () => api.get('/users/me/point-history'),
-
   /** 회원 탈퇴 */
   withdraw: () => api.delete('/users/me/withdraw'),
 
   /** FCM 토큰 업데이트 */
   saveFcmToken: (fcmToken: string) =>
     api.put('/users/me/fcm-token', { fcmToken }),
+
+  /** AI 투명성 고지 동의 처리 */
+  acceptAiNotice: () => api.patch('/users/me/accept-ai-notice'),
 
   /** 유저 통계 정보 조회 */
   getStats: () => api.get('/users/me/stats'),

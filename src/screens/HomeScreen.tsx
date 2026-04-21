@@ -17,7 +17,6 @@ import { RootStackScreenName } from './navigation/RootStack';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { userApi } from '../api/user';
 import { matchApi } from '../api/match';
 import { socketService } from '../api/socket';
 import { logEvent } from '../utils/analytics';
@@ -28,19 +27,11 @@ const HomeScreen = ({ navigation }: any) => {
 
   const [isMatching, setIsMatching] = useState(false);
 
-  // 1. 포인트 및 무료 횟수 조회
-  const { data: pointData } = useQuery({
-    queryKey: ['myPoints'],
-    queryFn: () => userApi.getPoints().then(res => res.data),
-  });
-
-  // 2. 최근 매칭 목록 조회 (👉 하드코딩 대체)
+  // 1. 최근 매칭 목록 조회
   const { data: recentMatches } = useQuery({
     queryKey: ['recentMatches'],
     queryFn: () => matchApi.getMatchHistory().then(res => res.data),
   });
-
-  const freeMatches = pointData?.freeMatchCount ?? 0;
 
   useEffect(() => {
     socketService.connect();
@@ -49,7 +40,6 @@ const HomeScreen = ({ navigation }: any) => {
       partnerId: string;
     }) => {
       setIsMatching(false);
-      queryClient.invalidateQueries({ queryKey: ['myPoints'] });
       queryClient.invalidateQueries({ queryKey: ['recentMatches'] }); // 목록 갱신
 
       // Analytics
@@ -77,17 +67,9 @@ const HomeScreen = ({ navigation }: any) => {
       return;
     }
 
-    if (freeMatches <= 0) {
-      Alert.alert('알림', t('home.reset_notice'));
-      logEvent('match_limit_reached');
-      return;
-    }
-
     try {
       setIsMatching(true);
-      logEvent('match_start', {
-        free_matches_left: freeMatches,
-      });
+      logEvent('match_start');
       const response = await matchApi.joinRandomChat({
         targetGender: 'ALL',
         targetCountry: 'ALL',
@@ -95,7 +77,6 @@ const HomeScreen = ({ navigation }: any) => {
 
       if (response.data.status === 'MATCHED') {
         setIsMatching(false);
-        queryClient.invalidateQueries({ queryKey: ['myPoints'] });
         queryClient.invalidateQueries({ queryKey: ['recentMatches'] });
 
         logEvent('match_found', {
@@ -124,12 +105,6 @@ const HomeScreen = ({ navigation }: any) => {
           <Sparkles size={24} color="#4A90E2" />
           <AMText style={styles.logoText} fontWeight={700}>
             AimoChat
-          </AMText>
-        </View>
-        <View style={styles.badge}>
-          <Zap size={12} color="#50E3C2" />
-          <AMText style={styles.badgeText} fontWeight={600}>
-            {t('home.free_remains', { count: freeMatches })}
           </AMText>
         </View>
       </View>
@@ -163,10 +138,7 @@ const HomeScreen = ({ navigation }: any) => {
             </View>
 
             <AMTouchableOpacity
-              style={[
-                styles.matchButton,
-                !isMatching && freeMatches <= 0 && styles.disabledButton,
-              ]}
+              style={styles.matchButton}
               onPress={handleInstantMatch}
             >
               <View style={styles.row}>
@@ -187,7 +159,7 @@ const HomeScreen = ({ navigation }: any) => {
           </LinearGradient>
         </MotiView>
 
-        {/* Recent Matches Section (👉 실제 데이터 연동) */}
+        {/* Recent Matches Section */}
         <MotiView
           from={{ opacity: 0, translateY: 20 }}
           animate={{ opacity: 1, translateY: 0 }}
@@ -246,35 +218,6 @@ const HomeScreen = ({ navigation }: any) => {
             )}
           </View>
         </MotiView>
-
-        {/* Premium Banner */}
-        <MotiView
-          from={{ opacity: 0, translateY: 20 }}
-          animate={{ opacity: 1, translateY: 0 }}
-          transition={{ delay: 300 }}
-        >
-          <LinearGradient
-            colors={['#8B5CF6', '#EC4899']}
-            style={styles.premiumCard}
-          >
-            <View style={styles.premiumHeader}>
-              <View>
-                <AMText style={styles.premiumTitle} fontWeight={700}>
-                  {t('home.premium_title')}
-                </AMText>
-                <AMText style={styles.premiumSubtitle}>
-                  {t('home.premium_desc')}
-                </AMText>
-              </View>
-              <Heart size={32} color="white" />
-            </View>
-            <AMTouchableOpacity style={styles.premiumButton}>
-              <AMText style={styles.premiumButtonText} fontWeight={700}>
-                {t('home.premium_subscribe')}
-              </AMText>
-            </AMTouchableOpacity>
-          </LinearGradient>
-        </MotiView>
       </ScrollView>
     </SafeAreaView>
   );
@@ -293,16 +236,6 @@ const styles = StyleSheet.create({
   },
   headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   logoText: { fontSize: 20, color: '#4A90E2' },
-  badge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#E6F9F5',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
-    gap: 4,
-  },
-  badgeText: { fontSize: 12, color: '#50E3C2' },
   scrollContent: { padding: 20, gap: 24 },
   matchCardContainer: {
     borderRadius: 20,
@@ -329,7 +262,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   matchButtonText: { fontSize: 18, color: '#4A90E2' },
-  disabledButton: { opacity: 0.5 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   sectionHeader: {
     flexDirection: 'row',
@@ -361,22 +293,6 @@ const styles = StyleSheet.create({
   recentMbti: { fontSize: 12, color: '#717182' },
   emptyRecent: { flex: 1, padding: 20, alignItems: 'center' },
   emptyRecentText: { color: '#9CA3AF', fontSize: 14 },
-  premiumCard: { padding: 24, borderRadius: 20 },
-  premiumHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 20,
-  },
-  premiumTitle: { fontSize: 20, color: 'white', marginBottom: 4 },
-  premiumSubtitle: { fontSize: 14, color: 'rgba(255,255,255,0.9)' },
-  premiumButton: {
-    height: 48,
-    backgroundColor: 'white',
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  premiumButtonText: { color: '#8B5CF6', fontSize: 16 },
 });
 
 export default HomeScreen;

@@ -66,6 +66,12 @@ const SignUpStep3 = ({
         </View>
       </View>
 
+      <View style={styles.warningBox}>
+        <AMText style={styles.warningText}>
+          ⚠️ {t('signup.photo_warning', '본인 사진이 아닐 경우 이용이 제한되거나 제재를 받을 수 있습니다.')}
+        </AMText>
+      </View>
+
       <AMTouchableOpacity
         style={[
           styles.nextButton,
@@ -119,6 +125,20 @@ const styles = StyleSheet.create({
   uploadBoxText: {
     marginTop: 12,
     textAlign: 'center',
+  },
+  warningBox: {
+    marginTop: 20,
+    padding: 12,
+    backgroundColor: '#FFF5F5',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#FED7D7',
+  },
+  warningText: {
+    fontSize: 12,
+    color: '#C53030',
+    textAlign: 'center',
+    lineHeight: 18,
   },
   uploadCount: { fontSize: 12, color: '#9CA3AF', marginTop: 4 },
   guideCard: {

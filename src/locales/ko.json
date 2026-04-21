@@ -8,7 +8,8 @@
     "close": "닫기",
     "loading": "로딩 중...",
     "error": "오류가 발생했습니다.",
-    "no_data": "데이터가 없습니다."
+    "no_data": "데이터가 없습니다.",
+    "next": "다음"
   },
   "login": {
     "title": "AimoChat",
@@ -39,10 +40,14 @@
     "female": "여성",
     "birthday": "생년월일",
     "next": "다음으로",
-    "step2_title": "본인의 사진을 등록해주세요",
-    "step2_subtitle": "본인 확인 및 AI 프로필 생성을 위해 필요합니다",
+    "step2_title": "취향을 선택해주세요",
+    "step2_subtitle": "나와 잘 맞는 친구를 찾기 위해 필요합니다",
+    "step3_title": "본인의 사진을 등록해주세요",
+    "step3_subtitle": "본인 확인 및 AI 프로필 생성을 위해 필요합니다",
     "real_photo": "실제 사진",
+    "pose_photo": "포즈 사진",
     "real_photo_desc": "본인의 얼굴이 잘 나온 사진을 선택해주세요",
+    "photo_warning": "본인 사진이 아닐 경우 이용이 제한되거나 제재를 받을 수 있습니다.",
     "complete": "가입 완료"
   },
   "home": {
@@ -62,8 +67,6 @@
   "profile": {
     "title": "내 프로필",
     "edit": "프로필 수정",
-    "points": "보유 포인트",
-    "history": "이용 내역",
     "logout": "로그아웃",
     "withdrawal": "회원 탈퇴"
   },
