@@ -132,10 +132,10 @@ const HomeScreen = ({ navigation }: any) => {
   const showRewardedAd = () => {
     const unsubscribe = rewarded.addAdEventListener(RewardedAdEventType.EARNED_REWARD, async () => {
       try {
-        await userApi.chargeMatchCount('test1ca-app-pub-8502781645264431/1288687661');
-        Alert.alert('충전 완료', '매칭 횟수가 1회 충전되었습니다.');
+        await userApi.addMatchCount('test1ca-app-pub-8502781645264431/1288687661');
+        Alert.alert(t('common.success'), '매칭 횟수가 1회 충전되었습니다.');
       } catch (err) {
-        Alert.alert('오류', '충전 처리 중 문제가 발생했습니다.');
+        Alert.alert(t('common.error'), '충전 처리 중 문제가 발생했습니다.');
       }
     });
     rewarded.load();

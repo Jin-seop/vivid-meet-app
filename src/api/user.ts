@@ -55,7 +55,11 @@ export const userApi = {
   acceptAiNotice: () => api.patch('/users/me/accept-ai-notice'),
 
   /** 광고 시청 보상으로 매칭 횟수 충전 */
-  chargeMatchCount: (adUnitId: string) => api.patch('/users/me/charge-match', { adUnitId }),
+  addMatchCount: (adUnitId: string) => api.patch('/users/me/add-match', { adUnitId }),
+
+  /** 인앱 결제를 통한 매칭 횟수 구매 */
+  purchaseMatchCount: (productId: string, transactionId: string, receipt: string, platform: 'ios' | 'android') => 
+    api.post('/users/me/purchase-match', { productId, transactionId, receipt, platform }),
 
   /** 프로필 사진 변경 및 AI 이미지 재생성 */
   updateProfileAi: (formData: FormData) =>
