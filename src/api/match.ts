@@ -5,9 +5,6 @@ export type TargetGender = 'MALE' | 'FEMALE' | 'ALL';
 export type TargetCountry = 'KR' | 'JP' | 'ALL';
 
 export const matchApi = {
-  /** 좋아요 보내기 (매칭 요청) */
-  sendLike: (receiverId: string) => api.post('/match/like', { receiverId }),
-
   /** 매칭 성공 리스트 조회 (채팅 가능 목록) */
   getMatchedList: () => api.get('/match/list'),
 
