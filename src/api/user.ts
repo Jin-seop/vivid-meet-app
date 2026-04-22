@@ -57,6 +57,12 @@ export const userApi = {
   /** 광고 시청 보상으로 매칭 횟수 충전 */
   chargeMatchCount: (adUnitId: string) => api.patch('/users/me/charge-match', { adUnitId }),
 
+  /** 프로필 사진 변경 및 AI 이미지 재생성 */
+  updateProfileAi: (formData: FormData) =>
+    api.post('/users/me/update-profile-ai', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }),
+
   /** 유저 통계 정보 조회 */
   getStats: () => api.get('/users/me/stats'),
 };

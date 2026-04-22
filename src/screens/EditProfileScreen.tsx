@@ -52,6 +52,32 @@ const EditProfileScreen = ({ navigation }: EditProfileScreenProps) => {
   const [interests, setInterests] = useState<string[]>(['music', 'game']);
   const [statusMessage, setStatusMessage] = useState('안녕하세요! 반가워요 😊');
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [posePhoto, setPosePhoto] = useState<string | null>(null);
+  const [realPhoto, setRealPhoto] = useState<string | null>(null);
+
+  const handleImagePicker = async (isPose: boolean) => {
+    const result = await launchImageLibrary({ mediaType: 'photo', quality: 0.8 });
+    if (result.assets && result.assets[0].uri) {
+      isPose ? setPosePhoto(result.assets[0].uri) : setRealPhoto(result.assets[0].uri);
+    }
+  };
+
+  const handleRegenerateAi = async () => {
+    if (!posePhoto || !realPhoto) {
+      Alert.alert('알림', '포즈 사진과 실물 사진을 모두 선택해주세요.');
+      return;
+    }
+    try {
+      const formData = new FormData();
+      formData.append('files', { uri: posePhoto, name: 'pose.jpg', type: 'image/jpeg' } as any);
+      formData.append('files', { uri: realPhoto, name: 'real.jpg', type: 'image/jpeg' } as any);
+      const res = await userApi.updateProfileAi(formData);
+      login(res.data);
+      Alert.alert('성공', 'AI 프로필 사진이 재생성되었습니다.');
+    } catch (e) {
+      Alert.alert('오류', '재생성 중 오류 발생');
+    }
+  };
 
   // 모달 상태
   const [showSaveConfirm, setShowSaveConfirm] = useState(false);
@@ -192,6 +218,20 @@ const EditProfileScreen = ({ navigation }: EditProfileScreenProps) => {
             <AMText style={styles.photoHelp}>
               {t('edit_profile.photo_help')}
             </AMText>
+            
+            {/* AI 사진 재생성 UI */}
+            <View style={styles.regenerateContainer}>
+              <AMTouchableOpacity style={styles.smallButton} onPress={() => handleImagePicker(true)}>
+                <AMText style={styles.smallButtonText}>포즈 사진 선택</AMText>
+              </AMTouchableOpacity>
+              <AMTouchableOpacity style={styles.smallButton} onPress={() => handleImagePicker(false)}>
+                <AMText style={styles.smallButtonText}>실물 사진 선택</AMText>
+              </AMTouchableOpacity>
+              <AMTouchableOpacity style={styles.regenButton} onPress={handleRegenerateAi}>
+                <AMText style={styles.regenButtonText}>AI 사진 재생성</AMText>
+              </AMTouchableOpacity>
+            </View>
+
             <View style={styles.warningBox}>
               <AMText style={styles.warningText}>
                 ⚠️ {t('signup.photo_warning', '본인 사진이 아닐 경우 이용이 제한되거나 제재를 받을 수 있습니다.')}
@@ -411,12 +451,27 @@ const styles = StyleSheet.create({
     borderColor: '#FED7D7',
     width: '100%',
   },
-  warningText: {
-    fontSize: 11,
-    color: '#C53030',
-    textAlign: 'center',
-    lineHeight: 16,
+  regenerateContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 16,
+    justifyContent: 'center',
   },
+  smallButton: {
+    backgroundColor: '#F3F4F6',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+  },
+  smallButtonText: { fontSize: 12, color: '#4B5563', fontWeight: 'bold' },
+  regenButton: {
+    backgroundColor: '#4A90E2',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+  },
+  regenButtonText: { fontSize: 12, color: 'white', fontWeight: 'bold' },
   inputGroup: { marginBottom: 16 },
   label: { fontSize: 14, color: '#374151', marginBottom: 8 },
   input: {
