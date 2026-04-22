@@ -1,4 +1,14 @@
 {
   "name": "AimoChat",
   "displayName": "AimoChat"
+  "expo": {
+    "name": "AimoChat",
+    "slug": "Aimo-chat",
+    "ios": {
+      "googleMobileAdsAppId": "ca-app-pub-8502781645264431~6631160011"
+    },
+    "android": {
+      "googleMobileAdsAppId": "ca-app-pub-8502781645264431~6631160011"
+    }
+  }
 }

@@ -23,6 +23,11 @@ import { socketService } from '../api/socket';
 import { logEvent } from '../utils/analytics';
 import { useAuth } from '../context/AuthContext';
 import CenterModal, { ModalButton } from '../components/common/CenterModal';
+import { RewardedAd, RewardedAdEventType, TestIds } from 'react-native-google-mobile-ads';
+
+const rewarded = RewardedAd.createForAdRequest(TestIds.REWARDED, {
+  requestNonPersonalizedAdsOnly: true,
+});
 
 const HomeScreen = ({ navigation }: any) => {
   const { t } = useTranslation();
@@ -110,11 +115,31 @@ const HomeScreen = ({ navigation }: any) => {
           matchId: response.data.matchId,
         });
       }
-    } catch {
+    } catch (error: any) {
       setIsMatching(false);
       logEvent('match_error');
-      Alert.alert('오류', '매칭 중 문제가 발생했습니다.');
+      if (error.response?.data?.message?.includes('무료 매칭 횟수를 모두 소진')) {
+        Alert.alert('횟수 부족', '광고를 시청하고 1회 충전하시겠습니까?', [
+          { text: '취소', style: 'cancel' },
+          { text: '광고 시청', onPress: showRewardedAd }
+        ]);
+      } else {
+        Alert.alert('오류', '매칭 중 문제가 발생했습니다.');
+      }
     }
+  };
+
+  const showRewardedAd = () => {
+    const unsubscribe = rewarded.addAdEventListener(RewardedAdEventType.EARNED_REWARD, async () => {
+      try {
+        await userApi.chargeMatchCount('test1ca-app-pub-8502781645264431/1288687661');
+        Alert.alert('충전 완료', '매칭 횟수가 1회 충전되었습니다.');
+      } catch (err) {
+        Alert.alert('오류', '충전 처리 중 문제가 발생했습니다.');
+      }
+    });
+    rewarded.load();
+    rewarded.show();
   };
 
   return (

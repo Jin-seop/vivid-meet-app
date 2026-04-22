@@ -31,7 +31,8 @@
 			<array>
 				<string>com.googleusercontent.apps.985196508402-j7salipa3f5dfup18iq7bb8j5iguv461</string>
 			</array>
-		</dict>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>개인 맞춤형 광고 경험을 제공하기 위해 사용자의 활동 데이터를 수집합니다.</string>		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
@@ -43,7 +44,8 @@
 		<false/>
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
-	</dict>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>개인 맞춤형 광고 경험을 제공하기 위해 사용자의 활동 데이터를 수집합니다.</string>	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>실물 기반 AI 페르소나 생성을 위해 카메라 권한이 필요합니다.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
@@ -87,5 +89,8 @@
 	<false/>
 	<key>PermissionGroupNotification</key>
 	<string>AimoChat의 실시간 매칭 및 메시지 알림을 받기 위해 권한이 필요합니다.</string>
-</dict>
+	<key>GADApplicationIdentifier</key>
+  <string>ca-app-pub-8502781645264431~6631160011</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>개인 맞춤형 광고 경험을 제공하기 위해 사용자의 활동 데이터를 수집합니다.</string></dict>
 </plist>
