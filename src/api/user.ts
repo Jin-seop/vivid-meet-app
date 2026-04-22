@@ -54,6 +54,9 @@ export const userApi = {
   /** AI 투명성 고지 동의 처리 */
   acceptAiNotice: () => api.patch('/users/me/accept-ai-notice'),
 
+  /** 광고 시청 보상으로 매칭 횟수 충전 */
+  chargeMatchCount: (adUnitId: string) => api.patch('/users/me/charge-match', { adUnitId }),
+
   /** 유저 통계 정보 조회 */
   getStats: () => api.get('/users/me/stats'),
 };
